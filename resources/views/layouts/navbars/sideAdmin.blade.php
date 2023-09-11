@@ -44,6 +44,12 @@
                                 <p>{{ __('Plan Management') }}</p>
                             </a>
                         </li>
+                        <li @if ($pageSlug == 'transactions') class="active " @endif>
+                            <a href="{{ route('admin.transactions')  }}">
+                                <i class="tim-icons icon-bullet-list-67"></i>
+                                <p>{{ __('Transactions Management') }}</p>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </li>

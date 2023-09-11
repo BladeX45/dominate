@@ -64,6 +64,47 @@ class PageController extends Controller
         }
     }
 
+    // transactions page
+    public function indexTransactions(){
+        // check admin or not
+        // ddd(auth()->user()->roleID);
+        // call name on table users
+
+        if(auth()->user()->roleID === '1'){
+            $data = DB::table('transactions')
+                ->join('users', 'transactions.userID', '=', 'users.id')
+                ->join('plans', 'transactions.planID', '=', 'plans.id')
+                ->select(
+                    'transactions.transactionID as transactionID',
+                    'users.name as userName',
+                    'transactions.planID as planID',
+                    'transactions.created_at as transactionDate',
+                    'transactions.paymentStatus as transactionStatus',
+                    'users.name as userName',
+                    'plans.planName as planName',
+                    'plans.planType as planType',
+                    'plans.planPrice as planPrice'
+                )
+                ->paginate(10);
+            return view('admin.transactions', compact('data'));
+        }
+        echo 'test';
+    }
+
+    public function verifyPayment($userID){
+        // forbidden route if not admin back to previous page
+        if(Auth::user()->roleID != '1'){
+            return redirect()->back();
+        }
+        // get user by id
+        $user = User::find($userID);
+        // update payment status
+        $user->paymentStatus = 'success';
+        $user->save();
+        // redirect back
+        return redirect()->back();
+    }
+
     public function customers(){
         // forbidden route if not admin back to previous page
         if(Auth::user()->roleID != 1){

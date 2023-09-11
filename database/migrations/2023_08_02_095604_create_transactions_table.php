@@ -28,8 +28,8 @@ return new class extends Migration
             $table->integer('totalSession');
             // transactionID
             $table->string('transactionID');
-            // paymentMethod
-            $table->string('paymentMethod');
+            // paymentMethod (transfer or cash) enum
+            $table->enum('paymentMethod', ['transfer', 'cash']);
             // paymentStatus
             $table->string('paymentStatus');
             // paymentAmount

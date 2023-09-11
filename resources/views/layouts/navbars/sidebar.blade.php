@@ -19,8 +19,8 @@
             </li>
             <li @if ($pageSlug == 'transaction') class="active " @endif>
                 <a href="{{ route('customer.transactions') }}">
-                    <i class="tim-icons icon-pin"></i>
-                    <p>{{ __('Maps') }}</p>
+                    <i class="tim-icons icon-bullet-list-67"></i>
+                    <p>{{ __('Daftar Transaksi') }}</p>
                 </a>
             </li>
             <li @if ($pageSlug == 'notifications') class="active " @endif>

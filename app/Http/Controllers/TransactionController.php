@@ -77,12 +77,44 @@ class TransactionController extends Controller
                 return view('pages.transactions', ['data' => $data]);
             }
             $data = Transaction::where('userID', Auth::user()->id)->get();
+
             return view('pages.transactions', ['data' => $data]);
         } else {
             // Redirect atau tindakan lain jika pengguna belum login
             return redirect()->route('login'); // Ganti 'login' dengan nama rute halaman login
         }
     }
+
+    // upload receipt Transfer
+    public function uploadReceipt(Request $request){
+        // Validate the incoming request data, e.g., check if a file is uploaded
+        $request->validate([
+            'evidence' => 'required|file|mimes:jpeg,png,pdf|max:2048', // Adjust validation rules as needed
+        ]);
+
+        // Check if the user is authenticated or authorized to upload receipts
+        // You can add your authentication/authorization logic here
+
+        // Get the uploaded file
+        $uploadedFile = $request->file('evidence');
+
+        // Generate a unique filename for the uploaded file
+        $filename = uniqid() . '_' . time() . '.' . $uploadedFile->getClientOriginalExtension();
+
+        // Move the uploaded file to a storage location (e.g., public storage)
+        $uploadedFile->storeAs('receipts', $filename, 'public');
+
+        // update
+        $transaction = Transaction::find($request->transactionID);
+        $transaction->receiptTransfer = $filename;
+        $transaction->save();
+
+        // You would typically associate this with the user's record or the transaction record
+
+        // Redirect or return a response to indicate success
+        return redirect()->back()->with('success', 'Receipt uploaded successfully');
+    }
+
 
     public function generateUniqueTransactionID()
     {
@@ -115,6 +147,7 @@ class TransactionController extends Controller
             'amount' => 'required|integer|min:1',
             'totalPrice' => 'required_without:totalSession|numeric|min:0',
             'totalSession' => 'required_without:totalPrice|integer|min:0',
+            'paymentMethod' => 'required|in:transfer,cash',
         ]);
 
         // Jika validasi gagal
@@ -140,8 +173,8 @@ class TransactionController extends Controller
         $transaction->planAmount = $request->amount;
         $transaction->totalSession = $totalSession;
         $transaction->transactionID = $this->generateUniqueTransactionID(); // Ganti dengan cara Anda untuk menghasilkan ID transaksi unik
-        $transaction->paymentMethod = 'transfer bank'; // Anda perlu mendapatkan ini dari formulir juga
-        $transaction->paymentStatus = 'Pending'; // Anda mungkin perlu mengatur status pembayaran sesuai dengan proses Anda
+        $transaction->paymentMethod = $request->paymentMethod;; // Anda mungkin perlu mengatur metode pembayaran sesuai dengan proses Anda
+        $transaction->paymentStatus = 'Pending'; //  Anda mungkin perlu mengatur status pembayaran sesuai dengan proses Anda
         $transaction->paymentAmount = $totalPrice;
         $transaction->receiptTransfer = null; // Anda mungkin perlu mengatur ini sesuai dengan proses Anda
         $transaction->save();
@@ -153,5 +186,33 @@ class TransactionController extends Controller
         // dan pastikan Anda telah mengimpor model Transaction dan Auth di atas
     }
 
+    public function uploadEvidence(Request $request){
+        // Validate the incoming request data, e.g., check if a file is uploaded
 
+        $request->validate([
+            'evidence' => 'required|file|mimes:jpeg,png,pdf|max:2048', // Adjust validation rules as needed
+        ]);
+
+        // Check if the user is authenticated or authorized to upload receipts
+        // You can add your authentication/authorization logic here
+
+        // Get the uploaded file
+        $uploadedFile = $request->file('evidence');
+
+        // Generate a unique filename for the uploaded file
+        $filename = uniqid() . '_' . time() . '.' . $uploadedFile->getClientOriginalExtension();
+
+        // move upload file to public/assets/img/receipt/..
+        $uploadedFile->storeAs('receipts', $filename, 'public');
+
+        // update
+        $transaction = Transaction::find($request->transactionID);
+        $transaction->receiptTransfer = $filename;
+        $transaction->save();
+
+        // You would typically associate this with the user's record or the transaction record
+
+        // Redirect or return a response to indicate success
+        return redirect()->back()->with('success', 'Receipt uploaded successfully');
+    }
 }

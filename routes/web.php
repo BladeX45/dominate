@@ -48,6 +48,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function(){
     Route::delete('/delete-plan/{id}',[PlanController::class, 'destroy'])->name('admin.deletePlan');
     Route::get('/edit-asset/{id}',[CarController::class, 'edit'])->name('admin.editAsset');
     Route::get('/show-instructor/{id}', [InstructureController::class, 'show'])->name('admin.showInstructor');
+    Route::get('/transactions', [PageController::class, 'indexTransactions'])->name('admin.transactions');
 });
 
 Route::group(['middleware' => 'auth'], function () {
@@ -78,5 +79,7 @@ Route::group(['prefix' => 'customer', 'middleware' => ['auth']], function(){
     Route::get('/dashboard', [PageController::class, 'customerDashboard'])->name('customer.dashboard');
     Route::post('/orders', [TransactionController::class, 'order'])->name('customer.orders');
     Route::get('/transactions', [TransactionController::class, 'customerTransactions'])->name('customer.transactions');
+    // upload evidence
+    Route::put('/upload-evidence', [TransactionController::class, 'uploadEvidence'])->name('customer.uploadEvidence');
 });
 

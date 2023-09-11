@@ -129,6 +129,13 @@
                             <option value="1 Session">1 Session</option>
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label for="paymentMethod">Select Payment</label>
+                        <select class="form-control bg-dark" id="paymentMethod" name="paymentMethod">
+                            <option value="transfer">Transfer</option>
+                            <option value="cash">Cash</option>
+                        </select>
+                    </div>
                     {{-- Amount --}}
                     <div class="form-group">
                         <label for="amount">Amount</label>
