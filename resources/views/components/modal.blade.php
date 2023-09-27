@@ -1,6 +1,8 @@
+ {{-- default style --}}
+
  <!-- Modal -->
  <div class="modal fade" id="{{ $idModal }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog ">
+    <div class="modal-dialog {{ $customStyles ?? '' }}" >
         <div class="modal-content bg-dark">
             <div class="modal-header">
             <h5 class="modal-title text-light" id="exampleModalLabel">{{ $title }}</h5>
@@ -15,3 +17,10 @@
         </div>
     </div>
 </div>
+
+<style>
+    .modal-lg{
+        width: 1200px !important;
+    }
+</style>
+

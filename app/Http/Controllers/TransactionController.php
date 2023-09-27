@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use to;
+use Carbon\Carbon;
 use App\Models\Plan;
+use App\Models\Customer;
 use App\Models\Transaction;
+use App\Models\Cashflow;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
+
 
 class TransactionController extends Controller
 {
@@ -26,6 +31,10 @@ class TransactionController extends Controller
     public function create()
     {
         //
+    }
+
+    public function cashFlow(){
+        return view('admin.cashflow');
     }
 
     /**
@@ -215,4 +224,46 @@ class TransactionController extends Controller
         // Redirect or return a response to indicate success
         return redirect()->back()->with('success', 'Receipt uploaded successfully');
     }
+
+    public function verifyTransaction(Request $request){
+        try {
+            // Find the transaction with transactionID where request->transactionID == transactionID
+            $transaction = Transaction::where('transactionID', $request->transactionID)->firstOrFail();
+            // Update paymentStatus to success
+            $transaction->update(['paymentStatus' => 'success']);
+            // update cashflow
+            $cashflow = Cashflow::create([
+                // fk transaction -> nullable
+                'transaction_id' => $transaction->id,
+                // debitAmount
+                'debitAmount' => $transaction->paymentAmount,
+                // date
+                'date' => Carbon::now(),
+                // update balance balance + debitAmount
+                'balance' => $transaction->balance + $transaction->paymentAmount,
+            ]);
+            // dd($cashflow);
+
+            $customer = Customer::where('userID', $transaction->userID)->firstOrFail();
+            // check planID === 1 || 2 || 3 || 4
+            if($transaction->planID === 1 ||$transaction->planID === 2 ||$transaction->planID === 3 ||$transaction->planID === 4){
+                // update debitAmount to table cashflows with model cashflow
+                $customer->update(['ManualSession'=> $transaction->totalSession + $customer->ManualSession]);
+            }
+            else{
+                $customer->update(['MaticSession'=> $transaction->totalSession + $customer->MaticSession]);
+            }
+            // You can also do additional actions here if needed
+
+            // Return a response indicating success
+            return response()->json(['message' => 'Transaction successfully verified and updated.']);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // Handle the case where the transaction with the specified transactionID was not found
+            return response()->json(['error' => 'Transaction not found.'], 404);
+        } catch (\Exception $e) {
+            // Handle any other exceptions that may occur during the process
+            return response()->json(['error' => 'An error occurred while verifying the transaction.'], 500);
+        }
+    }
+
 }

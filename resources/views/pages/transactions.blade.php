@@ -44,7 +44,7 @@
                                     </td>
                                 </tr>
                                 <!-- Modal for this transaction -->
-                                <x-modal title="Bukti Pembayaran" idModal="evidence{{$dt->id}}" >
+                                <x-modal title="Bukti Pembayaran" idModal="evidence{{$dt->id}}" customStyle="">
                                     <x-form-update id="{{$dt->id}}" data="Transaction" action="{{route('customer.uploadEvidence')}}">
                                         <!-- Display a field with the data -->
                                         {{-- input hidden idTransaction --}}

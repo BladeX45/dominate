@@ -59,6 +59,30 @@
                     <p>{{ __('Accounting') }}</p>
                 </a>
             </li>
+            <li @if ($pageSlug == 'admin.cashFlow') class="active " @endif>
+                <a data-toggle="collapse" href="#accounting" aria-expanded="true">
+                    <i class="fab fa-laravel" ></i>
+                    <span class="nav-link-text" >{{ __('Accounting') }}</span>
+                    <b class="caret mt-1"></b>
+                </a>
+
+                <div class="collapse show" id="accounting">
+                    <ul class="nav pl-4">
+                        <li @if ($pageSlug == 'admin.cashFlow') class="active " @endif>
+                            <a href="{{ route('admin.cashflow')  }}">
+                                <i class="tim-icons icon-bullet-list-67"></i>
+                                <p>{{ __('Cash Flow') }}</p>
+                            </a>
+                        </li>
+                        <li @if ($pageSlug == 'transactions') class="active " @endif>
+                            <a href="{{ route('admin.transactions')  }}">
+                                <i class="tim-icons icon-bullet-list-67"></i>
+                                <p>{{ __('Transactions Management') }}</p>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
         </ul>
     </div>
 </div>

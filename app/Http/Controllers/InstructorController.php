@@ -6,7 +6,7 @@ use App\Models\Instructor;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class InstructureController extends Controller
+class InstructorController extends Controller
 {
 
     // model data Instructor
@@ -55,6 +55,13 @@ class InstructureController extends Controller
     {
         // Tampilkan form untuk membuat instruktur baru
         return view('instructors.create');
+    }
+
+    public function showProfile(){
+        // ambil dari auth
+        $instructor = Instructor::where('userID', auth()->user()->id)->first();
+
+        return view('instructor.profile', compact('instructor'));
     }
 
     /**
@@ -133,7 +140,7 @@ class InstructureController extends Controller
     public function destroy(Instructor $instructor)
     {
         // Hapus data instruktur
-        $instructure->delete();
+        $instructor->delete();
 
         return redirect()->route('instructors.index')->withStatus('Instruktur berhasil dihapus.');
     }

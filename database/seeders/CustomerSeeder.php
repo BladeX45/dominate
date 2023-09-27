@@ -30,13 +30,14 @@ class CustomerSeeder extends Seeder
             // phone
             'phone'     => '+39 845678901',
             // total session -> default null
-            'totalSession' => 0,
+            'MaticSession' => 5,
+            'ManualSession' => 10,
             // certificate -> default null
             'certificate' => null,
             // isCertificatePass -> default 0
             'isCertificatePass' => 0,
             // fk from user
-            'userID' => 2,
+            'userID' => 3,
         ]);
     }
 }

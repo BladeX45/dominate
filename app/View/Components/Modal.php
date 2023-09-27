@@ -11,8 +11,11 @@ class Modal extends Component
     public $title;
     public $idModal;
 
-    public function __construct($title, $idModal)
+    public $customStyle;
+
+    public function __construct($title, $idModal, $customStyle)
     {
+        $this->customStyle = $customStyle;
         $this->title = $title;
         $this->idModal = $idModal;
     }

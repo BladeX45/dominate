@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Customer;
-use App\Http\Controllers\Controller;
+use App\Models\CashFlow;
 use Illuminate\Http\Request;
 
-class CustomerController extends Controller
+class CashFlowController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -35,15 +34,15 @@ class CustomerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Request $request)
+    public function show(CashFlow $cashFlow)
     {
-        dd($request);
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Customer $customer)
+    public function edit(CashFlow $cashFlow)
     {
         //
     }
@@ -51,7 +50,7 @@ class CustomerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Customer $customer)
+    public function update(Request $request, CashFlow $cashFlow)
     {
         //
     }
@@ -59,7 +58,7 @@ class CustomerController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Customer $customer)
+    public function destroy(CashFlow $cashFlow)
     {
         //
     }

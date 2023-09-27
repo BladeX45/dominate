@@ -7,7 +7,13 @@ use App\Models\Car;
 use App\Models\Plan;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\Score;
+use App\Models\Customer;
+use App\Models\Schedule;
 use App\Models\instructor;
+use App\Models\Certificate;
+use Illuminate\Http\Request;
+use GuzzleHttp\Promise\Create;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -79,7 +85,11 @@ class PageController extends Controller
                     'users.name as userName',
                     'transactions.planID as planID',
                     'transactions.created_at as transactionDate',
+                    'transactions.planAmount as planAmount',
                     'transactions.paymentStatus as transactionStatus',
+                    'transactions.paymentMethod as paymentMethod',
+                    'transactions.receiptTransfer as receiptTransfer',
+                    'transactions.totalSession as totalSession',
                     'users.name as userName',
                     'plans.planName as planName',
                     'plans.planType as planType',
@@ -91,18 +101,13 @@ class PageController extends Controller
         echo 'test';
     }
 
-    public function verifyPayment($userID){
+    public function verifyPayment(Request $request){
         // forbidden route if not admin back to previous page
         if(Auth::user()->roleID != '1'){
             return redirect()->back();
         }
-        // get user by id
-        $user = User::find($userID);
-        // update payment status
-        $user->paymentStatus = 'success';
-        $user->save();
-        // redirect back
-        return redirect()->back();
+
+
     }
 
     public function customers(){
@@ -218,4 +223,92 @@ class PageController extends Controller
     {
         return view('pages.upgrade');
     }
+    public function checkAvailability(Request $request)
+    {
+        $instructorId = $request->input('instructor');
+        $date = $request->input('date');
+        $session = $request->input('session');
+        $type = $request->input('type');
+
+        // revalue type to manual or automatic
+        if($type == 'manual'){
+            $type = 'manual';
+        }else{
+            $type = 'automatic';
+        }
+
+        // Periksa apakah jadwal tersedia berdasarkan instruktur, tanggal, dan sesi
+        $isAvailable = !Schedule::where('instructorID', $instructorId)
+            ->where('date', $date)
+            ->where('session', $session)
+            ->exists();
+
+        $car = Car::whereDoesntHave('schedules', function($query) use ($request){
+            $query->where('date', $request->date)->where('session', $request->session);
+        })->where('carStatus', 'available')->where('Transmission', $type)->first();
+
+        // check if car is available
+        if($car == null){
+            $isAvailable = false;
+        }
+
+        return response()->json(['isAvailable' => $isAvailable]);
+    }
+
+    // certificate page
+    public function certificate(Request $request){
+        // check auth role 0 / 1
+        switch (auth()->user()->roleID) {
+            case 0:
+                return redirect()->route('owner.dashboard');
+                break;
+            case 1:
+                return redirect()->route('admin.dashboard');
+                break;
+            case 2:
+
+                // get input
+                $customerID = $request->input('customerID');
+                $scheduleID = $request->input('scheduleID');
+                $instructorID = $request->input('instructorID');
+                // generating number certificate unique and pattern sequential
+                $number = 'CERT-'.date('Y').'-'.date('m').'-'.date('d').'-'.rand(1000, 9999);
+
+                // get data customer
+                $customer = Customer::find($customerID);
+                // get data schedule
+                $schedules = Schedule::find($scheduleID);
+                // get data instructor
+                $instructors = instructor::find($instructorID);
+                // get data score
+                $scores = Score::where('customerID', $customerID)->where('scheduleID', $scheduleID)->first();
+
+
+                // if certificate number isExist then create new number
+                if(Certificate::where('certificateNumber', $number)->exists()){
+                    $number = 'CERT-'.date('Y').'-'.date('m').'-'.date('d').'-'.rand(1000, 9999);
+                }
+                // dd($schedules);
+                // create certificate pdf
+                $certificate = Certificate::create([
+                    'certificateNumber' => $number,
+                    'customerID' => $customerID,
+                    'scoreID' => $scores->id,
+                    // certificateDate
+                    'certificateDate' => date('Y-m-d'),
+                ]);
+
+
+                return view('pages.certificate', compact('schedules', 'customer', 'scores', 'instructors', 'certificate'));
+                break;
+            case 3:
+                return redirect()->route('instructor.dashboard');
+                break;
+            default:
+                return redirect()->route('login');
+                break;
+        }
+    }
+
 }
+

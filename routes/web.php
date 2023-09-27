@@ -3,13 +3,17 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CarController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\InstructureController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\ScoreController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +34,7 @@ Route::get('/', function () {
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Auth::routes();
 // Auth::routes();
+Route::post('/check-availability', [PageController::class, 'checkAvailability'])->name('check-availability');
 
 Route::get('/home', 'App\Http\Controllers\HomeController@index')->name('home')->middleware('auth');
 
@@ -47,8 +52,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function(){
     Route::post('/update-plan/{id}',[PlanController::class, 'update'])->name('admin.updatePlan');
     Route::delete('/delete-plan/{id}',[PlanController::class, 'destroy'])->name('admin.deletePlan');
     Route::get('/edit-asset/{id}',[CarController::class, 'edit'])->name('admin.editAsset');
-    Route::get('/show-instructor/{id}', [InstructureController::class, 'show'])->name('admin.showInstructor');
+    Route::get('/show-instructor/{id}', [InstructorController::class, 'show'])->name('admin.showInstructor');
     Route::get('/transactions', [PageController::class, 'indexTransactions'])->name('admin.transactions');
+    Route::post('/transactions', [TransactionController::class, 'verifyTransaction'])->name('admin.verifyTransaction');
+    Route::get('/cashflow', [TransactionController::class, 'cashFlow'])->name('admin.cashflow');
 });
 
 Route::group(['middleware' => 'auth'], function () {
@@ -76,10 +83,28 @@ Route::group(['middleware' => 'auth'], function () {
 
 // Route group prefix for customer
 Route::group(['prefix' => 'customer', 'middleware' => ['auth']], function(){
+    // get score customer
+    Route::get('/score', [CustomerController::class, 'show'])->name('customer.score');
     Route::get('/dashboard', [PageController::class, 'customerDashboard'])->name('customer.dashboard');
     Route::post('/orders', [TransactionController::class, 'order'])->name('customer.orders');
     Route::get('/transactions', [TransactionController::class, 'customerTransactions'])->name('customer.transactions');
     // upload evidence
     Route::put('/upload-evidence', [TransactionController::class, 'uploadEvidence'])->name('customer.uploadEvidence');
+    Route::get('/schedules', [ScheduleController::class, 'index'])->name('customer.schedules');
+    Route::post('/schedules', [ScheduleController::class, 'store'])->name('customer.creataSchedule');
+    // customer.rating
+    Route::post('/rating', [ScoreController::class, 'ratingInstructor'])->name('customer.rating');
+    // generate cerificate
+    Route::post('/certificate', [PageController::class, 'certificate'])->name('customer.generateCertificate');
 });
 
+// Route group prefix for instructor
+
+Route::group(['prefix' => 'instructor', 'middleware' =>['auth']], function(){
+    Route::get('/profile', [InstructorController::class, 'showProfile'])->name('instructor.profile');
+    Route::get('/dashboard', [PageController::class, 'instructorDashboard'])->name('instructor.dashboard');
+    Route::get('/schedules', [ScheduleController::class, 'instructorSchedules'])->name('instructor.schedules');
+    // post
+    Route::post('/score', [ScoreController::class, 'addCustomerScore'])->name('instructor.addScore');
+    Route::post('/train', [ScheduleController::class, 'train'])->name('instructor.train');
+});

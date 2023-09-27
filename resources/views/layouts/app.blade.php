@@ -49,6 +49,8 @@
             <div class="wrapper">
                     @if (Auth::user()->roleID == 1)
                         @include('layouts.navbars.sideAdmin')
+                    @elseif (Auth::user()->roleID == 3)
+                        @include('layouts.navbars.sideInst')
                     @else
                         @include('layouts.navbars.sidebar')
                     @endif
@@ -192,8 +194,11 @@
                 });
             });
         </script>
-        {{-- <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        {{-- <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.7.3/feather.min.js"></script>

@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Instructor;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 
 class Schedule extends Model
 {
@@ -11,9 +13,10 @@ class Schedule extends Model
 
     protected $guarded = [];
 
+    // instructor
     public function instructor()
     {
-        return $this->belongsTo(instructors::class, 'instructorID');
+        return $this->belongsTo(Instructor::class, 'instructorID');
     }
 
     public function customer()
@@ -25,4 +28,10 @@ class Schedule extends Model
     {
         return $this->belongsTo(Car::class, 'carID');
     }
+
+    public function score()
+    {
+        return $this->hasOne(Score::class, 'scheduleID');
+    }
+
 }

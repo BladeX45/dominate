@@ -136,7 +136,10 @@
                     </p>
                     <div class="card-description">
                         {{-- Token --}}
-                        <span>Token Training : {{ auth()->user()->customer->totalSession}}</span><hr/>
+                        @php
+                            $totalSession = auth()->user()->customer->ManualSession + auth()->user()->customer->MaticSession;
+                        @endphp
+                        <span>Token Training : {{ $totalSession}}</span><hr/>
                     </div>
                     <div class="card-description">
                         {{ __('Do not be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...') }}

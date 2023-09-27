@@ -28,7 +28,8 @@ return new class extends Migration
             // phone
             $table->string('phone');
             // total session -> default null
-            $table->integer('totalSession')->nullable()->default(null);
+            $table->integer('ManualSession')->nullable()->default(null);
+            $table->integer('MaticSession')->nullable()->default(null);
             // certificate -> default null
             $table->string('certificate')->nullable()->default(null);
             // isCertificatePass -> default 0

@@ -23,10 +23,10 @@
                     <p>{{ __('Daftar Transaksi') }}</p>
                 </a>
             </li>
-            <li @if ($pageSlug == 'notifications') class="active " @endif>
-                <a href="{{ route('pages.notifications') }}">
+            <li @if ($pageSlug == 'schedule') class="active " @endif>
+                <a href="{{ route('customer.schedules') }}">
                     <i class="tim-icons icon-bell-55"></i>
-                    <p>{{ __('Notifications') }}</p>
+                    <p>{{ __('Jadwal Latihan') }}</p>
                 </a>
             </li>
             <li @if ($pageSlug == 'tables') class="active " @endif>

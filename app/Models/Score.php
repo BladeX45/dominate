@@ -18,6 +18,12 @@ class Score extends Model
 
     public function instructor()
     {
-        return $this->belongsTo(instructors::class, 'instructorID');
+        return $this->belongsTo(instructor::class, 'instructorID');
     }
+
+    public function schedule()
+    {
+        return $this->belongsTo(Schedule::class, 'scheduleID');
+    }
+
 }

@@ -12,7 +12,7 @@
                         Plans List
                     </div>
                     <div class="col">
-                        <a href="{{-- route('admin.plans.create') --}}" class="btn btn-info btn-round" data-toggle="modal" data-target="#exampleModal">Add Plan</a>
+                        <a href="route('admin.plans.create')" class="btn btn-info btn-round" data-toggle="modal" data-target="#exampleModal">Add Plan</a>
                     </div>
                 </div>
               <h4 class="card-title ">Plans Table</h4>
