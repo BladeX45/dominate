@@ -44,12 +44,6 @@
                                 <p>{{ __('Plan Management') }}</p>
                             </a>
                         </li>
-                        <li @if ($pageSlug == 'transactions') class="active " @endif>
-                            <a href="{{ route('admin.transactions')  }}">
-                                <i class="tim-icons icon-bullet-list-67"></i>
-                                <p>{{ __('Transactions Management') }}</p>
-                            </a>
-                        </li>
                     </ul>
                 </div>
             </li>
@@ -77,7 +71,13 @@
                         <li @if ($pageSlug == 'transactions') class="active " @endif>
                             <a href="{{ route('admin.transactions')  }}">
                                 <i class="tim-icons icon-bullet-list-67"></i>
-                                <p>{{ __('Transactions Management') }}</p>
+                                <p>{{ __('Transaksi Masuk') }}</p>
+                            </a>
+                        </li>
+                        <li @if ($pageSlug == 'admin.expense') class="active " @endif>
+                            <a href="{{ route('admin.expenses')  }}">
+                                <i class="tim-icons icon-bullet-list-67"></i>
+                                <p>{{ __('Transaksi Keluar') }}</p>
                             </a>
                         </li>
                     </ul>

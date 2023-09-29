@@ -20,4 +20,11 @@ class Transaction extends Model
         return $this->belongsTo(Plan::class, 'planID');
     }
 
+    // customer
+    public function customer(){
+        return $this->belongsTo(Customer::class,'userID', 'userID');
+    }
+
+
+
 }

@@ -108,7 +108,7 @@
     </div>
   </div>
 
-    <x-modal title="Add plan">
+    <x-modal title="Add plan" idModal="plan" customStyle="">
         <x-form action="{{ route('admin.addPlan') }}" method="post">
             <div class="form-group">
                 <label for="planName">Plan Name</label>

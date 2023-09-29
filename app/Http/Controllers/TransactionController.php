@@ -11,6 +11,7 @@ use App\Models\Cashflow;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Expense;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -33,8 +34,68 @@ class TransactionController extends Controller
         //
     }
 
+    // transaction out
+    public function expenses(){
+        $expenses = Expense::all();
+
+        return view('admin.expense', compact('expenses'));
+    }
+
+    // generate unique TransactionID
+    public function generateUniqueTransactionIDExpense(){
+        $prefix = 'EXP-'; // Prefix untuk ID transaksi
+
+        // 8 random number
+        $randomPart = mt_rand(00000000,9999999);
+
+        $uniqueID = $prefix . $randomPart;
+        // Pastikan ID ini belum digunakan sebelumnya dalam database
+        while (Expense::where('transactionID', $uniqueID)->exists()) {
+            $randomPart = mt_rand(00000000,9999999);
+            $uniqueID = $prefix . $randomPart;
+        }
+
+        return $uniqueID;
+    }
+    // addExpense
+    public function addExpense(Request $request){
+
+        // dd($request->all());
+
+        // transactionnID
+        $transactionID = $this->generateUniqueTransactionIDExpense();
+
+        // dd($transactionID);
+        $expense = Expense::create([
+            'transactionID' => $transactionID,
+            'expenseName' => $request->expenseName,
+            'expenseAmount' => $request->expenseAmount,
+            'expenseDate' => $request->expenseDate,
+            'expenseDescription' => $request->expenseDescription,
+        ]);
+
+        // get last balance
+        $lastBalance = Cashflow::orderBy('id', 'desc')->first();
+
+        // insert to cashflow
+        $cashflow = Cashflow::create([
+            // fk transaction -> nullable
+            'expense_id' => $expense->id,
+            // debitAmount
+            'creditAmount' => $expense->expenseAmount,
+            // date
+            'date' => Carbon::now(),
+            // update balance balance - creditAmount
+            'balance' => $lastBalance->balance - $expense->expenseAmount,
+        ]);
+        // dd($expense);
+        return redirect()->back()->with('success', 'Expense added successfully');
+    }
+
     public function cashFlow(){
-        return view('admin.cashflow');
+        $cashflows = Cashflow::all();
+
+        return view('admin.cashflow', compact('cashflows'));
     }
 
     /**
@@ -231,6 +292,9 @@ class TransactionController extends Controller
             $transaction = Transaction::where('transactionID', $request->transactionID)->firstOrFail();
             // Update paymentStatus to success
             $transaction->update(['paymentStatus' => 'success']);
+            // get last balance if exists
+            $lastBalance = Cashflow::orderBy('id', 'desc')->first();
+
             // update cashflow
             $cashflow = Cashflow::create([
                 // fk transaction -> nullable
@@ -240,7 +304,7 @@ class TransactionController extends Controller
                 // date
                 'date' => Carbon::now(),
                 // update balance balance + debitAmount
-                'balance' => $transaction->balance + $transaction->paymentAmount,
+                'balance' => $lastBalance->balance + $transaction->paymentAmount,
             ]);
             // dd($cashflow);
 

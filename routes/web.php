@@ -55,7 +55,13 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function(){
     Route::get('/show-instructor/{id}', [InstructorController::class, 'show'])->name('admin.showInstructor');
     Route::get('/transactions', [PageController::class, 'indexTransactions'])->name('admin.transactions');
     Route::post('/transactions', [TransactionController::class, 'verifyTransaction'])->name('admin.verifyTransaction');
+    // get expenses
+    Route::get('/expenses', [TransactionController::class, 'expenses'])->name('admin.expenses');
+    // addexpense
+    Route::post('/add-expense', [TransactionController::class, 'addExpense'])->name('admin.addExpense');
     Route::get('/cashflow', [TransactionController::class, 'cashFlow'])->name('admin.cashflow');
+    // Route dashboard admin
+    Route::get('/dashboard', [PageController::class, 'adminDashboard'])->name('admin.dashboard');
 });
 
 Route::group(['middleware' => 'auth'], function () {

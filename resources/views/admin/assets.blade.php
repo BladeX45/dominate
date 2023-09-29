@@ -138,7 +138,7 @@
     </div>
   </div>
 
-  <x-modal title="Add Car" idModal="addCar">
+  <x-modal title="Add Car" idModal="addCar" customStyle="">
     <x-form action="test" method="post">
         <div class="form-group">
             <label for="carName">Car Name</label>

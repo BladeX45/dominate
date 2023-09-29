@@ -12,6 +12,7 @@ use App\Models\Customer;
 use App\Models\Schedule;
 use App\Models\instructor;
 use App\Models\Certificate;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use GuzzleHttp\Promise\Create;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +27,11 @@ class PageController extends Controller
         if(Auth::user()->roleID != 1){
             return redirect()->back();
         }
-        return view('admin.dashboard');
+
+        // get all data from transaction
+        $transactions = Transaction::all();
+        // dd($transactions);
+        return view('admin.dashboard', compact('transactions'));
     }
 
     public function users()

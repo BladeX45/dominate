@@ -73,7 +73,7 @@
                                    @php
                                    $increment++;
                                    @endphp
-                                    <x-modal title="Profile" idModal="profile{{ $user->userID }}">
+                                    <x-modal title="Profile" idModal="profile{{ $user->userID }}" customStyle="">
                                         <x-profile idUser="{{ $user->userID }}" />
                                     </x-modal>
 
@@ -118,7 +118,7 @@
    </div>
 </div>
 
-<x-modal title="Add User" idModal="addUser">
+<x-modal title="Add User" idModal="addUser" customStyle="">
     <x-form action="{{ route('admin.addUser') }}" method="post">
         {{ csrf_field() }}
         <div class="form-group">
