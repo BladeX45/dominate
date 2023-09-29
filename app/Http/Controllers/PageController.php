@@ -12,6 +12,7 @@ use App\Models\Customer;
 use App\Models\Schedule;
 use App\Models\instructor;
 use App\Models\Certificate;
+use App\Models\Expense;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use GuzzleHttp\Promise\Create;
@@ -31,7 +32,29 @@ class PageController extends Controller
         // get all data from transaction
         $transactions = Transaction::all();
         // dd($transactions);
-        return view('admin.dashboard', compact('transactions'));
+        $salesData = Transaction::select('planID', DB::raw('SUM(planAmount) as totalSales'))
+        ->where('paymentStatus', 'success')
+        ->groupBy('planID')
+        ->get();
+
+        $totalSales = $salesData->sum('totalSales');
+
+        $percentageData = $salesData->map(function ($item) use ($totalSales) {
+            return [
+                'Plan' => $item->plan->planName, // Anda perlu memiliki atribut 'name' di model Plan
+                'Percentage' => ($item->totalSales / $totalSales) * 100,
+            ];
+        });
+
+        // get all car
+        $cars = Car::all();
+
+        // get all expense
+        $expenses = Expense::all();
+
+        // dd($percentageData);
+
+        return view('admin.dashboard', compact('transactions', 'percentageData', 'cars', 'expenses'));
     }
 
     public function users()
