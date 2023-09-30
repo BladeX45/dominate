@@ -57,6 +57,30 @@ class PageController extends Controller
         return view('admin.dashboard', compact('transactions', 'percentageData', 'cars', 'expenses'));
     }
 
+    public function customerDashboard(){
+        // forbidden route if not admin back to previous page
+        if(Auth::user()->roleID != 2){
+            return redirect()->back();
+        }
+        // get data customer
+        $customer = Customer::where('userID', Auth::user()->id)->first();
+        // get all transaction
+        $transactions = Transaction::where('userID', Auth::user()->id)->get();
+        // get all schedule
+        $schedules = Schedule::where('customerID', $customer->id)->get();
+        // get data instructor
+        $instructors = instructor::all();
+        // get overallassessment and scheduleID asc created at
+        $scores = Score::where('customerID', $customer->id)->orderBy('scheduleID', 'asc')->get();
+
+        // If you want to retrieve the result as an array, you can use the toArray() method:
+        $scores = $scores->toArray();
+        // dd($scores);
+        $certificates = Certificate::where('customerID', $customer->id)->get();
+        // dd($scores);
+        return view('layouts.dashboard.customer', compact('customer', 'schedules', 'instructors', 'scores', 'transactions', 'certificates'));
+    }
+
     public function users()
     {
         // check auth role 0 / 1

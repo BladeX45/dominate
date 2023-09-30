@@ -39,6 +39,7 @@ class ScoreController extends Controller
 
         // if exist redirect else create
         if(Score::where('customerID', $request->input('customerID'))->where('scheduleID', $request->input('scheduleID'))->exists()){
+            dd('exist');
             return redirect()->back()->with('error', 'Score already exist');
         }else{
             $score = new Score();
@@ -54,7 +55,7 @@ class ScoreController extends Controller
             $score->overallAssessment = $request->input('overallAssessment');
             $score->additionalComment = $request->input('additionalComment');
             $score->save();
-
+            dd($score);
             // update schedule status
             $schedule = Schedule::find($request->input('scheduleID'));
             $schedule->status = 'need rating';

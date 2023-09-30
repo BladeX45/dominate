@@ -48,7 +48,6 @@ class LoginController extends Controller
             }else if(Auth::user()->roleID == 3){
                 return redirect()->route('instructor.dashboard');
             }
-
         }else{
             return redirect()->route('login')->with('error', 'Email or Password is wrong!');
         }
