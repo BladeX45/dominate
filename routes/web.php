@@ -26,18 +26,17 @@ use App\Http\Controllers\ScoreController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
+// welcome
+Route::get('/', [PageController::class, 'welcome'])->name('welcome');
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Auth::routes();
 // Auth::routes();
+Auth::routes();
 Route::post('/check-availability', [PageController::class, 'checkAvailability'])->name('check-availability');
 
 Route::get('/home', 'App\Http\Controllers\HomeController@index')->name('home')->middleware('auth');
 
+Route::post('/register', [UserController::class, 'registerUser'])->name('register');
 // route group prefix
 Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function(){
     Route::get('/dashboard', [PageController::class, 'adminDashboard'])->name('admin.dashboard');
@@ -113,4 +112,5 @@ Route::group(['prefix' => 'instructor', 'middleware' =>['auth']], function(){
     // post
     Route::post('/score', [ScoreController::class, 'addCustomerScore'])->name('instructor.addScore');
     Route::post('/train', [ScheduleController::class, 'train'])->name('instructor.train');
+    Route::post('/dashboard', [PageController::class, 'train'])->name('instructor.dashboard');
 });

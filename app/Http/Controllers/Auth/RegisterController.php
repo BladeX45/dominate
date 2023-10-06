@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
 use App\Models\User;
-use Illuminate\Foundation\Auth\RegistersUsers;
+use App\Models\Customer;
+use Illuminate\Validation\Rule;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\RegistersUsers;
 
 class RegisterController extends Controller
 {
@@ -47,9 +49,29 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
-    protected function validator(array $data)
+
+    //  "name" => "B Tri Wibowo"
+//   "email" => "190710235@students.uajy.ac.id"
+//   "password" => "123123"
+//   "password_confirmation" => "123123"
+//   "firstName" => "adsasd"
+//   "NIN" => "123123412341"
+//   "birthDate" => "2023-09-19"
+//   "phone" => "085155221292"
+//   "lastName" => "asdasd"
+//   "gender" => "male"
+//   "address" => "asdasdasdas"
+     protected function validator(array $data)
     {
         return Validator::make($data, [
+            'firstName' => ['required', 'string', 'max:255'],
+            'lastName' => ['required', 'string', 'max:255'],
+            'NIN' => ['required', 'string', 'max:255'],
+            'birthDate' => ['required', 'date'],
+            'phone' => ['required', 'string', 'max:255'],
+            // gender enum male, female, other
+            'gender' => ['required', Rule::in(['male', 'female', 'other'])],
+            'name' => ['string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
@@ -63,7 +85,18 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        // create customer
+        $customer = Customer::create([
+            'firstName' => $data['firstName'] ?? $data['email'],
+            'lastName' => $data['lastName'] ?? $data['email'],
+            'NIN' => $data['NIN'],
+            'phone' => $data['phone'],
+            'gender' => $data['gender'],
+            'birthDate' => $data['birthDate'],
+            'address' => $data['address'],
+        ]);
         return User::create([
+            'name' => $data['name'] ?? $data['email'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);

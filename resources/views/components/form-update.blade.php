@@ -22,7 +22,7 @@
 
     <!-- Image Preview -->
     <div class="form-group">
-        <label for="evidence">Preview: <img id="image-preview" for="evidence" src="#" alt="evidence" max-width="300px"></label>
+        <label for="evidence">Preview: <img id="image-preview" for="evidence" src="{{ asset('storage/receipts/'.$record->receiptTransfer) }}" alt="evidence" max-width="300px"></label>
     </div>
     {{$slot}}
     @endif

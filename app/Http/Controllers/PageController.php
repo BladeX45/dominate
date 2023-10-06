@@ -8,11 +8,12 @@ use App\Models\Plan;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Score;
+use App\Models\rating;
+use App\Models\Expense;
 use App\Models\Customer;
 use App\Models\Schedule;
 use App\Models\instructor;
 use App\Models\Certificate;
-use App\Models\Expense;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use GuzzleHttp\Promise\Create;
@@ -266,6 +267,19 @@ class PageController extends Controller
         return view('pages.typography');
     }
 
+    // welcome page
+    public function welcome()
+    {
+        // Mengambil semua data dari tabel 'plans' dengan planType 'manual'
+        $dataManual = Plan::where('planType', 'manual')->get();
+
+        // Mengambil semua data dari tabel 'plans' dengan planType 'matic'
+        $dataMatic = Plan::where('planType', 'automatic')->get();
+        // $data = Plan::all();
+
+        return view('welcome', compact('dataManual', 'dataMatic'));
+    }
+
     /**
      * Display upgrade page
      *
@@ -360,6 +374,35 @@ class PageController extends Controller
                 return redirect()->route('login');
                 break;
         }
+    }
+
+    // dashboard instructor
+    public function instructorDashboard(){
+        // forbidden route if not admin back to previous page
+        if(Auth::user()->roleID != 3){
+            return redirect()->back();
+        }
+        // get data instructor
+        $instructor = instructor::where('userID', Auth::user()->id)->first();
+        // get all schedule
+        $schedules = Schedule::where('instructorID', $instructor->id)->get();
+        // get data instructor
+        $instructors = instructor::all();
+        // get overallassessment and scheduleID asc created at
+        $scores = Score::where('instructorID', $instructor->id)->orderBy('scheduleID', 'asc')->get();
+
+        // dd($scores);
+        // dd($scores);
+        // ratings line chart
+        $ratings = rating::where('instructorID', $instructor->id)->get();
+        // Now, extract and format the data for the chart as previously shown.
+        $labels = $ratings->pluck('created_at');
+        $ratingsData = $ratings->pluck('rating');
+
+        $formattedLabels = $labels->map(function ($timestamp) {
+            return date('Y-m-d', strtotime($timestamp));
+        });
+        return view('layouts.dashboard.instructor', compact('instructor', 'schedules', 'ratings', 'scores', 'formattedLabels', 'ratingsData'));
     }
 
 }

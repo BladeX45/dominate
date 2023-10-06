@@ -12,17 +12,57 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="card">
+                <div class="card bg-primary">
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="card-header">
-                                <h3 class="title">
-                                    <i class="tim-icons icon-chart-pie-36 text-primary"></i>
-                                    {{ __('Overall Assessment') }}
-                                </h3>
-                                <canvas id="myChart">
-
-                                </canvas>
+                            <div class="card">
+                                {{-- schedules --}}
+                                <div class="card-header">
+                                    <h3 class="title">
+                                        <i class="tim-icons icon-chart-pie-36 text-primary"></i>
+                                        {{ __('Jadwal') }}
+                                    </h3>
+                                </div>
+                                <div class="card-body" style="min-height: 56vh">
+                                    <div class="table-responsive">
+                                        <table class="table tablesorter " id="">
+                                            <thead class=" text-primary">
+                                                <tr>
+                                                    <th>
+                                                        {{ __('No') }}
+                                                    </th>
+                                                    <th>
+                                                        {{ __('Nama') }}
+                                                    </th>
+                                                    <th>
+                                                        {{ __('Tanggal') }}
+                                                    </th>
+                                                    <th>
+                                                        {{ __('Status') }}
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($schedules as $data)
+                                                    <tr>
+                                                        <td>
+                                                            {{ $loop->iteration }}
+                                                        </td>
+                                                        <td>
+                                                            {{ $data->customer->firstName }}
+                                                        </td>
+                                                        <td>
+                                                            {{ date('d/m/Y', strtotime($data->created_at)) }}
+                                                        </td>
+                                                        <td>
+                                                            {{ $data->status }}
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -34,8 +74,8 @@
                                     </h3>
                                 </div>
                                 <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table tablesorter " id="">
+                                    <div class="table-responsive" style="min-height: 52vh">
+                                        <table class="table tablesorter" id="">
                                             <thead class=" text-primary">
                                                 <tr>
                                                     <th>
@@ -72,6 +112,21 @@
                                             </tbody>
                                         </table>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header ">
+                                    <h3 class="title">
+                                        <i class="tim-icons icon-chart-pie-36 text-primary"></i>
+                                        {{ __('Grafik') }}
+                                    </h3>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="myChart" width="400" height="200"></canvas>
                                 </div>
                             </div>
                         </div>

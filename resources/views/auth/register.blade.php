@@ -1,7 +1,31 @@
 @extends('layouts.app', ['class' => 'register-page', 'page' => __('Register Page'), 'contentClass' => 'register-page'])
 
 @section('content')
+<style>
+    .hidden {
+        display: none;
+    }
+</style>
+    @if ($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Whoops!</strong> There were some problems with your input.
+                <ul>
+                    {{-- loop all error --}}
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+
+                {{-- close button --}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    {{-- close icon --}}
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        @endif
     <div class="row">
+        {{-- alert error --}}
+
         <div class="col-md-5 ml-auto">
             <div class="info-area info-horizontal mt-5">
                 <div class="icon icon-warning">
@@ -41,72 +65,172 @@
             <div class="card card-register card-white">
                 <div class="card-header">
                     <img class="card-img" src="{{ asset('black') }}/img/card-primary.png" alt="Card image">
-                    <h4 class="card-title">{{ __('Register') }}</h4>
+                    <h4 class="card-title">{{ __('Daftar') }}</h4>
                 </div>
-                <form class="form" method="post" action="{{ route('register') }}">
-                    @csrf
+                <div class="card-body">
+                    {{-- create form --}}
+                    <form action="{{ route('register')}}" id="form" method="post">
+                        @csrf
+                        <!-- Step 1: Name, Email, Password -->
+                        <div class="step" data-step="1">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="name">Username</label>
+                                        <input type="text" class="form-control w-100" id="name" name="name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email">Email</label>
+                                        <input type="email" class="form-control w-100" id="email" name="email">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="password">Password</label>
+                                        <input type="password" class="form-control w-100" id="password" name="password">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="password_confirmation">Password Confirmation</label>
+                                        <input type="password" class="form-control w-100" id="password_confirmation" name="password_confirmation">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <button  type="button" class="next-step btn">Next</button>
+                                </div>
+                            </div>
+                        </div>
 
-                    <div class="card-body">
-                        <div class="input-group{{ $errors->has('name') ? ' has-danger' : '' }}">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">
-                                    <i class="tim-icons icon-single-02"></i>
+                        <!-- Step 2: Additional Customer Information -->
+                        <div class="step" data-step="2" style="display: none;">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {{-- firstName --}}
+                                    <div class="form-group">
+                                        <label for="firstName">First Name</label>
+                                        <input type="text" class="form-control w-100" id="firstName" name="firstName">
+                                    </div>
+                                    {{-- NIN --}}
+                                    <div class="form-group">
+                                        <label for="NIN">NIK</label>
+                                        <input type="text" class="form-control w-100" id="NIN" name="NIN">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="birthDate">Date of Birth</label>
+                                        <input type="date" class="form-control w-100" id="birthDate" name="birthDate">
+                                    </div>
+                                    {{-- phone --}}
+                                    <div class="form-group">
+                                        <label for="phone">Phone</label>
+                                        <input type="text" class="form-control w-100" id="phone" name="phone">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    {{-- lastName --}}
+                                    <div class="form-group">
+                                        <label for="lastName">Last Name</label>
+                                        <input type="text" class="form-control w-100" id="lastName" name="lastName">
+                                    </div>
+                                    {{-- gender --}}
+                                    <div class="form-group">
+                                        <label for="gender">Gender</label>
+                                        <select class="form-control w-100" id="gender" name="gender">
+                                            <option value="male">Male</option>
+                                            <option value="female">Female</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="address">Address</label>
+                                        <textarea class="form-control w-100" rows="4" id="address" name="address"></textarea>
+                                    </div>
                                 </div>
                             </div>
-                            <input type="text" name="name" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" placeholder="{{ __('Name') }}">
-                            @include('alerts.feedback', ['field' => 'name'])
-                        </div>
-                        <div class="input-group{{ $errors->has('email') ? ' has-danger' : '' }}">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">
-                                    <i class="tim-icons icon-email-85"></i>
+                            <div class="row">
+                                {{-- previous and submit --}}
+                                <div class="col-md-6">
+                                    <button type="button" class="prev-step btn">Previous</button>
+                                </div>
+                                <div class="col-md-6">
+                                    <button type="submit" class="next-step btn">{{__('Daftar')}}</button>
                                 </div>
                             </div>
-                            <input type="email" name="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" placeholder="{{ __('Email') }}">
-                            @include('alerts.feedback', ['field' => 'email'])
                         </div>
-                        <div class="input-group{{ $errors->has('password') ? ' has-danger' : '' }}">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">
-                                    <i class="tim-icons icon-lock-circle"></i>
-                                </div>
-                            </div>
-                            <input type="password" name="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" placeholder="{{ __('Password') }}">
-                            @include('alerts.feedback', ['field' => 'password'])
-                        </div>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">
-                                    <i class="tim-icons icon-lock-circle"></i>
-                                </div>
-                            </div>
-                            <input type="password" name="password_confirmation" class="form-control" placeholder="{{ __('Confirm Password') }}">
-                        </div>
-                        <div class="form-group">
-                            <div class="form-check text-left">
-                                <input class="form-check-input{{ $errors->has('agreement') ? ' has-danger' : '' }}" type="checkbox" name="agreement" id="agreement" required>
-                                <label class="form-check-label" for="agreement">
-                                    <span class="form-check-sign"></span>
-                                    {{ __('I agree to the') }}
-                                    <button type="button" data-toggle="modal" data-target="#exampleModal" class="btn btn-link">{{ __('terms and conditions') }}.</button>
-                                </label>
-                                {{-- @if ($errors->has('agreement')) --}}
-                                <div id="invalidCheck3Feedback" class="invalid-feedback">
-                                    <strong>{{ $errors->first('agreement') }}</strong>
-                                </div>
-                                {{-- @endif --}}
 
-                            </div>
+
+
+                        <!-- Navigation buttons -->
+                        <div class="form-navigation">
+                            {{-- <button class="btn" type="button" id="prevBtn" onclick="prevStep()">Previous</button>
+                            <button class="btn" type="button" id="nextBtn" onclick="nextStep()">Next</button> --}}
                         </div>
-                        <!-- The error message for the agreement field -->
-
-
-                    </div>
-                    <div class="card-footer">
-                        <button type="submit" class="btn btn-primary btn-round btn-lg">{{ __('Get Started') }}</button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
+
 @endsection
+
+@push('js')
+<script>
+$(document).ready(function () {
+    var currentStep = 1;
+    var totalSteps = $('.step').length;
+
+    // Function to show the current step
+    function showStep(step) {
+        $('.step').hide();
+        $('.step[data-step="' + step + '"]').show();
+    }
+
+    // Function to handle "Next" button click
+    $('.next-step').on('click', function () {
+        if (currentStep < totalSteps) {
+            currentStep++;
+            showStep(currentStep);
+        }
+    });
+
+    // Function to handle "Previous" button click
+    $('.prev-step').on('click', function () {
+        if (currentStep > 1) {
+            currentStep--;
+            showStep(currentStep);
+        }
+    });
+
+    // Handle form submission when the third step is completed
+    $('#multi-step-form').on('submit', function (e) {
+        e.preventDefault();
+
+        if (currentStep === totalSteps) {
+            // Form is on the last step, submit the data
+            var formData = $(this).serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: '{{route('register')}}', // Replace with your server endpoint
+                data: formData,
+
+
+                success: function (response) {
+                    // Handle success response here
+                    alert('Form submitted successfully!');
+                },
+                error: function (error) {
+                    // Handle error response here
+                    alert('Form submission failed. Error: ' + JSON.stringify(error));
+                }
+            });
+        }
+    });
+
+    // Initially show the first step
+    showStep(currentStep);
+});
+</script>
+@endpush
+
+
+
+

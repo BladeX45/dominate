@@ -55,7 +55,7 @@ class ScoreController extends Controller
             $score->overallAssessment = $request->input('overallAssessment');
             $score->additionalComment = $request->input('additionalComment');
             $score->save();
-            dd($score);
+            // dd($score);
             // update schedule status
             $schedule = Schedule::find($request->input('scheduleID'));
             $schedule->status = 'need rating';
@@ -86,6 +86,9 @@ class ScoreController extends Controller
             $rating->instructorID = $request->input('instructorID');
             $rating->rating = $request->input('rating');
             $rating->comment = $request->input('comment');
+            // timestamp
+            $rating->created_at = now();
+            $rating->updated_at = now();
             $rating->save();
 
             // update schedule status

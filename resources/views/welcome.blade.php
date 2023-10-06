@@ -9,11 +9,7 @@
                     <div class="row" style="background-image: url({{ asset('assets/img/bg-hero.jpg') }}); background-size:cover; height:32rem; padding:2rem;" >
                         <div class="col-lg-6">
                             <div class="hero-content" >
-                                <h1>Maju Lancar Company</h1>
-                                <p class="lead">
-                                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Deserunt aut distinctio dicta at natus labore nesciunt, nisi vero, reiciendis ipsa officiis illo delectus illum pariatur in ducimus harum dolorem possimus id eos molestiae rerum dignissimos. Est, dolor rem! Ea, doloremque.
-                                </p>
-                                <a href="https://www.creative-tim.com/product/black-dashboard" class="btn btn-primary btn-round">Buy Now</a>
+                                <h1>CV. Praba Jaya</h1>
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -70,13 +66,66 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-lg-4">
-                            <ul class="package-list">
-                                <li class="heading">
-                                    <h3>Basic</h3>
-                                    <span>$29</span>
-                                </li>
-                                <li>1000 Downloads</li>
+                       <div class="card">
+                        <div class="card-header">
+                            <h2 class="title">
+                                Manual
+                            </h2>
+                            <div class="card-body">
+                                <div class="row">
+                                    @foreach ($dataManual as $dm)
+                                    <div class="col-md-3">
+                                        <div class="card bg-primary">
+                                            <div class="card-header">
+                                                <h2 class="title">
+                                                    {{ $dm->planName }}
+                                                </h2>
+                                            </div>
+                                            <div class="card-body">
+                                                <p class="lead">
+                                                    {{ $dm->planDescription }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                       </div>
+                    </div>
+                    {{-- Matic --}}
+                    <div class="row">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="title">
+                                    Automatic
+                                </h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    @foreach ($dataMatic as $da)
+                                    <div class="col-md-3">
+                                        <div class="card bg-primary">
+                                            <div class="card-header">
+                                                <h2 class="title">
+                                                    {{ $da->planName }}
+                                                </h2>
+                                            </div>
+                                            <div class="card-body">
+                                                <p class="lead">
+                                                    {{ $da->planDescription }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
 @endsection

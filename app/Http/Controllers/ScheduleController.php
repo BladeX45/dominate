@@ -31,8 +31,8 @@ class ScheduleController extends Controller
             // get all instructors
             $instructors = instructor::all();
 
-            // get all score
-            $scores = Score::all();
+            // get customer score
+            $scores = Score::where('customerID', $customerID->id)->get();
 
             // dd($scores);
             return view('pages.schedules', compact('schedules', 'customerID', 'instructors', 'scores'));

@@ -94,7 +94,17 @@
             </div>
         </div>
 
-
+        {{-- check verification certificate --}}
+        <div class="row">
+            <div class="col-md-12">
+                <h5 class="text-center">
+                    Untuk memverifikasi sertifikat ini, silahkan kunjungi
+                </h5>
+                <h5 class="text-center">
+                    <a href="#">"asdasdas"</a>
+                </h5>
+            </div>
+        </div>
     </div>
 
     <!-- Optional JavaScript; choose one of the two! -->

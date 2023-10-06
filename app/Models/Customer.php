@@ -16,4 +16,8 @@ class Customer extends Model
         return $this->belongsTo('App\Models\User', 'userID');
     }
 
+    public function scores()
+    {
+        return $this->hasMany('App\Models\Score', 'customerID');
+    }
 }

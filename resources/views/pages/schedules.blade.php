@@ -14,14 +14,15 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="card ">
+                @if (count($schedules) > 0)
+                <div class="card">
                     <table class="table">
                         {{-- alert error  --}}
-                            @if (session('error'))
+                        @if (session('error'))
                             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                 <strong>{{ session('error') }}</strong>
                             </div>
-                            @endif
+                        @endif
                         <thead>
                             <tr>
                                 <th scope="col">No</th>
@@ -35,52 +36,59 @@
                         </thead>
                         <tbody>
                             @foreach ($schedules as $schedule)
-                            <tr>
-                                <th scope="row">{{ $loop->iteration }}</th>
-                                <td>{{ $schedule->instructor->firstName }} {{ $schedule->instructor->lastName }}</td>
-                                <td>{{ $schedule->carType }}</td>
-                                <td>{{ $schedule->carID}}</td>
-                                <td>{{ $schedule->date }}</td>
-                                <td>{{ $schedule->status }}</td>
-                                {{-- pending, trained, completed --}}
-                                @if('pending' === $schedule->status)
-                                    <td>
-                                        {{-- penilaian instruktur --}}
-                                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate" disabled>
-                                            Penilaian
-                                        </button>
-                                    </td>
-                                @elseif ($schedule->status === 'trained')
-                                    <td>
-                                        {{-- penilaian instruktur --}}
-                                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate" disabled>
-                                            Penilaian
-                                        </button>
-                                    </td>
-                                    {{-- need penilaian instruktur --}}
-                                @elseif($schedule->status === 'need rating')
-                                    <td>
-                                        {{-- penilaian instruktur --}}
-                                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate">
-                                            Penilaian
-                                        </button>
-                                    </td>
-                                @else
-                                    <td>
-                                        {{-- penilaian instruktur --}}
-                                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#score{{$schedule->id}}">
-                                            Cek Nilai
-                                        </button>
-                                    </td>
-                                @endif
+                                <tr>
+                                    <th scope="row">{{ $loop->iteration }}</th>
+                                    <td>{{ $schedule->instructor->firstName }} {{ $schedule->instructor->lastName }}</td>
+                                    <td>{{ $schedule->carType }}</td>
+                                    <td>{{ $schedule->carID}}</td>
+                                    <td>{{ $schedule->date }}</td>
+                                    <td>{{ $schedule->status }}</td>
+                                    {{-- pending, trained, completed --}}
+                                    @if ($schedule->status === 'pending')
+                                        <td>
+                                            {{-- penilaian instruktur --}}
+                                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate" disabled>
+                                                Penilaian
+                                            </button>
+                                        </td>
+                                    @elseif ($schedule->status === 'trained')
+                                        <td>
+                                            {{-- penilaian instruktur --}}
+                                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate" disabled>
+                                                Penilaian
+                                            </button>
+                                        </td>
+                                        {{-- need penilaian instruktur --}}
+                                    @elseif ($schedule->status === 'need rating')
+                                        <td>
+                                            {{-- penilaian instruktur --}}
+                                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate">
+                                                Penilaian
+                                            </button>
+                                        </td>
+                                    @else
+                                        <td>
+                                            {{-- penilaian instruktur --}}
+                                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#score{{$schedule->id}}">
+                                                Cek Nilai
+                                            </button>
+                                        </td>
+                                    @endif
+                                </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
+                @else
+                    <p>Tidak ada jadwal yang tersedia.</p>
+                @endif
             </div>
         </div>
     </div>
 </div>
+
+{{-- if  --}}
+@if (count($schedules) > 0)
 
 {{-- modal penilaian instruktur --}}
 <x-modal idModal="rate" title="Penilaian Instruktur" customStyle="modal-lg">
@@ -104,6 +112,9 @@
 
     </x-form>
 </x-modal>
+
+@endif
+
 
 <x-modal idModal="schedules" title="Tambah Jadwal" customStyle="">
     <x-form id="schedule-form" action="{{route('customer.creataSchedule')}}" method="post">
