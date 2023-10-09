@@ -8,8 +8,14 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Http\Requests\UserRequest;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 // use Illuminate\Validation\Validator;
+use Illuminate\Support\Facades\Hash;
+// use send email
+use Illuminate\Support\Facades\Mail;
+// use verify email
+use App\Providers\RouteServiceProvider;
+use Illuminate\Foundation\Auth\VerifiesEmails;
 use Illuminate\Support\Facades\Validator; // Import the Validator class
 
 
@@ -63,7 +69,7 @@ class UserController extends Controller
             ]);
 
             // dd($user);
-
+            // dd($user->id);
             // create customer
             $customer = Customer::create([
                 'userID' => $user->id,
@@ -76,7 +82,14 @@ class UserController extends Controller
                 'address' => $request->address,
             ]);
 
-            return redirect()->back()->with('status', __('User successfully created.'));
+            // auth attempt
+            Auth::attempt($request->only('email', 'password'));
+
+            $user = User::find($user->id);
+            // send email verification
+            $user->sendEmailVerificationNotification();
+            //    send email verifikasi
+            return redirect()->route('verification.send')->with('status', __('User successfully created.'));
         }
 
         $user = User::create([
@@ -86,6 +99,8 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+
 
 
 

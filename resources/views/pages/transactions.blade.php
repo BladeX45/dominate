@@ -33,7 +33,6 @@
                                     <td>{{ $dt->totalSession }}</td>
                                     <td>{{ $dt->paymentMethod }}</td>
                                     {{-- <td>{{ $dt->paymentAmount }}</td> format currency --}}
-                                    <td>Rp. {{ number_format($dt->paymentAmount, 0, ',', '.') }}</td>
                                     <td>{{ $dt->paymentStatus }}</td>
                                     <td>
                                         <button type="button" class="btn btn-primary evidence-button" data-toggle="modal" data-target="#evidence{{$dt->id}}" data-user-id="{{$dt->id}}">

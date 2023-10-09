@@ -36,9 +36,29 @@ Route::post('/check-availability', [PageController::class, 'checkAvailability'])
 
 Route::get('/home', 'App\Http\Controllers\HomeController@index')->name('home')->middleware('auth');
 
+
+
 Route::post('/register', [UserController::class, 'registerUser'])->name('register');
+
+// Route group prefix for customer and need verified email
+Route::group(['prefix' => 'customer', 'middleware' => ['auth', 'verified']], function(){
+    // get score customer
+    Route::get('/score', [CustomerController::class, 'show'])->name('customer.score');
+    Route::get('/dashboard', [PageController::class, 'customerDashboard'])->name('customer.dashboard');
+    Route::post('/orders', [TransactionController::class, 'order'])->name('customer.orders');
+    Route::get('/transactions', [TransactionController::class, 'customerTransactions'])->name('customer.transactions');
+    // upload evidence
+    Route::put('/upload-evidence', [TransactionController::class, 'uploadEvidence'])->name('customer.uploadEvidence');
+    Route::get('/schedules', [ScheduleController::class, 'index'])->name('customer.schedules');
+    Route::post('/schedules', [ScheduleController::class, 'store'])->name('customer.creataSchedule');
+    // customer.rating
+    Route::post('/rating', [ScoreController::class, 'ratingInstructor'])->name('customer.rating');
+    // generate cerificate
+    Route::post('/certificate', [PageController::class, 'certificate'])->name('customer.generateCertificate');
+});
+
 // route group prefix
-Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function(){
+Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'verified']], function(){
     Route::get('/dashboard', [PageController::class, 'adminDashboard'])->name('admin.dashboard');
     Route::get('/users', [PageController::class, 'users'])->name('admin.users');
     Route::get('/customers', [PageController::class, 'customers'])->name('admin.customers');
@@ -61,9 +81,11 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function(){
     Route::get('/cashflow', [TransactionController::class, 'cashFlow'])->name('admin.cashflow');
     // Route dashboard admin
     Route::get('/dashboard', [PageController::class, 'adminDashboard'])->name('admin.dashboard');
+    // admin schedule
+    Route::get('/schedules', [ScheduleController::class, 'index'])->name('admin.schedules');
 });
 
-Route::group(['middleware' => 'auth'], function () {
+Route::group(['middleware' => 'auth', 'verified'], function () {
 		Route::get('icons', ['as' => 'pages.icons', 'uses' => 'App\Http\Controllers\PageController@icons']);
 		Route::get('maps', ['as' => 'pages.maps', 'uses' => 'App\Http\Controllers\PageController@maps']);
 		Route::get('notifications', ['as' => 'pages.notifications', 'uses' => 'App\Http\Controllers\PageController@notifications']);
@@ -77,6 +99,9 @@ Route::group(['middleware' => 'auth'], function () {
 
 });
 
+// verification.notice
+// Route::get('/email/verify', [PageController::class, 'verificationSend'])->name('verification.notice');
+
 Route::group(['middleware' => 'auth'], function () {
 	Route::resource('user', 'App\Http\Controllers\UserController', ['except' => ['show']]);
 	Route::get('profile', ['as' => 'profile.edit', 'uses' => 'App\Http\Controllers\ProfileController@edit']);
@@ -87,21 +112,23 @@ Route::group(['middleware' => 'auth'], function () {
 });
 
 // Route group prefix for customer
-Route::group(['prefix' => 'customer', 'middleware' => ['auth']], function(){
-    // get score customer
-    Route::get('/score', [CustomerController::class, 'show'])->name('customer.score');
-    Route::get('/dashboard', [PageController::class, 'customerDashboard'])->name('customer.dashboard');
-    Route::post('/orders', [TransactionController::class, 'order'])->name('customer.orders');
-    Route::get('/transactions', [TransactionController::class, 'customerTransactions'])->name('customer.transactions');
-    // upload evidence
-    Route::put('/upload-evidence', [TransactionController::class, 'uploadEvidence'])->name('customer.uploadEvidence');
-    Route::get('/schedules', [ScheduleController::class, 'index'])->name('customer.schedules');
-    Route::post('/schedules', [ScheduleController::class, 'store'])->name('customer.creataSchedule');
-    // customer.rating
-    Route::post('/rating', [ScoreController::class, 'ratingInstructor'])->name('customer.rating');
-    // generate cerificate
-    Route::post('/certificate', [PageController::class, 'certificate'])->name('customer.generateCertificate');
-});
+// Route::group(['prefix' => 'customer', 'middleware' => ['auth', 'verified']], function(){
+//     // get score customer
+//     Route::get('/score', [CustomerController::class, 'show'])->name('customer.score');
+//     Route::get('/dashboard', [PageController::class, 'customerDashboard'])->name('customer.dashboard');
+//     Route::post('/orders', [TransactionController::class, 'order'])->name('customer.orders');
+//     Route::get('/transactions', [TransactionController::class, 'customerTransactions'])->name('customer.transactions');
+//     // upload evidence
+//     Route::put('/upload-evidence', [TransactionController::class, 'uploadEvidence'])->name('customer.uploadEvidence');
+//     Route::get('/schedules', [ScheduleController::class, 'index'])->name('customer.schedules');
+//     Route::post('/schedules', [ScheduleController::class, 'store'])->name('customer.creataSchedule');
+//     // customer.rating
+//     Route::post('/rating', [ScoreController::class, 'ratingInstructor'])->name('customer.rating');
+//     // generate cerificate
+//     Route::post('/certificate', [PageController::class, 'certificate'])->name('customer.generateCertificate');
+// });
+
+
 
 // Route group prefix for instructor
 
@@ -114,3 +141,15 @@ Route::group(['prefix' => 'instructor', 'middleware' =>['auth']], function(){
     Route::post('/train', [ScheduleController::class, 'train'])->name('instructor.train');
     Route::post('/dashboard', [PageController::class, 'train'])->name('instructor.dashboard');
 });
+
+
+Route::post('/email/verification-notification', [PageController::class, 'verificationResend'])->name('verification.resend');
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->middleware('auth')->name('verification.notice');
+
+// verification.verify
+Route::get('/email/verify/{id}/{hash}', [PageController::class, 'verificationVerify'])->middleware(['auth', 'signed'])->name('verification.verify');
+// route verification.send
+Route::get('/email/verify', [PageController::class, 'verificationSend'])->name('verification.send');
+// verifiaction resend

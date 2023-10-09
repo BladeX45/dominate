@@ -1,7 +1,7 @@
-@extends('layouts.app', ['class' => 'bg-default'])
+@extends('layouts.app', ['class' => 'bg-default', 'pageSlug' => 'Verify'])
 
 @section('content')
-    @include('layouts.headers.guest')
+    {{-- @include('layouts.headers.guest') --}}
 
     <div class="container mt--8 pb-5">
         <div class="row justify-content-center">
@@ -17,13 +17,16 @@
                                     {{ __('A fresh verification link has been sent to your email address.') }}
                                 </div>
                             @endif
-                            
+
                             {{ __('Before proceeding, please check your email for a verification link.') }}
-                            
+
                             @if (Route::has('verification.resend'))
-                                {{ __('If you did not receive the email') }}, 
+                                {{ __('If you did not receive the email') }},
                                <form class="d-inline" method="POST" action="{{ route('verification.resend') }}">
                                    @csrf
+                                   {{-- hidden email --}}
+                                      <input type="hidden" name="email" value="{{ $email ?? old('email') }}">
+                                      {{-- hidden email --}}
                                    <button type="submit" class="btn btn-link p-0 m-0 align-baseline">{{ __('click here to request another') }}</button>.
                                </form>
                             @endif

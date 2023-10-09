@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\ProfileRequest;
+use Intervention\Image\Facades\Image;
 use App\Http\Requests\PasswordRequest;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
 
 class ProfileController extends Controller
 {
@@ -55,21 +56,22 @@ class ProfileController extends Controller
             $user->save();
         }
 
-        if ($request->hasFile('photo')) {
-            $avatarPath = $request->file('photo');
-            // Generate a unique hash to be used as the image name that will be stored in the storage directory
-            $hashName = md5($avatarPath->getClientOriginalName()) . "." . $avatarPath->extension();
+        // Get the uploaded file
+        $uploadedFile = $request->file('photo');
 
-            // Upload avatar and resize it into various dimensions
-            $uploadedAvatar = Image::make($avatarPath)->resize(300, 300);
+        // Generate a unique filename for the uploaded file
+        $filename = uniqid() . '_' . time() . '.' . $uploadedFile->getClientOriginalExtension();
 
-            // Store the resized image in the public directory
-            $publicPath = "public/assets/img/avatar/{$hashName}";
-            Storage::put($publicPath, $uploadedAvatar->stream());
+        // move upload file to public/assets/img/receipt/..
+        $uploadedFile->storeAs('avatar', $filename, 'public');
 
-            $user->avatar = $hashName;
-            $user->save();
-        }
+        // update
+        $user = User::find(auth()->user()->id);
+        // dd($user);
+        $user->avatar = $filename;
+        $user->save();
+
+        // You would typically associate this with the user's record or the transaction record
 
         return redirect()->back()->with('success', 'Foto profil berhasil diunggah.');
     }

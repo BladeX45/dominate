@@ -405,5 +405,38 @@ class PageController extends Controller
         return view('layouts.dashboard.instructor', compact('instructor', 'schedules', 'ratings', 'scores', 'formattedLabels', 'ratingsData'));
     }
 
+
+    // verificationSend
+    public function verificationSend(){
+
+        return view('auth.verify');
+    }
+
+    // verification email resend
+
+    // verification email resend
+    public function verificationResend(Request $request){
+        // get user
+        // ddauth
+        $user = User::find(Auth::user()->id);
+        // send email verification
+        $user->sendEmailVerificationNotification();
+        // redirect back
+        return redirect()->back()->with('success', 'Email verification has been sent!');
+    }
+
+    // verification verify
+    public function verificationVerify(Request $request){
+        // get user
+        $user = User::find(Auth::user()->id);
+        // check if user is verified
+        if($user->hasVerifiedEmail()){
+            return redirect()->route('customer.dashboard')->with('success', 'Email already verified!');
+        }
+        // verify email
+        $user->markEmailAsVerified();
+        // redirect back
+        return redirect()->route('customer.dashboard')->with('success', 'Email verified!');
+    }
 }
 

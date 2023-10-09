@@ -1,5 +1,4 @@
 @extends('layouts.app', ['page' => __('Schedules'), 'pageSlug' => 'schedules'])
-
 @section('content')
 
 <div class="row">
@@ -8,9 +7,13 @@
             <div class="card-header">
                 <div class="d-flex justify-content-between">
                     <h3 class="title">Jadwal</h3>
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#schedules">
-                        Tambah Jadwal
-                    </button>
+                    {{-- disabled if admin --}}
+                    @if (auth()->user()->role === 'customer')
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#schedules">
+                            Tambah Jadwal
+                        </button>
+                    @endif
+
                 </div>
             </div>
             <div class="card-body">
@@ -62,7 +65,7 @@
                                     @elseif ($schedule->status === 'need rating')
                                         <td>
                                             {{-- penilaian instruktur --}}
-                                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate">
+                                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate{{$schedule->id}}">
                                                 Penilaian
                                             </button>
                                         </td>
@@ -90,28 +93,29 @@
 {{-- if  --}}
 @if (count($schedules) > 0)
 
-{{-- modal penilaian instruktur --}}
-<x-modal idModal="rate" title="Penilaian Instruktur" customStyle="modal-lg">
-    <x-form action="{{route('customer.rating')}}" method="post">
-        {{-- hidden instructorID --}}
-        <input type="hidden" name="instructorID" value="{{ $schedule->instructor->id }}">
-        {{-- hidden scheduleID --}}
-        <input type="hidden" name="scheduleID" value="{{ $schedule->id }}">
-        {{-- input rating 1-10 --}}
-        <div class="form-group">
-            <label for="rating">Rating</label>
-            <input type="number" name="rating" id="rating" class="form-control" min="1" max="10">
-        </div>
-        {{-- input comment --}}
-        <div class="form-group">
-            <label for="comment">Komentar</label>
-            <textarea name="comment" id="comment" cols="30" rows="10" class="form-control"></textarea>
-        </div>
-        {{-- button submit --}}
-        <button type="submit" class="btn btn-primary">Simpan</button>
-
-    </x-form>
-</x-modal>
+    @foreach ($schedules as $schedule)
+        {{-- modal penilaian instruktur --}}
+        <x-modal idModal="rate{{$schedule->id}}" title="Penilaian Instruktur" customStyle="modal-lg">
+            <x-form action="{{route('customer.rating')}}" method="post">
+                {{-- hidden instructorID --}}
+                <input type="hidden" name="instructorID" value="{{ $schedule->instructor->id }}">
+                {{-- hidden scheduleID --}}
+                <input type="hidden" name="scheduleID" value="{{ $schedule->id }}">
+                {{-- input rating 1-10 --}}
+                <div class="form-group">
+                    <label for="rating">Rating</label>
+                    <input type="number" name="rating" id="rating" class="form-control" min="1" max="10">
+                </div>
+                {{-- input comment --}}
+                <div class="form-group">
+                    <label for="comment">Komentar</label>
+                    <textarea name="comment" id="comment" cols="30" rows="10" class="form-control"></textarea>
+                </div>
+                {{-- button submit --}}
+                <button type="submit" class="btn btn-primary">Simpan</button>
+            </x-form>
+        </x-modal>
+    @endforeach
 
 @endif
 

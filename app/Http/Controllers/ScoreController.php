@@ -37,6 +37,8 @@ class ScoreController extends Controller
             $request->merge(['isFinal' => 0]);
         }
 
+        // dd($request->all());
+
         // if exist redirect else create
         if(Score::where('customerID', $request->input('customerID'))->where('scheduleID', $request->input('scheduleID'))->exists()){
             dd('exist');

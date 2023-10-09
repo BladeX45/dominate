@@ -102,4 +102,9 @@ class RegisterController extends Controller
         ]);
     }
 
+    // verificationSend
+    public function verificationSend(){
+        return view('auth.verify');
+    }
+
 }

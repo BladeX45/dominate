@@ -20,6 +20,12 @@ class ScheduleController extends Controller
     {
         if(Auth::user()->roleID == 1 || Auth::user()->roleID == 0){
             $schedules = Schedule::all();
+
+            $instructors = instructor::all();
+
+            $scores = Score::all();
+
+            return view('pages.schedules', compact('schedules', 'instructors', 'scores'));
         }
         elseif(Auth::user()->roleID == 2){
             // get customerID
@@ -41,6 +47,19 @@ class ScheduleController extends Controller
             $schedules = Schedule::where('instructorID', Auth::user()->employeeID)->get();
 
         }
+    }
+
+    // cancel schedule
+    public function cancel(Request $request){
+        // dd($request->all());
+        // get schedule
+        $schedule = Schedule::find($request->scheduleID);
+        // dd($schedule);
+        // update status
+        $schedule->status = 'canceled';
+        $schedule->save();
+        // redirect
+        return redirect()->back()->with('success', 'Schedule canceled successfully');
     }
 
     /**

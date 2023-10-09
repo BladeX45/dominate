@@ -21,7 +21,7 @@ class LoginController extends Controller
     |
     */
 
-    // use AuthenticatesUsers;
+    use AuthenticatesUsers;
 
     /**
      * Where to redirect users after login.
@@ -40,13 +40,25 @@ class LoginController extends Controller
 
         // check role
         $credentials = $request->only('email', 'password');
+
+
+
+        // check email and password
         if(Auth::attempt($credentials)){
+            // if not verified then destroy session
+            if(!Auth::user()->email_verified_at){
+                // send email for view verification.send
+                return redirect()->route('verification.send')->with('error', 'Your account is not verified!');
+            }
+            // check role
             if(Auth::user()->roleID == 1){
                 return redirect()->route('admin.dashboard');
             }else if(Auth::user()->roleID == 2){
                 return redirect()->route('customer.dashboard');
             }else if(Auth::user()->roleID == 3){
                 return redirect()->route('instructor.dashboard');
+            }else{
+                return redirect()->route('welcome');
             }
         }else{
             return redirect()->route('login')->with('error', 'Email or Password is wrong!');
