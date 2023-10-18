@@ -55,6 +55,8 @@ Route::group(['prefix' => 'customer', 'middleware' => ['auth', 'verified']], fun
     Route::post('/rating', [ScoreController::class, 'ratingInstructor'])->name('customer.rating');
     // generate cerificate
     Route::post('/certificate', [PageController::class, 'certificate'])->name('customer.generateCertificate');
+    // invoice
+    Route::get('/invoice/{$id}', [PageController::class, 'invoice'])->name('customer.invoice');
 });
 
 // route group prefix
@@ -83,6 +85,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'verified']], functi
     Route::get('/dashboard', [PageController::class, 'adminDashboard'])->name('admin.dashboard');
     // admin schedule
     Route::get('/schedules', [ScheduleController::class, 'index'])->name('admin.schedules');
+    // cancel
+    Route::post('/cancel', [ScheduleController::class, 'cancel'])->name('admin.cancel');
+    // reject evidence
+    Route::post('/reject-evidence', [TransactionController::class, 'rejectEvidence'])->name('admin.rejectTransaction');
 });
 
 Route::group(['middleware' => 'auth', 'verified'], function () {

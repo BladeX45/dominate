@@ -55,9 +55,22 @@
                         <p class="d-lg-none">{{ __('Log out') }}</p>
                     </a>
                     <ul class="dropdown-menu dropdown-navbar">
+                        {{-- auth roleID profile--}}
+                        @if (auth()->user()->roleId == 1)
                         <li class="nav-link">
                             <a href="{{ route('profile.edit') }}" class="nav-item dropdown-item">{{ __('Profile') }}</a>
                         </li>
+                        @elseif (auth()->user()->roleID == 3)
+                        <li class="nav-link">
+                            <a href="{{ route('instructor.profile') }}" class="nav-item dropdown-item">{{ __('Profile') }}</a>
+                        </li>
+                        @elseif (auth()->user()->roleID == 2)
+                        <li class="nav-link">
+                            <a href="{{ route('profile.edit') }}" class="nav-item dropdown-item">{{ __('Profile') }}</a>
+                        </li>
+                        @endif
+                        {{-- auth roleID profile--}}
+
                         <li class="nav-link">
                             <a href="#" class="nav-item dropdown-item">{{ __('Settings') }}</a>
                         </li>

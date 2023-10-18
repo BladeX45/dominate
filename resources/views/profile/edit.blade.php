@@ -54,6 +54,8 @@
                         <input type="text" name="phone" class="form-control {{ $errors->has('phone') ? ' is-invalid' : '' }}" placeholder="{{ __('(+62) XXXX-XXXX-XXXX') }}" value="{{ old('phone', auth()->user()->customer->phone) }}">
                         @include('alerts.feedback', ['field' => 'phone '])
                     </div>
+                    {{-- address --}}
+
                 </div>
                 <div class="card-footer">
                     <button type="submit" class="btn btn-fill btn-primary">{{ __('Save') }}</button>
@@ -128,17 +130,30 @@
                         </form>
 
                         <h5 class="title">{{ auth()->user()->name }}</h5>
+                        {{-- nik --}}
+                        <p class="description">
+                            {{ auth()->user()->customer->NIN }}
+                        </p>
                         <p class="email">
                             {{ auth()->user()->email }}
                         </p>
                     </div>
                 </p>
                 <div class="card-description">
-                    {{-- Token --}}
-                    @php
-                        $totalSession = auth()->user()->customer->ManualSession + auth()->user()->customer->MaticSession;
-                    @endphp
-                    <span>Token Training : {{ $totalSession}}</span><hr/>
+                    {{-- Manual Token && Matic Token --}}
+                    {{-- @if (auth()->user()->customer->manualSession != null && auth()->user()->customer->maticSession != null) --}}
+                        <div class="row">
+                            <div class="col">
+                                <h5 class="title">{{ __('Manual Token') }}</h5>
+                                <p class="description">{{ auth()->user()->customer->ManualSession }}</p>
+                            </div>
+                            <div class="col">
+                                <h5 class="title">{{ __('Matic Token') }}</h5>
+                                <p class="description">{{ auth()->user()->customer->MaticSession }}</p>
+                            </div>
+                        </div>
+                    {{-- @endif --}}
+
                 </div>
                 <div class="card-description">
                     {{ __('Do not be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...') }}

@@ -11,4 +11,18 @@ class Instructor extends Model
 
     protected $guarded = [];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'userID');
+    }
+
+    public function plan()
+    {
+        return $this->belongsTo(Plan::class, 'planID');
+    }
+
+    public function schedule()
+    {
+        return $this->hasMany(Schedule::class, 'instructorID');
+    }
 }

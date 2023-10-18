@@ -126,6 +126,67 @@
                     </div>
                 </div>
             </section>
+            {{-- section for ratings instructor from customer to instructor --}}
+            <section class="ratings">
+                <div class="scroll-container">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="title">
+                                Instructor Review
+                            </h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="scrolling-row">
+                            @foreach ($ratings as $rating)
+                                <div class="col-md-3 ratings">
+                                    <div class="card bg-primary">
+                                        <div class="card-header">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    {{-- avatar user instructor ternary --}}
+                                                    <img src="{{ $rating->instructor->user->avatar ? asset('storage/avatar/' . $rating->instructor->user->avatar) : asset('storage/avatar/R.png') }}" alt="" class="img-fluid rounded-circle">
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <h4 class="title">
+                                                        {{ $rating->instructor->user->name }}
+                                                    </h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="lead">
+                                                {{ $rating->rating }}/10
+                                            </p>
+                                            <p class="comment">
+                                                {{ $rating->comment }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
+
+    <style>
+        /* Add this CSS to your stylesheet */
+        .scrolling-row {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+        }
+
+        .ratings {
+            flex: 0 0 calc(25% - 10px); /* Adjust the width as needed */
+            margin-right: 10px;
+        }
+    </style>
 @endsection
+
+@push('style')
+
+@endpush

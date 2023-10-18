@@ -3,17 +3,37 @@
 
 <div class="row">
     <div class="col-md-12">
+        {{-- if any error --}}
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>{{ session('error') }}</strong>
+            </div>
+        @endif
+        {{-- if any success --}}
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>{{ session('success') }}</strong>
+            </div>
+        @endif
         <div class="card bg-primary">
             <div class="card-header">
                 <div class="d-flex justify-content-between">
                     <h3 class="title">Jadwal</h3>
                     {{-- disabled if admin --}}
-                    @if (auth()->user()->role === 'customer')
+                    @if (auth()->user()->roleID == 2)
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#schedules">
                             Tambah Jadwal
                         </button>
                     @endif
-
+                </div>
+                <div class="row">
+                    <div class="container-fluid">
+                        <div class="col-md-4">
+                            <div class="searchInput">
+                                <input type="text" name="search" id="searchInput" class="form-control" placeholder="Cari Jadwal">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="card-body">
@@ -46,37 +66,77 @@
                                     <td>{{ $schedule->carID}}</td>
                                     <td>{{ $schedule->date }}</td>
                                     <td>{{ $schedule->status }}</td>
-                                    {{-- pending, trained, completed --}}
-                                    @if ($schedule->status === 'pending')
+                                    {{-- if roleID == 0 | 1 --}}
+                                    @if (auth()->user()->roleID == 0 || auth()->user()->roleID == 1)
+                                        @if('pending' === $schedule->status )
+                                        {{-- cancel button --}}
                                         <td>
-                                            {{-- penilaian instruktur --}}
-                                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate" disabled>
-                                                Penilaian
-                                            </button>
+                                            <x-form action="{{ route('admin.cancel')}}" method="post">
+                                                {{-- hidden input --}}
+                                                <input type="hidden" name="scheduleID" value="{{$schedule->id}}">
+                                                <button type="submit" class="btn btn-primary btn-sm">
+                                                    {{ __('Batalkan')}}
+                                                </button>
+                                            </x-form>
                                         </td>
-                                    @elseif ($schedule->status === 'trained')
-                                        <td>
-                                            {{-- penilaian instruktur --}}
-                                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate" disabled>
-                                                Penilaian
-                                            </button>
-                                        </td>
-                                        {{-- need penilaian instruktur --}}
-                                    @elseif ($schedule->status === 'need rating')
-                                        <td>
-                                            {{-- penilaian instruktur --}}
-                                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate{{$schedule->id}}">
-                                                Penilaian
-                                            </button>
-                                        </td>
+                                        @else
+                                            {{-- if status is done cek nilai --}}
+                                            @if ($schedule->status === 'done' || $schedule->status === 'completed')
+                                                <td>
+                                                    {{-- penilaian instruktur --}}
+                                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#score{{$schedule->id}}">
+                                                        Cek Nilai
+                                                    </button>
+                                                </td>
+                                            @else
+                                                {{-- button cancel disabled --}}
+                                                <td>
+                                                    <button type="button" class="btn btn-primary btn-sm" disabled>
+                                                        {{ __('Batalkan')}}
+                                                    </button>
+                                                </td>
+                                            @endif
+                                        @endif
                                     @else
-                                        <td>
-                                            {{-- penilaian instruktur --}}
-                                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#score{{$schedule->id}}">
-                                                Cek Nilai
-                                            </button>
-                                        </td>
+                                        @if ($schedule->status === 'pending')
+                                            <td>
+                                                {{-- penilaian instruktur --}}
+                                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate" disabled>
+                                                    Penilaian
+                                                </button>
+                                            </td>
+                                        @elseif ($schedule->status === 'trained')
+                                            <td>
+                                                {{-- penilaian instruktur --}}
+                                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate" disabled>
+                                                    Penilaian
+                                                </button>
+                                            </td>
+                                            {{-- need penilaian instruktur --}}
+                                        @elseif ($schedule->status === 'need rating')
+                                            <td>
+                                                {{-- penilaian instruktur --}}
+                                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate{{$schedule->id}}">
+                                                    Penilaian
+                                                </button>
+                                            </td>
+                                        @elseif ($schedule->status === 'done' || $schedule->status === 'completed')
+                                            <td>
+                                                {{-- penilaian instruktur --}}
+                                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#score{{$schedule->id}}">
+                                                    Cek Nilai
+                                                </button>
+                                            </td>
+                                        @else
+                                            <td>
+                                                {{-- penilaian instruktur --}}
+                                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate" disabled>
+                                                    canceled
+                                                </button>
+                                            </td>
+                                        @endif
                                     @endif
+                                    {{-- pending, trained, completed --}}
                                 </tr>
                             @endforeach
                         </tbody>
@@ -92,7 +152,6 @@
 
 {{-- if  --}}
 @if (count($schedules) > 0)
-
     @foreach ($schedules as $schedule)
         {{-- modal penilaian instruktur --}}
         <x-modal idModal="rate{{$schedule->id}}" title="Penilaian Instruktur" customStyle="modal-lg">
@@ -116,7 +175,6 @@
             </x-form>
         </x-modal>
     @endforeach
-
 @endif
 
 
@@ -125,7 +183,7 @@
         <x-schedules>
             <div id="availability-message"></div>
             <label for="instructor">Pilih Instruktur</label>
-            <select name="instructor" id="instructor" class="form-control">
+            <select name="instructor" id="instructor" class="form-control" required>
                 <option class="bg-primary" value="">Pilih Instruktur</option>
                 @foreach ($instructors as $instructor)
                     <option class="bg-primary" value="{{ $instructor->id }}">{{ $instructor->firstName }} {{ $instructor->lastName }}</option>
@@ -133,17 +191,17 @@
             </select>
 
             <label for="type">Pilih Tipe</label>
-            <select name="type" id="type" class="form-control">
+            <select name="type" id="type" class="form-control" required>
                 <option class="bg-primary" value="manual">Manual</option>
                 <option class="bg-primary" value="matic">Matic</option>
             </select>
 
             <label for="date">Pilih Tanggal</label>
-            <input type="date" name="date" id="date" class="form-control">
+            <input type="date" name="date" id="date" class="form-control" required>
             <span id="error-message" style="color: red;"></span>
 
             <label for="session">Pilih Sesi</label>
-            <select name="session" id="session" class="form-control">
+            <select name="session" id="session" class="form-control" required>
                 <option class="bg-primary">--- Pilih Sesi ---</option>
                 <option class="bg-primary" value="1">08:00-09:45</option>
                 <option class="bg-primary" value="2">10:00-11:45</option>
@@ -269,7 +327,39 @@
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    var searchInput = document.getElementById("searchInput");
+        // Dapatkan semua baris (tr) dalam tabel
+        var rows = document.querySelectorAll("tbody tr");
 
+        // Tambahkan event listener untuk input pencarian
+        searchInput.addEventListener("input", function () {
+            var searchText = searchInput.value.toLowerCase();
+
+            // Iterasi melalui setiap baris dalam tabel
+            rows.forEach(function (row) {
+                // Dapatkan sel di dalam baris
+                var cells = row.getElementsByTagName("td");
+                var shouldShow = false;
+
+                // Periksa apakah teks pencarian ada dalam setiap sel
+                for (var i = 0; i < cells.length; i++) {
+                    var cellText = cells[i].textContent.toLowerCase();
+                    if (cellText.includes(searchText)) {
+                        shouldShow = true;
+                        break;
+                    }
+                }
+
+                // Tampilkan atau sembunyikan baris berdasarkan hasil pencarian
+                if (shouldShow) {
+                    row.style.display = "table-row";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        });
+</script>
 
 {{-- script ajax get data from  --}}
 @endsection

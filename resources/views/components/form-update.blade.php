@@ -1,47 +1,47 @@
-{{-- form --}}
-<form action="{{$action}}" method="POST" enctype="multipart/form-data">
+<form action="{{ $action }}" method="POST" enctype="multipart/form-data">
     @csrf
     @method('PUT')
-    {{-- if record has value show record input image--}}
-    @if ($record->receiptTransfer !== null)
-        <div class="form-group">
-            <label for="evidence">Bukti Pembayaran</label>
-            <input type="file" class="form-control-file" id="evidence" name="evidence" onchange="previewImage()">
-        </div>
-
-        <!-- Image Preview -->
-        <div class="form-group">
-            <label for="evidence">Preview: <img id="image-preview" for="evidence" src="{{ asset('storage/receipts/'.$record->receiptTransfer) }}" alt="evidence" max-width="300px"></label>
-        </div>
-        {{$slot}}
-    @else
     <div class="form-group">
         <label for="evidence">Bukti Pembayaran</label>
-        <input type="file" class="form-control-file" id="evidence" name="evidence" onchange="previewImage()">
+        <input type="file" class="form-control-file" id="evidence{{ $id }}" name="evidence" onchange="previewImage({{ $id }})">
     </div>
 
     <!-- Image Preview -->
     <div class="form-group">
-        <label for="evidence">Preview: <img id="image-preview" for="evidence" src="{{ asset('storage/receipts/'.$record->receiptTransfer) }}" alt="evidence" max-width="300px"></label>
+        <label for="evidence{{ $id }}">Preview:</label>
+        <img id="image-preview-{{ $id }}" src="{{ $record->receiptTransfer ? asset('storage/receipts/'.$record->receiptTransfer) : '' }}" alt="evidence{{ $id }}" style="max-width: 300px">
     </div>
-    {{$slot}}
-    @endif
-    <!-- Add more form fields as needed -->
 
-    <script>
-        function previewImage() {
-            var input = document.getElementById('evidence');
-            var imagePreview = document.getElementById('image-preview');
-
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-
-                reader.onload = function (e) {
-                    imagePreview.src = e.target.result;
-                };
-
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-    </script>
+    {{ $slot }}
 </form>
+
+<script>
+    // Function to preview the selected image
+    function previewImage(id) {
+        // console.log("Function previewImage called for ID " + id);
+        var input = document.getElementById('evidence' + id);
+        var imagePreview = document.getElementById('image-preview-' + id);
+        console.log(input);
+        // console.log(imagePreview);
+        input.addEventListener('change', function () {
+            if (input.files && input.files[0]) {
+                if (input.files[0].type.startsWith('image/')) {
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        imagePreview.src = e.target.result;
+                    };
+
+                    reader.readAsDataURL(input.files[0]);
+                } else {
+                    console.log("Bukan berkas gambar");
+                }
+            } else {
+                imagePreview.src = '';
+            }
+        });
+    }
+
+    // Call the previewImage function for each input field that should trigger image preview
+    previewImage({{ $id }});
+</script>

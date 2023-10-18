@@ -31,8 +31,8 @@ class ScheduleController extends Controller
             // get customerID
             $customerID = Customer::where('userID', Auth::user()->id)->first();
 
-            // find or fail
-            $schedules = Schedule::where('customerID', $customerID->id)->get();
+            // get schedule paginate asc status
+            $schedules = Schedule::where('customerID', $customerID->id)->orderBy('status', 'asc')->paginate(10);
             // dd($schedules);
             // get all instructors
             $instructors = instructor::all();
@@ -44,8 +44,13 @@ class ScheduleController extends Controller
             return view('pages.schedules', compact('schedules', 'customerID', 'instructors', 'scores'));
         }
         else{
-            $schedules = Schedule::where('instructorID', Auth::user()->employeeID)->get();
+            $schedules = Schedule::where('instructorID', Auth::user()->roleID)->get();
 
+            $instructors = instructor::all();
+
+            $scores = Score::all();
+
+            return view('pages.schedules', compact('schedules', 'instructors', 'scores'));
         }
     }
 
@@ -58,6 +63,24 @@ class ScheduleController extends Controller
         // update status
         $schedule->status = 'canceled';
         $schedule->save();
+        // dd($schedule);
+
+        // check car type
+        if($schedule->carType === 'manual'){
+            // get customer
+            $customer = Customer::find($schedule->customerID);
+            // update manual session
+            $customer->ManualSession = $customer->ManualSession + 1;
+            $customer->save();
+        }
+        else{
+            // get customer
+            $customer = Customer::find($schedule->customerID);
+            // update matic session
+            $customer->MaticSession = $customer->MaticSession + 1;
+            $customer->save();
+        }
+
         // redirect
         return redirect()->back()->with('success', 'Schedule canceled successfully');
     }
@@ -106,6 +129,11 @@ class ScheduleController extends Controller
             }
             else{
                 // if car mat
+                // check if user has schedule at the same date and session
+                $schedule = Schedule::where('customerID', $customer->id)->where('date', $request->date)->where('session', $request->session)->first();
+                if($schedule){
+                    return redirect()->back()->with('error', 'You have schedule at the same date and session');
+                }
                 // find car where the car is available at $request->date and $request->session from table schedules and availability is available
                 $car = Car::whereDoesntHave('schedules', function($query) use ($request){
                     $query->where('date', $request->date)->where('session', $request->session);
@@ -171,8 +199,10 @@ class ScheduleController extends Controller
         // ddd(Auth::user()->id);
         $instructor = instructor::where('userID', Auth::user()->id)->first();
         $schedules = Schedule::where('instructorID', $instructor->id)->get();
-        // dd($schedules);
-        return view('instructor.schedules', compact('schedules'));
+        // score
+        $scores = Score::all();
+
+        return view('instructor.schedules', compact('schedules', 'scores'));
     }
 
     // train

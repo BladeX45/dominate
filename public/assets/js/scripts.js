@@ -71,3 +71,18 @@ $(function () {
         $(this).addClass('active');
     });
 });
+
+function previewImage(id) {
+    var input = document.getElementById('evidence'+id);
+    var imagePreview     = document.getElementById('image-preview-'+id);
+    console.log(imagePreview);
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            imagePreview.src = e.target.result;
+        };
+
+        reader.readAsDataURL(input.files[0]);
+    }
+}

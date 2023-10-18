@@ -5,6 +5,12 @@
             <a href="#" class="simple-text logo-normal">{{ __('Maju Lancar') }}</a>
         </div>
         <ul class="nav">
+            <li @if ($pageSlug == 'profile') class="active " @endif>
+                <a href="{{ route('instructor.profile') }}">
+                    <i class="tim-icons icon-single-02"></i>
+                    <p>{{ __('Profile') }}</p>
+                </a>
+            </li>
             <li @if ($pageSlug == 'dashboard') class="active " @endif>
                 <a href="{{ route('instructor.dashboard') }}">
                     <i class="tim-icons icon-bell-55"></i>

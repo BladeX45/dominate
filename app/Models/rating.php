@@ -13,7 +13,7 @@ class rating extends Model
 
     public function instructor()
     {
-        return $this->belongsTo(instructors::class, 'instructorID');
+        return $this->belongsTo(Instructor::class, 'instructorID');
     }
 
     // average rate

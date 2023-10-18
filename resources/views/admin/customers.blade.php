@@ -9,6 +9,15 @@
             <div class="card-header card-header-primary">
               <h4 class="card-title ">Users Table</h4>
               <p class="card-category"> Here is a subtitle for this table</p>
+              <div class="row">
+                <div class="container-fluid">
+                    <div class="col-md-4">
+                        <div class="searchInput">
+                            <input type="text" name="search" id="searchInput" class="form-control" placeholder="Cari Jadwal">
+                        </div>
+                    </div>
+                </div>
+            </div>
             </div>
             <div class="card-body">
               <div class="table-responsive">

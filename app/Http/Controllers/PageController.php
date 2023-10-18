@@ -275,9 +275,11 @@ class PageController extends Controller
 
         // Mengambil semua data dari tabel 'plans' dengan planType 'matic'
         $dataMatic = Plan::where('planType', 'automatic')->get();
-        // $data = Plan::all();
 
-        return view('welcome', compact('dataManual', 'dataMatic'));
+        // Mengambil semua data rating dari tabel 'ratings' asc
+        $ratings = rating::orderBy('created_at', 'asc')->get();
+
+        return view('welcome', compact('dataManual', 'dataMatic', 'ratings'));
     }
 
     /**

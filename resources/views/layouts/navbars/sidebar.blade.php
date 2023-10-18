@@ -5,6 +5,13 @@
             <a href="#" class="simple-text logo-normal">{{ __('Maju Lancar') }}</a>
         </div>
         <ul class="nav">
+            {{-- dashboard --}}
+            <li @if ($pageSlug == 'customer.dashboard') class="active " @endif>
+                <a href="{{ route('customer.dashboard') }}">
+                    <i class="tim-icons icon-chart-pie-36"></i>
+                    <p>{{ __('Dashboard') }}</p>
+                </a>
+            </li>
             <li @if ($pageSlug == 'profile') class="active " @endif>
                 <a href="{{ route('profile.edit') }}">
                     <i class="tim-icons icon-single-02"></i>
@@ -27,24 +34,6 @@
                 <a href="{{ route('customer.schedules') }}">
                     <i class="tim-icons icon-bell-55"></i>
                     <p>{{ __('Jadwal Latihan') }}</p>
-                </a>
-            </li>
-            <li @if ($pageSlug == 'tables') class="active " @endif>
-                <a href="{{ route('pages.tables') }}">
-                    <i class="tim-icons icon-puzzle-10"></i>
-                    <p>{{ __('Table List') }}</p>
-                </a>
-            </li>
-            <li @if ($pageSlug == 'typography') class="active " @endif>
-                <a href="{{ route('pages.typography') }}">
-                    <i class="tim-icons icon-align-center"></i>
-                    <p>{{ __('Typography') }}</p>
-                </a>
-            </li>
-            <li @if ($pageSlug == 'rtl') class="active " @endif>
-                <a href="{{ route('pages.rtl') }}">
-                    <i class="tim-icons icon-world"></i>
-                    <p>{{ __('RTL Support') }}</p>
                 </a>
             </li>
         </ul>

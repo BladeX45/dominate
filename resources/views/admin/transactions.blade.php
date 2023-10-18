@@ -8,6 +8,15 @@
     <div class="card-header">
         <h3 class="title">Transactions</h3>
     </div>
+    <div class="row">
+        <div class="container-fluid">
+            <div class="col-md-4">
+                <div class="searchInput">
+                    <input type="text" name="search" id="searchInput" class="form-control" placeholder="Cari Jadwal">
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="card-body">
         <div class="table-responsive">
             <table class="table">
@@ -44,16 +53,22 @@
                         <td>{{ $transaction->transactionDate }}</td>
                         {{-- verify transaction --}}
                         <td>
+                            {{-- if success disabled verify, when pending show button tolak and verify --}}
+                            @if ($transaction->transactionStatus == 'success')
+                                <button type="button" class="btn btn-primary evidence-button" disabled>Verify</button>
+                            @else
                             <form action="{{ route('admin.verifyTransaction') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="transactionID" value="{{ $transaction->transactionID }}">
-                                @if($transaction->transactionStatus === 'success')
-                                    <button type="submit" class="btn btn-primary" disabled>Verify</button>
-                                @else
-                                    <button type="submit" class="btn btn-primary">Verify</button>
-                                @endif
-
+                                <button type="submit" class="btn btn-primary">Verify</button>
                             </form>
+                            {{-- form tolak --}}
+                            <form action="{{ route('admin.rejectTransaction') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="transactionID" value="{{ $transaction->transactionID }}">
+                                <button type="submit" class="btn btn-danger">Reject</button>
+                            </form>
+                            @endif
                         </td>
                     </tr>
                     @endforeach

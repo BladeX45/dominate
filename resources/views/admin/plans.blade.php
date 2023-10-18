@@ -15,9 +15,15 @@
                         <a href="route('admin.plans.create')" class="btn btn-info btn-round" data-toggle="modal" data-target="#plan">Add Plan</a>
                     </div>
                 </div>
-              <h4 class="card-title ">Plans Table</h4>
-              <p class="card-category"> Here is a subtitle for this table</p>
-
+                <div class="row">
+                    <div class="container-fluid">
+                        <div class="col-md-4">
+                            <div class="searchInput">
+                                <input type="text" name="search" id="searchInput" class="form-control" placeholder="Cari Jadwal">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="card-body">
               <div class="table-responsive">

@@ -146,7 +146,7 @@ class TransactionController extends Controller
                 $data = Transaction::all();
                 return view('pages.transactions', ['data' => $data]);
             }
-            $data = Transaction::where('userID', Auth::user()->id)->get();
+            $data = Transaction::where('userID', Auth::user()->id)->paginate(10);
 
             return view('pages.transactions', ['data' => $data]);
         } else {
@@ -158,9 +158,16 @@ class TransactionController extends Controller
     // upload receipt Transfer
     public function uploadReceipt(Request $request){
         // Validate the incoming request data, e.g., check if a file is uploaded
+        dd($request->all());
+
         $request->validate([
             'evidence' => 'required|file|mimes:jpeg,png,pdf|max:2048', // Adjust validation rules as needed
         ]);
+
+        // if null
+        if($request->evidence == null){
+            return redirect()->back()->with('error', 'Receipt not found');
+        }
 
         // Check if the user is authenticated or authorized to upload receipts
         // You can add your authentication/authorization logic here
@@ -258,32 +265,52 @@ class TransactionController extends Controller
 
     public function uploadEvidence(Request $request){
         // Validate the incoming request data, e.g., check if a file is uploaded
-
-        $request->validate([
+        $validator = $request->validate([
             'evidence' => 'required|file|mimes:jpeg,png,pdf|max:2048', // Adjust validation rules as needed
         ]);
+        // dd($validator);
+        if ($validator) {
+            // Check if the user is authenticated or authorized to upload receipts
+            // Anda dapat menambahkan logika otentikasi/otorisasi Anda di sini
 
-        // Check if the user is authenticated or authorized to upload receipts
-        // You can add your authentication/authorization logic here
+            // Get the uploaded file
+            $uploadedFile = $request->file('evidence');
 
-        // Get the uploaded file
-        $uploadedFile = $request->file('evidence');
+            // Generate a unique filename for the uploaded file
+            $filename = uniqid() . '_' . time() . '.' . $uploadedFile->getClientOriginalExtension();
 
-        // Generate a unique filename for the uploaded file
-        $filename = uniqid() . '_' . time() . '.' . $uploadedFile->getClientOriginalExtension();
+            // Pindahkan file yang diunggah ke public/assets/img/receipt/..
+            $uploadedFile->storeAs('receipts', $filename, 'public');
 
-        // move upload file to public/assets/img/receipt/..
-        $uploadedFile->storeAs('receipts', $filename, 'public');
+            // Perbarui
+            $transaction = Transaction::find($request->transactionID);
+            $transaction->receiptTransfer = $filename;
+            $transaction->save();
 
+            // Redirect atau kembalikan respons untuk menunjukkan kesuksesan
+            // dd($transaction);
+            return redirect()->back()->with('success', 'Receipt uploaded successfully');
+        } else {
+            // Validasi gagal, kembalikan pesan kesalahan
+            // dd($validator);
+            return redirect()->back()->with('error', 'Validation failed. Please check your uploaded file.');
+        }
+    }
+
+
+    // rejectEvidence
+    public function rejectEvidence(Request $request){
         // update
         $transaction = Transaction::find($request->transactionID);
-        $transaction->receiptTransfer = $filename;
+        // change status to rejected
+        $transaction->paymentStatus = 'Rejected';
+        $transaction->receiptTransfer = null;
         $transaction->save();
 
         // You would typically associate this with the user's record or the transaction record
 
         // Redirect or return a response to indicate success
-        return redirect()->back()->with('success', 'Receipt uploaded successfully');
+        return redirect()->back()->with('success', 'Receipt rejected successfully');
     }
 
     public function verifyTransaction(Request $request){
@@ -328,6 +355,21 @@ class TransactionController extends Controller
             // Handle any other exceptions that may occur during the process
             return response()->json(['error' => 'An error occurred while verifying the transaction.'], 500);
         }
+    }
+
+    public function invoice(Request $request){
+        // dd($request->all());
+        $transaction = Transaction::where('transactionID', $request->id)->firstOrFail();
+        // dd($transaction);
+
+        // send to email
+        $details = [
+            'title' => 'Mail from ItSolutionStuff.com',
+            'body' => 'This is for testing email using smtp'
+        ];
+
+
+        return view('invoice', compact('transaction'));
     }
 
 }
