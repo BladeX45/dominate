@@ -13,7 +13,7 @@
                 <div class="container-fluid">
                     <div class="col-md-4">
                         <div class="searchInput">
-                            <input type="text" name="search" id="searchInput" class="form-control" placeholder="Cari Jadwal">
+                            <input type="text" name="search" id="searchInput" class="form-control" placeholder="Customer Search">
                         </div>
                     </div>
                 </div>
@@ -55,16 +55,15 @@
                         {{ $user->roleID }}
                       </td>
                       <td>
-                        <button type="button" rel="tooltip" class="btn btn-info btn-sm btn-round btn-icon">
-                            <i class="tim-icons icon-single-02"></i>
-                        </button>
-                        <button type="button" rel="tooltip" class="btn btn-success btn-sm btn-round btn-icon">
-                            <i class="tim-icons icon-settings"></i>
-                        </button>
-                        <button type="button" rel="tooltip" class="btn btn-danger btn-sm btn-round btn-icon">
-                            <i class="tim-icons icon-simple-remove"></i>
-                        </button>
-                      </td>
+                        <a href="#" rel="tooltip" class="btn btn-info btn-sm btn-round btn-icon"
+                        data-toggle="modal" data-target="#customer{{ $user->id }}" data-placement="top" title="Data Customer"
+                        data-userID="{{ $user->id }}">
+                        <i class="tim-icons icon-single-02"></i>
+                        </a>
+                    </td>
+                    <x-modal title="Data Customer" idModal="customer{{ $user->id }}" customStyle="modal-xl">
+                        <x-profile idUser="{{ $user->id }}" />
+                    </x-modal>
                     </tr>
                     {{--  --}}
                     @endforeach

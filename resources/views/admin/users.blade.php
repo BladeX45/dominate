@@ -61,12 +61,6 @@
                                                data-userid="{{ $user->userID }}">
                                                <i class="tim-icons icon-single-02"></i>
                                            </a>
-                                           <button type="button" rel="tooltip" class="btn btn-success btn-sm btn-round btn-icon">
-                                               <i class="tim-icons icon-settings"></i>
-                                           </button>
-                                           <button type="button" rel="tooltip" class="btn btn-danger btn-sm btn-round btn-icon">
-                                               <i class="tim-icons icon-simple-remove"></i>
-                                           </button>
                                        </td>
                                    </tr>
                                    {{-- Increment nomor baris --}}
@@ -76,7 +70,6 @@
                                     <x-modal title="Profile" idModal="profile{{ $user->userID }}" customStyle="">
                                         <x-profile idUser="{{ $user->userID }}" />
                                     </x-modal>
-
                                    @endforeach
                                </tbody>
                            </table>

@@ -19,6 +19,18 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-12">
+            {{-- status --}}
+            @if (session('status'))
+            <div class="alert alert-success">
+                {{ session('status') }}
+            </div>
+            @endif
+            {{-- if any error --}}
+            @if ($errors->any())
+            <div class="alert alert-danger">
+                <strong>Whoops!</strong> There were some problems with your input.
+            </div>
+            @endif
           <div class="card">
             <div class="card-header card-header-primary">
                 <div class="row">
@@ -33,7 +45,7 @@
                     <div class="container-fluid">
                         <div class="col-md-4">
                             <div class="searchInput">
-                                <input type="text" name="search" id="searchInput" class="form-control" placeholder="Cari Jadwal">
+                                <input type="text" name="search" id="searchInput" class="form-control" placeholder="Saerch Car">
                             </div>
                         </div>
                     </div>
@@ -92,17 +104,98 @@
                             {{ $car->carStatus }}
                         </td>
                         <td>
-                            <button type="button" rel="tooltip" class="btn btn-info btn-sm btn-round btn-icon">
-                                <i class="tim-icons icon-single-02"></i>
-                            </button>
-                            <button type="button" rel="tooltip" class="btn btn-success btn-sm btn-round btn-icon">
-                                <i class="tim-icons icon-settings"></i>
-                            </button>
-                            <button type="button" rel="tooltip" class="btn btn-danger btn-sm btn-round btn-icon">
-                                <i class="tim-icons icon-simple-remove"></i>
-                            </button>
-                          </td>
+                            <a href="#" rel="tooltip" class="btn btn-info btn-sm btn-round btn-icon"
+                            data-toggle="modal" data-target="#car{{ $car->id }}" data-placement="top" title="Data Mobil"
+                            data-carID="{{ $car->id }}">
+                            <i class="tim-icons icon-single-02"></i>
+                            </a>
+                        </td>
                     </tr>
+                    <x-modal title="Data Mobil" idModal="car{{ $car->id }}" customStyle="modal-lg">
+                        {{-- show data mobil --}}
+                        {{-- @dd($car) --}}
+                        <form action="{{route('admin.updateCar')}}" autocomplete="off" enctype="multipart/form-data" method="post">
+                        <div class="row">
+                                @method('put')
+                                @csrf
+                                <div class="col-md-6">
+                                    {{-- carName --}}
+                                    <div class="form-group">
+                                        <label for="carName">{{__('Nama Mobil')}}</label>
+                                        <input type="carName" name="carName" class="form-control" id="carName" value="{{old('carName',$car->carName)}}" placeholder="{{ $car->carName}}">
+                                    </div>
+                                    <div class="form-group">
+                                        {{-- carModel --}}
+                                        <label for="carModel">{{__('Model Mobil')}}</label>
+                                        <input type="carModel" name="carModel" class="form-control" id="carModel" value="{{old('carModel',$car->carModel)}}" placeholder="{{ $car->carModel}}">
+                                    </div>
+                                    <div class="form-group">
+                                        {{-- Transmission --}}
+                                        <label for="Transmission">{{__('Transmisi')}}</label>
+                                        <input type="Transmission" name="Transmission" class="form-control" id="Transmission" value="{{old('Transmission',$car->Transmission)}}" placeholder="{{ $car->Transmission}}">
+                                    </div>
+                                    <div class="form-group">
+                                        {{-- carYear --}}
+                                        <label for="carYear">{{__('Tahun Mobil')}}</label>
+                                        <input type="carYear" name="carYear" class="form-control" id="carYear" value="{{old('carYear',$car->carYear)}}" placeholder="{{ $car->carYear}}">
+                                    </div>
+
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        {{-- carColor --}}
+                                        <label for="carColor">{{__('Warna Mobil')}}</label>
+                                        <input type="carColor" class="form-control" id="carColor" value="{{old('carColor',$car->carColor)}}" placeholder="{{ $car->carColor}}">
+                                    </div>
+                                    <div class="form-group">
+                                        {{-- plateNumber --}}
+                                        <label for="plateNumber">{{__('Nomor Plat Mobil')}}</label>
+                                        <input type="plateNumber" class="form-control" id="plateNumber" value="{{old('carPlateNumber',$car->carPlateNumber)}}" placeholder="{{ $car->carPlateNumber}}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="carStatus">{{ __('Status Mobil') }}</label>
+                                        <select class="form-control bg-dark" id="carStatus" name="carStatus">
+                                            <option value="Available">Available</option>
+                                            <option value="Not Available">Not Available</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="carImage" class="d-flex justify-content-center">
+                                            {{-- Jika user->avatar = null, maka tampilkan avatar default --}}
+                                            @if ($car->carImage === '')
+                                                    <img id="car-preview"  class="carImage" src="{{ asset('storage') }}/cars/test.png" alt="" style="height: 150px; width:75%">
+                                            @else
+                                                    <img id="car-preview" class="carImage" src="{{ asset('storage/cars/'. $car->carImage) }}" alt="">
+                                            @endif
+                                            <input type="file" id="carImage" name="carImage" accept="image/*" onchange="previewCar();" hidden> <!-- Menggunakan 'photo' sebagai id dan name -->
+                                        </label>
+                                    </div>
+                                </div>
+                        </div>
+                        <script>
+                                function previewCar() {
+                                var input = document.getElementById('carImage'); // Menggunakan 'photo' sebagai id
+                                var imagePreview = document.getElementById('car-preview');
+
+                                if (input.files && input.files[0]) {
+                                    var reader = new FileReader();
+
+                                    reader.onload = function (e) {
+                                        imagePreview.src = e.target.result;
+                                    };
+
+                                    reader.readAsDataURL(input.files[0]);
+                                }
+                            }
+                        </script>
+                        <div class="row">
+                            <div class="col-md-12 d-flex justify-content-center">
+                                {{-- submit --}}
+                                <button type="submit" class="btn btn-primary">{{__('Submit')}}</button>
+                            </div>
+                        </div>
+                    </form>
+                    </x-modal>
                     {{--  --}}
                     @endforeach
                   </tbody>
@@ -203,6 +296,8 @@
     </x-form>
 </x-modal>
 @endsection
+
+
 
 
 @push('js')

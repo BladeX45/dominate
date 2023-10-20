@@ -8,7 +8,7 @@
                     <span class="navbar-toggler-bar bar3"></span>
                 </button>
             </div>
-            <a class="navbar-brand" href="#">{{ $page ?? '' }}</a>
+            <a class="navbar-brand" href="#">{{ $page ?? 'WELCOME' }}</a>
         </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -18,7 +18,7 @@
         <div class="collapse navbar-collapse" id="navigation">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a href="{{ route('home') }}" class="nav-link text-primary">
+                    <a href="{{ route('welcome') }}" class="nav-link text-primary">
                         <i class="tim-icons icon-minimal-left"></i> {{ __('Back to Dashboard') }}
                     </a>
                 </li>

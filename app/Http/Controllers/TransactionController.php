@@ -77,6 +77,21 @@ class TransactionController extends Controller
         // get last balance
         $lastBalance = Cashflow::orderBy('id', 'desc')->first();
 
+        // if null
+        if($lastBalance == null){
+            $lastBalance = Cashflow::create([
+                // fk transaction -> nullable
+                'expense_id' => $expense->id,
+                // debitAmount
+                'creditAmount' => $expense->expenseAmount,
+                // date
+                'date' => Carbon::now(),
+                // update balance balance - creditAmount
+                'balance' => 0 - $expense->expenseAmount,
+            ]);
+            return redirect()->back()->with('success', 'Expense added successfully');
+        }
+
         // insert to cashflow
         $cashflow = Cashflow::create([
             // fk transaction -> nullable

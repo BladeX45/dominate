@@ -51,7 +51,7 @@
                         <div class="col-md-8">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="card" style="max-height:55vh: 100%; display: flex; flex-direction: column;">
+                                    <div class="card" style="max-height:55vh; display: flex; flex-direction: column;">
                                         <div class="card-header">
                                             <h3 class="title">
                                                 Penjualan Paket
@@ -59,7 +59,7 @@
                                         </div>
                                         <div class="card-body" style="flex: 1; overflow-y: auto;">
                                             {{-- planChart --}}
-                                            <canvas id="planChart" style="max-height: 100%;"></canvas>
+                                            <canvas id="planChart" style="max-height: 130px;"></canvas>
                                         </div>
                                     </div>
                                 </div>

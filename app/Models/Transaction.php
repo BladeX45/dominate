@@ -25,6 +25,7 @@ class Transaction extends Model
         return $this->belongsTo(Customer::class,'userID', 'userID');
     }
 
+    // build email
 
 
 }

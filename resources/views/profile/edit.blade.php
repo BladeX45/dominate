@@ -14,53 +14,109 @@
             <div class="card-header">
                 <h5 class="title">{{ __('Edit Profile') }}</h5>
             </div>
-            <form method="post" action="{{ route('profile.update') }}" autocomplete="off">
-                <div class="card-body">
-                    @csrf
-                    @method('put')
+            <div class="card-body">
+                {{-- if instructor --}}
+                @if(auth()->user()->roleID == 3)
+                <form method="post" action="{{ route('profile.update') }}" autocomplete="off">
+                    <div class="card-body">
+                        @csrf
+                        @method('put')
 
-                    @include('alerts.success')
+                        @include('alerts.success')
 
-                    <div class="form-group{{ $errors->has('name') ? ' has-danger' : '' }}">
-                        <label>{{ __('Name') }}</label>
-                        <input type="text" name="name" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" placeholder="{{ __('Name') }}" value="{{ old('name', auth()->user()->name) }}">
-                        @include('alerts.feedback', ['field' => 'name'])
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-group{{ $errors->has('firstName') ? ' has-danger' : '' }}">
-                                <label>{{ __('First Name') }}</label>
-                                <input type="text" name="firstName" class="form-control{{ $errors->has('firstName') ? ' is-invalid' : '' }}" placeholder="{{ __('First Name') }}" value="{{ old('firstName', auth()->user()->customer->firstName) }}">
-                                @include('alerts.feedback', ['field' => 'firstName'])
+                        <div class="form-group{{ $errors->has('name') ? ' has-danger' : '' }}">
+                            <label>{{ __('Name') }}</label>
+                            <input type="text" name="name" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" placeholder="{{ __('Name') }}" value="{{ old('name', auth()->user()->name) ?: '' }}">
+                            @include('alerts.feedback', ['field' => 'name'])
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group{{ $errors->has('firstName') ? ' has-danger' : '' }}">
+                                    <label>{{ __('First Name') }}</label>
+                                    <input type="text" name="firstName" class="form-control{{ $errors->has('firstName') ? ' is-invalid' : '' }}" placeholder="{{ __('First Name') }}" value="{{ old('firstName', auth()->user()->instructor->firstName) ?: '' }}">
+                                    @include('alerts.feedback', ['field' => 'firstName'])
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group{{ $errors->has('lastName') ? ' has-danger' : '' }}">
+                                    <label>{{ __('Last Name') }}</label>
+                                    <input type="text" name="lastName" class="form-control {{ $errors->has('lastName') ? ' is-invalid' : '' }}" placeholder="{{ __('Last Name') }}" value="{{ old('lastName', auth()->user()->instructor->lastName) ?? '' }}">
+                                    @include('alerts.feedback', ['field' => 'lastName'])
+                                </div>
                             </div>
                         </div>
-                        <div class="col">
-                            <div class="form-group{{ $errors->has('lastName') ? ' has-danger' : '' }}">
-                                <label>{{ __('Last Name') }}</label>
-                                <input type="text" name="lastName" class="form-control {{ $errors->has('lastName') ? ' is-invalid' : '' }}" placeholder="{{ __('Last Name') }}" value="{{ old('lastName', auth()->user()->customer->lastName) }}">
-                                @include('alerts.feedback', ['field' => 'lastName'])
+                        {{-- Birth Date --}}
+                        <div class="form-group{{ $errors->has('birthDate') ? ' has-danger' : '' }}">
+                            <label>{{ __('Birth Date') }}</label>
+                            <input type="date" name="birthDate" class="form-control {{ $errors->has('birthDate') ? ' is-invalid' : '' }}" value="{{ old('birthDate', auth()->user()->instructor->birthDate ?? '') }}">
+                            @include('alerts.feedback', ['field' => 'birthDate'])
+                        </div>
+                        {{-- phone --}}
+                        <div class="form-group{{ $errors->has('phone') ? ' has-danger' : '' }}">
+                            <label>{{ __('Phone Number') }}</label>
+                            <input type="text" name="phone" class="form-control {{ $errors->has('phone') ? ' is-invalid' : '' }}" placeholder="{{ __('(+62) XXXX-XXXX-XXXX') }}" value="{{ old('phone', auth()->user()->instructor->phone) }}">
+                            @include('alerts.feedback', ['field' => 'phone '])
+                        </div>
+                        {{-- address --}}
+
+                    </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-fill btn-primary">{{ __('Save') }}</button>
+                    </div>
+                </form>
+                @elseif(auth()->user()->roleID == 2)
+                {{-- elseif customer --}}
+                <form method="post" action="{{ route('profile.update') }}" autocomplete="off">
+                    <div class="card-body">
+                        @csrf
+                        @method('put')
+
+                        @include('alerts.success')
+
+                        <div class="form-group{{ $errors->has('name') ? ' has-danger' : '' }}">
+                            <label>{{ __('Name') }}</label>
+                            <input type="text" name="name" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" placeholder="{{ __('Name') }}" value="{{ old('name', auth()->user()->name) ?: '' }}">
+                            @include('alerts.feedback', ['field' => 'name'])
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group{{ $errors->has('firstName') ? ' has-danger' : '' }}">
+                                    <label>{{ __('First Name') }}</label>
+                                    <input type="text" name="firstName" class="form-control{{ $errors->has('firstName') ? ' is-invalid' : '' }}" placeholder="{{ __('First Name') }}" value="{{ old('firstName', auth()->user()->customer->firstName) ?? '' }}">
+                                    @include('alerts.feedback', ['field' => 'firstName'])
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group{{ $errors->has('lastName') ? ' has-danger' : '' }}">
+                                    <label>{{ __('Last Name') }}</label>
+                                    <input type="text" name="lastName" class="form-control {{ $errors->has('lastName') ? ' is-invalid' : '' }}" placeholder="{{ __('Last Name') }}" value="{{ old('lastName', auth()->user()->customer->lastName) ?? '' }}">
+                                    @include('alerts.feedback', ['field' => 'lastName'])
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    {{-- Birth Date --}}
-                    <div class="form-group{{ $errors->has('birthDate') ? ' has-danger' : '' }}">
-                        <label>{{ __('Birth Date') }}</label>
-                        <input type="date" name="birthDate" class="form-control {{ $errors->has('birthDate') ? ' is-invalid' : '' }}" value="{{ old('birthDate', auth()->user()->customer->birthDate) }}">
-                        @include('alerts.feedback', ['field' => 'birthDate'])
-                    </div>
-                    {{-- phone --}}
-                    <div class="form-group{{ $errors->has('phone') ? ' has-danger' : '' }}">
-                        <label>{{ __('Phone Number') }}</label>
-                        <input type="text" name="phone" class="form-control {{ $errors->has('phone') ? ' is-invalid' : '' }}" placeholder="{{ __('(+62) XXXX-XXXX-XXXX') }}" value="{{ old('phone', auth()->user()->customer->phone) }}">
-                        @include('alerts.feedback', ['field' => 'phone '])
-                    </div>
-                    {{-- address --}}
+                        {{-- Birth Date --}}
+                        <div class="form-group{{ $errors->has('birthDate') ? ' has-danger' : '' }}">
+                            <label>{{ __('Birth Date') }}</label>
+                            <input type="date" name="birthDate" class="form-control {{ $errors->has('birthDate') ? ' is-invalid' : '' }}" value="{{ old('birthDate', auth()->user()->customer->birthDate ?? '') }}">
+                            @include('alerts.feedback', ['field' => 'birthDate'])
+                        </div>
+                        {{-- phone --}}
+                        <div class="form-group{{ $errors->has('phone') ? ' has-danger' : '' }}">
+                            <label>{{ __('Phone Number') }}</label>
+                            <input type="text" name="phone" class="form-control {{ $errors->has('phone') ? ' is-invalid' : '' }}" placeholder="{{ __('(+62) XXXX-XXXX-XXXX') }}" value="{{ old('phone', auth()->user()->customer->phone) }}">
+                            @include('alerts.feedback', ['field' => 'phone '])
+                        </div>
+                        {{-- address --}}
 
-                </div>
-                <div class="card-footer">
-                    <button type="submit" class="btn btn-fill btn-primary">{{ __('Save') }}</button>
-                </div>
-            </form>
+                    </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-fill btn-primary">{{ __('Save') }}</button>
+                    </div>
+                </form>
+                @elseif(auth()->user()->roleID == 1)
+                {{-- elseif admin --}}
+                @endif
+            </div>
         </div>
 
         <div class="card">
@@ -113,7 +169,7 @@
                                 {{-- Jika user->avatar = null, maka tampilkan avatar default --}}
                                 @if (Auth::user()->avatar === null)
                                     <div class="avatar-wrapper">
-                                        <img class="avatar" src="{{ asset('black') }}/img/emilyz.jpg" alt="">
+                                        <img id="image-preview"  class="avatar" src="{{ asset('black') }}/img/emilyz.jpg" alt="">
                                     </div>
                                 @else
                                     <div class="avatar-wrapper">
@@ -131,8 +187,14 @@
 
                         <h5 class="title">{{ auth()->user()->name }}</h5>
                         {{-- nik --}}
+                        {{-- cust ?? --}}
                         <p class="description">
-                            {{ auth()->user()->customer->NIN }}
+                            {{-- customer / instructor --}}
+                            @if(auth()->user()->roleID == 3)
+                                {{ auth()->user()->instructor->nin }}
+                            @elseif(auth()->user()->roleID == 2)
+                                {{ auth()->user()->customer->nin }}
+                            @endif
                         </p>
                         <p class="email">
                             {{ auth()->user()->email }}
@@ -141,18 +203,22 @@
                 </p>
                 <div class="card-description">
                     {{-- Manual Token && Matic Token --}}
-                    {{-- @if (auth()->user()->customer->manualSession != null && auth()->user()->customer->maticSession != null) --}}
-                        <div class="row">
-                            <div class="col">
-                                <h5 class="title">{{ __('Manual Token') }}</h5>
-                                <p class="description">{{ auth()->user()->customer->ManualSession }}</p>
-                            </div>
-                            <div class="col">
-                                <h5 class="title">{{ __('Matic Token') }}</h5>
-                                <p class="description">{{ auth()->user()->customer->MaticSession }}</p>
-                            </div>
+                    @if (auth()->user()->roleID === 3)
+                    @elseif(auth()->user()->roleID === 2)
+                    @if (auth()->user()->customer->manualSession != null && auth()->user()->customer->maticSession != null)
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="title">{{ __('Manual Token') }}</h5>
+                            <p class="description">{{ auth()->user()->customer->ManualSession }}</p>
                         </div>
-                    {{-- @endif --}}
+                        <div class="col">
+                            <h5 class="title">{{ __('Matic Token') }}</h5>
+                            <p class="description">{{ auth()->user()->customer->MaticSession }}</p>
+                        </div>
+                    </div>
+                    @endif
+                    @endif
+                    {{-- if instructor --}}
 
                 </div>
                 <div class="card-description">
@@ -173,13 +239,55 @@
                 </div>
             </div>
         </div>
+        <div class="card">
+            @if(auth()->user()->roleID == 3)
+    {{-- if instructor --}}
+        {{-- Form update certificate image --}}
+        <form method="POST" action="{{ '' }}" autocomplete="off" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+
+            <label for="certificate" class="d-flex justify-content-center">
+                {{-- Jika user->avatar = null, maka tampilkan avatar default --}}
+
+                @if (Auth::user()->instructor->certificate === '')
+                        <img id="certificate-preview"  class="certificate" src="{{ asset('black') }}/img/emilyz.jpg" alt="" style="height: 280px; width:75%">
+                @else
+                        <img id="certificate-preview" class="certificate" src="{{ asset('storage/certificate/'. auth()->user()->instructor->certifiate) }}" alt="">
+                @endif
+                <input type="file" id="certificate" name="certificate" accept="image/*" onchange="previewCertificate();" hidden> <!-- Menggunakan 'photo' sebagai id dan name -->
+            </label>
+
+            <br>
+            <div class="card-footer d-flex justify-content-center" class="mx-auto">
+                <button type="submit" class="btn btn-fill btn-primary ">{{ __('Upload image') }}</button>
+            </div>
+        </form>
+        @endif
+        </div>
     </div>
+
 </div>
 
 <script>
     function previewImage() {
         var input = document.getElementById('photo'); // Menggunakan 'photo' sebagai id
         var imagePreview = document.getElementById('image-preview');
+
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                imagePreview.src = e.target.result;
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function previewCertificate() {
+        var input = document.getElementById('certificate'); // Menggunakan 'photo' sebagai id
+        var imagePreview = document.getElementById('certificate-preview');
 
         if (input.files && input.files[0]) {
             var reader = new FileReader();

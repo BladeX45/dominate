@@ -326,37 +326,5 @@
             }
         }
     </script>
-    <script>
-        var searchInput = document.getElementById("searchInput");
-            // Dapatkan semua baris (tr) dalam tabel
-            var rows = document.querySelectorAll("tbody tr");
 
-            // Tambahkan event listener untuk input pencarian
-            searchInput.addEventListener("input", function () {
-                var searchText = searchInput.value.toLowerCase();
-
-                // Iterasi melalui setiap baris dalam tabel
-                rows.forEach(function (row) {
-                    // Dapatkan sel di dalam baris
-                    var cells = row.getElementsByTagName("td");
-                    var shouldShow = false;
-
-                    // Periksa apakah teks pencarian ada dalam setiap sel
-                    for (var i = 0; i < cells.length; i++) {
-                        var cellText = cells[i].textContent.toLowerCase();
-                        if (cellText.includes(searchText)) {
-                            shouldShow = true;
-                            break;
-                        }
-                    }
-
-                    // Tampilkan atau sembunyikan baris berdasarkan hasil pencarian
-                    if (shouldShow) {
-                        row.style.display = "table-row";
-                    } else {
-                        row.style.display = "none";
-                    }
-                });
-            });
-    </script>
 @endsection

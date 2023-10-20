@@ -427,6 +427,7 @@ class PageController extends Controller
         return redirect()->back()->with('success', 'Email verification has been sent!');
     }
 
+
     // verification verify
     public function verificationVerify(Request $request){
         // get user

@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('expenseName');
             $table->string('expenseAmount');
+            // transactionID
+            $table->string('transactionID');
             $table->string('expenseDate');
             $table->string('expenseDescription');
             $table->timestamps();

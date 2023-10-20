@@ -43,6 +43,8 @@
         <!-- CSS -->
         <link href="{{ asset('black') }}/css/black-dashboard.css?v=1.0.0" rel="stylesheet" />
         <link href="{{ asset('black') }}/css/theme.css" rel="stylesheet" />
+        {{-- font awesome --}}
+        <script src="https://kit.fontawesome.com/57b8c8d926.js" crossorigin="anonymous"></script>
     </head>
     <body class="{{ $class ?? '' }}">
         @auth()

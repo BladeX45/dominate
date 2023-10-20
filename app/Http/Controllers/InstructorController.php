@@ -60,8 +60,8 @@ class InstructorController extends Controller
     public function showProfile(){
         // ambil dari auth
         $instructor = Instructor::where('userID', auth()->user()->id)->first();
-        dd($instructor);
-        return view('instructor.profile', compact('instructor'));
+        // dd($instructor);
+        return view('profile.edit', compact('instructor'));
     }
 
     /**

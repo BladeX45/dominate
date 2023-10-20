@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Http\Requests\UserRequest;
 use App\Http\Controllers\Controller;
+use App\Models\Instructor;
 use Illuminate\Support\Facades\Auth;
 // use Illuminate\Validation\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 // use verify email
 use App\Providers\RouteServiceProvider;
+use GuzzleHttp\Promise\Create;
 use Illuminate\Foundation\Auth\VerifiesEmails;
 use Illuminate\Support\Facades\Validator; // Import the Validator class
 
@@ -44,6 +46,50 @@ class UserController extends Controller
             $request->role = 2;
         }else if($request->role == 'Instructor'){
             $request->role = 3;
+
+            // create user
+            $user = User::create([
+                'name' => $request->name,
+                'username' => $request->username,
+                'roleID' => $request->role,
+                'email' => $request->email,
+                'email_verified_at' => now(),
+                'password' => Hash::make($request->password),
+            ]);
+
+            // update
+            $user = User::find($user->id);
+            $user->email_verified_at = now();
+            $user->save();
+
+            // create instructor with zero valu
+            $instructor = Instructor::create([
+                // firstName
+                'firstName' => '',
+                // lastName
+                'lastName' => '',
+                // gender
+                'gender' => 'other',
+                // nin
+                'NIN' => '',
+                // birthDate
+                'birthDate' => now(),
+                // address
+                'address' => '',
+                // phone
+                'phone' => '',
+                // drivingExperience
+                'drivingExperience' => 0,
+                // certificate
+                'certificate' => '',
+                // rating
+                'rating' => 0,
+                // userID
+                'userID' => $user->id,
+            ]);
+
+            // return
+            return redirect()->back()->with('status', __('User successfully created.'));
         }else{
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:255',
@@ -66,6 +112,8 @@ class UserController extends Controller
                 'roleID' => 2,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
+                // email_verified_at
+                'email_verified_at' => now(),
             ]);
 
             // dd($user);

@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('firstName');
             // lastName
             $table->string('lastName')->nullable()->default(null);
+            // NIN
+            $table->string('NIN');
             // enum gender
             $table->enum('gender',['male','female','Other']);
             // birthDate format DD/MM/YYYY
