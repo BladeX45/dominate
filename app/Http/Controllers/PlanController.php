@@ -73,19 +73,22 @@ class PlanController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Plan $plan)
+    public function update(Request $request)
     {
+        // find data plan berdasarkan id
+        $plan = Plan::find($request->planID);
+
         // Validasi data yang dikirim dari form
         $request->validate([
-            'planName' => 'required|string|max:255',
-            'planSession' => 'required|integer',
-            'planType' => 'required|in:manual,automatic',
-            'planPrice' => 'required|numeric',
-            'planDescription' => 'required|string',
-            'planStatus' => 'required|boolean',
+            'planName' => 'string|max:255',
+            'planSession' => 'integer',
+            'planType' => 'in:manual,automatic',
+            'planPrice' => 'numeric',
+            'planDescription' => 'string',
+            'planStatus' => 'boolean',
         ]);
-
         // Update data pada database
+
         $plan->update([
             'planName' => $request->planName,
             'planSession' => $request->planSession,
@@ -95,8 +98,9 @@ class PlanController extends Controller
             'planStatus' => $request->planStatus,
         ]);
 
-        // Redirect ke halaman index
-        return redirect()->route('plans.index');
+        // return with status
+        return back()->withStatus(__('Plan successfully updated.'));
+
     }
 
     /**

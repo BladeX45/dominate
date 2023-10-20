@@ -76,6 +76,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'verified']], functi
     Route::get('/show-instructor/{id}', [InstructorController::class, 'show'])->name('admin.showInstructor');
     Route::get('/transactions', [PageController::class, 'indexTransactions'])->name('admin.transactions');
     Route::post('/transactions', [TransactionController::class, 'verifyTransaction'])->name('admin.verifyTransaction');
+    // admin.updatePlan
+    Route::put('/update-asset',[PlanController::class, 'update'])->name('admin.updatePlan');
     // admin setCarStatus
     Route::put('/set-car-status', [CarController::class, 'updateCar'])->name('admin.updateCar');
     // get expenses
