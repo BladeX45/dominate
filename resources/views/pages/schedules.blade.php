@@ -18,11 +18,11 @@
         <div class="card bg-primary">
             <div class="card-header">
                 <div class="d-flex justify-content-between">
-                    <h3 class="title">Jadwal</h3>
+                    <h3 class="title">Schedule</h3>
                     {{-- disabled if admin --}}
                     @if (auth()->user()->roleID == 2)
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#schedules">
-                            Tambah Jadwal
+                            Add Schedule
                         </button>
                     @endif
                 </div>
@@ -30,7 +30,7 @@
                     <div class="container-fluid">
                         <div class="col-md-4">
                             <div class="searchInput">
-                                <input type="text" name="search" id="searchInput" class="form-control" placeholder="Cari Jadwal">
+                                <input type="text" name="search" id="searchInput" class="form-control bg-dark" placeholder="Search Schedule">
                             </div>
                         </div>
                     </div>
@@ -49,12 +49,12 @@
                         <thead>
                             <tr>
                                 <th scope="col">No</th>
-                                <th scope="col">Nama Instuktur</th>
-                                <th scope="col">Manual/Matic</th>
-                                <th scope="col">Tanggal</th>
-                                <th scope="col">Sesi</th>
+                                <th scope="col">Instructor Name</th>
+                                <th scope="col">Tranmission</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Session</th>
                                 <th scope="col">Status</th>
-                                <th scope="col">Aksi</th>
+                                <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -71,28 +71,45 @@
                                         @if('pending' === $schedule->status )
                                         {{-- cancel button --}}
                                         <td>
-                                            <x-form action="{{ route('admin.cancel')}}" method="post">
-                                                {{-- hidden input --}}
-                                                <input type="hidden" name="scheduleID" value="{{$schedule->id}}">
-                                                <button type="submit" class="btn btn-primary btn-sm">
-                                                    {{ __('Batalkan')}}
-                                                </button>
-                                            </x-form>
+                                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#cancelSchedule{{$schedule->id}}">
+                                                {{ __('Cancel')}}
+                                            </button>
                                         </td>
+                                        <x-modal title="Cancel Schedule" idModal="cancelSchedule{{$schedule->id}}" customStyle="">
+                                            <x-form action="{{ route('admin.cancel', ['id' => $schedule->id]) }}" method="post">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <h3 class="text-light">
+                                                           {{__('Are you sure you want to cancel this schedule?')}}
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        {{-- Cancel Button --}}
+                                                        <button type="submit" class="btn btn-danger">Cancel</button>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        {{-- Close Button --}}
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                    </div>
+                                                </div>
+                                            </x-form>
+                                        </x-modal>
                                         @else
                                             {{-- if status is done cek nilai --}}
                                             @if ($schedule->status === 'done' || $schedule->status === 'completed')
                                                 <td>
                                                     {{-- penilaian instruktur --}}
                                                     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#score{{$schedule->id}}">
-                                                        Cek Nilai
+                                                        Check Score
                                                     </button>
                                                 </td>
                                             @else
                                                 {{-- button cancel disabled --}}
                                                 <td>
                                                     <button type="button" class="btn btn-primary btn-sm" disabled>
-                                                        {{ __('Batalkan')}}
+                                                        {{ __('Cancel')}}
                                                     </button>
                                                 </td>
                                             @endif
@@ -102,14 +119,14 @@
                                             <td>
                                                 {{-- penilaian instruktur --}}
                                                 <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate" disabled>
-                                                    Penilaian
+                                                    Rate
                                                 </button>
                                             </td>
                                         @elseif ($schedule->status === 'trained')
                                             <td>
                                                 {{-- penilaian instruktur --}}
                                                 <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate" disabled>
-                                                    Penilaian
+                                                    Rate
                                                 </button>
                                             </td>
                                             {{-- need penilaian instruktur --}}
@@ -117,21 +134,21 @@
                                             <td>
                                                 {{-- penilaian instruktur --}}
                                                 <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate{{$schedule->id}}">
-                                                    Penilaian
+                                                    Rate
                                                 </button>
                                             </td>
                                         @elseif ($schedule->status === 'done' || $schedule->status === 'completed')
                                             <td>
                                                 {{-- penilaian instruktur --}}
                                                 <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#score{{$schedule->id}}">
-                                                    Cek Nilai
+                                                    Check Score
                                                 </button>
                                             </td>
                                         @else
                                             <td>
                                                 {{-- penilaian instruktur --}}
                                                 <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate" disabled>
-                                                    canceled
+                                                    Canceled
                                                 </button>
                                             </td>
                                         @endif
@@ -143,7 +160,7 @@
                     </table>
                 </div>
                 @else
-                    <p>Tidak ada jadwal yang tersedia.</p>
+                    <p>There are no available schedules.</p>
                 @endif
             </div>
         </div>
@@ -182,27 +199,26 @@
     <x-form id="schedule-form" action="{{route('customer.creataSchedule')}}" method="post">
         <x-schedules>
             <div id="availability-message"></div>
-            <label for="instructor">Pilih Instruktur</label>
+            <label for="instructor">Choose Instructor</label>
             <select name="instructor" id="instructor" class="form-control" required>
-                <option class="bg-primary" value="">Pilih Instruktur</option>
                 @foreach ($instructors as $instructor)
                     <option class="bg-primary" value="{{ $instructor->id }}">{{ $instructor->firstName }} {{ $instructor->lastName }}</option>
                 @endforeach
             </select>
 
-            <label for="type">Pilih Tipe</label>
+            <label for="type">Choose Transmission</label>
             <select name="type" id="type" class="form-control" required>
                 <option class="bg-primary" value="manual">Manual</option>
                 <option class="bg-primary" value="matic">Matic</option>
             </select>
 
-            <label for="date">Pilih Tanggal</label>
+            <label for="date">Date</label>
             <input type="date" name="date" id="date" class="form-control" required>
             <span id="error-message" style="color: red;"></span>
 
             <label for="session">Pilih Sesi</label>
             <select name="session" id="session" class="form-control" required>
-                <option class="bg-primary">--- Pilih Sesi ---</option>
+                <option class="bg-primary">--- Choose Session ---</option>
                 <option class="bg-primary" value="1">08:00-09:45</option>
                 <option class="bg-primary" value="2">10:00-11:45</option>
                 <option class="bg-primary" value="3">14:00-15:45</option>
@@ -210,9 +226,9 @@
                 <option class="bg-primary" value="5">19:00-30:45</option>
             </select>
 
-            <p class="text-danger pt-3 text-center">Setelah melakukan submit, jadwal tidak dapat dibatalkan!</p>
+            <p class="text-danger pt-3 text-center">After submitting, the schedule cannot be canceled!</p>
 
-            <button type="submit" class="btn btn-primary" id="submit-button">Simpan Jadwal</button>
+            <button type="submit" class="btn btn-primary" id="submit-button">Save</button>
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
             {{-- script checking data input user dengan data schedule --}}

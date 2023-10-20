@@ -53,12 +53,6 @@
                     </ul>
                 </div>
             </li>
-            <li @if ($pageSlug == 'icons') class="active " @endif>
-                <a href="{{ route('pages.icons') }}">
-                    <i class="tim-icons icon-money-coins"></i>
-                    <p>{{ __('Accounting') }}</p>
-                </a>
-            </li>
             <li @if ($pageSlug == 'admin.cashFlow') class="active " @endif>
                 <a data-toggle="collapse" href="#accounting" aria-expanded="true">
                     <i class="fab fa-laravel" ></i>
@@ -77,13 +71,13 @@
                         <li @if ($pageSlug == 'transactions') class="active " @endif>
                             <a href="{{ route('admin.transactions')  }}">
                                 <i class="tim-icons icon-bullet-list-67"></i>
-                                <p>{{ __('Transaksi Masuk') }}</p>
+                                <p>{{ __('Incoming Trnsaction') }}</p>
                             </a>
                         </li>
                         <li @if ($pageSlug == 'admin.expense') class="active " @endif>
                             <a href="{{ route('admin.expenses')  }}">
                                 <i class="tim-icons icon-bullet-list-67"></i>
-                                <p>{{ __('Transaksi Keluar') }}</p>
+                                <p>{{ __('Outgoing Transaction') }}</p>
                             </a>
                         </li>
                     </ul>

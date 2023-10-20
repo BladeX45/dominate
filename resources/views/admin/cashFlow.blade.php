@@ -13,27 +13,27 @@
                     <div class="container-fluid">
                         <div class="form-row">
                             <div class="form-group col-md-6">
-                                <label for="filterMonth">Bulan:</label>
+                                <label for="filterMonth">Month:</label>
                                 <select class="form-control" id="filterMonth">
-                                    <option class="bg-dark" value="">Tampilkan Semua Bulan</option>
-                                    <option class="bg-dark" value="01">Januari</option>
-                                    <option class="bg-dark" value="02">Februari</option>
-                                    <option class="bg-dark" value="03">Maret</option>
+                                    <option class="bg-dark" value="">Show All Months</option>
+                                    <option class="bg-dark" value="01">January</option>
+                                    <option class="bg-dark" value="02">February</option>
+                                    <option class="bg-dark" value="03">March</option>
                                     <option class="bg-dark" value="04">April</option>
-                                    <option class="bg-dark" value="05">Mei</option>
-                                    <option class="bg-dark" value="06">Juni</option>
-                                    <option class="bg-dark" value="07">Juli</option>
-                                    <option class="bg-dark" value="08">Agustus</option>
-                                    <option value="09">September</option>
-                                    <option class="bg-dark" value="10">Oktober</option>
+                                    <option class="bg-dark" value="05">May</option>
+                                    <option class="bg-dark" value="06">June</option>
+                                    <option class="bg-dark" value="07">July</option>
+                                    <option class="bg-dark" value="08">August</option>
+                                    <option class="bg-dark" value="09">September</option>
+                                    <option class="bg-dark" value="10">October</option>
                                     <option class="bg-dark" value="11">November</option>
-                                    <option class="bg-dark" value="12">Desember</option>
+                                    <option class="bg-dark" value="12">December</option>
                                 </select>
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="filterYear">Tahun:</label>
+                                <label for="filterYear">Year:</label>
                                 <select class="form-control" id="filterYear">
-                                    <option class="text-light" value="">Tampilkan Semua Tahun</option>
+                                    <option class="text-light" value="">Show All Years</option>
                                     @for ($year = date("Y"); $year >= 2000; $year--)
                                         <option class="bg-dark" value="{{ $year }}">{{ $year }}</option>
                                     @endfor
@@ -63,14 +63,14 @@
                                                     <td>{{$cashflow->expense->transactionID}}</td>
                                                 @endif
                                                 <td>{{$cashflow->date}}</td>
-                                                <td>{{$cashflow->debitAmount}}</td>
-                                                <td>{{$cashflow->creditAmount}}</td>
-                                                <td>{{$cashflow->balance}}</td>
+                                                <td>Rp. {{ number_format($cashflow->debitAmount, 0, ',', '.') }} IDR</td>
+                                                <td>Rp. {{ number_format($cashflow->creditAmount, 0, ',', '.') }} IDR</td>
+                                                <td>Rp. {{ number_format($cashflow->balance, 0, ',', '.') }} IDR</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
-                                <p id="noTransactions" style="display: none; color: red;">Tidak ada transaksi di bulan ini.</p>
+                                <p id="noTransactions" style="display: none; color: red;">No Transaction This Month</p>
                             </div>
 
                         </div>

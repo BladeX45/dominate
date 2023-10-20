@@ -32,9 +32,9 @@
                     <i class="tim-icons icon-wifi"></i>
                 </div>
                 <div class="description">
-                    <h3 class="info-title">{{ __('Marketing') }}</h3>
+                    <h3 class="info-title">{{ __('Driving School Services') }}</h3>
                     <p class="description">
-                        {{ __('We\'ve created the marketing campaign of the website. It was a very interesting collaboration.') }}
+                        {{ __('We provide comprehensive driving school services. It has been an exciting and educational journey.') }}
                     </p>
                 </div>
             </div>
@@ -43,9 +43,9 @@
                     <i class="tim-icons icon-triangle-right-17"></i>
                 </div>
                 <div class="description">
-                    <h3 class="info-title">{{ __('Fully Coded in HTML5') }}</h3>
+                    <h3 class="info-title">{{ __('Modern Curriculum') }}</h3>
                     <p class="description">
-                        {{ __('We\'ve developed the website with HTML5 and CSS3. The client has access to the code using GitHub.') }}
+                        {{ __('Our curriculum is designed with a modern approach to driver education, ensuring an interactive and engaging learning experience.') }}
                     </p>
                 </div>
             </div>
@@ -54,9 +54,9 @@
                     <i class="tim-icons icon-trophy"></i>
                 </div>
                 <div class="description">
-                    <h3 class="info-title">{{ __('Built Audience') }}</h3>
+                    <h3 class="info-title">{{ __('Satisfied Student Community') }}</h3>
                     <p class="description">
-                        {{ __('There is also a Fully Customizable CMS Admin Dashboard for this product.') }}
+                        {{ __('We take pride in our satisfied student community. Additionally, we offer a fully customizable experience for our students.') }}
                     </p>
                 </div>
             </div>
@@ -65,7 +65,7 @@
             <div class="card card-register card-white">
                 <div class="card-header">
                     <img class="card-img" src="{{ asset('black') }}/img/card-primary.png" alt="Card image">
-                    <h4 class="card-title">{{ __('Daftar') }}</h4>
+                    <h4 class="card-title">{{ __('Register') }}</h4>
                 </div>
                 <div class="card-body">
                     {{-- create form --}}

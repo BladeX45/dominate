@@ -46,9 +46,19 @@
                         <td>{{ $transaction->transactionStatus }}</td>
                         {{-- if receiptTransfer != null --}}
                         @if($transaction->receiptTransfer != null)
-                            <td><img src="{{ asset('storage/receipts/'.$transaction->receiptTransfer) }}" alt="receiptTransfer" style="height:5rem;"></td>
+                            <td>
+                                <a href="#" data-toggle="modal" data-target="#imageModal{{$transaction->transactionID}}">
+                                    <img src="{{ asset('storage/receipts/'.$transaction->receiptTransfer) }}" alt="receiptTransfer" style="height:5rem;">
+                                </a>
+                                {{-- Modal --}}
+                                <x-modal title="Evidence" idModal="imageModal{{$transaction->transactionID}}" customStyle="">
+                                    <img src="{{ asset('storage/receipts/'.$transaction->receiptTransfer) }}" alt="receiptTransfer" style="height:100%;">
+                                </x-modal>
+                            </td>
                         @else
-                            <td class="text-center"><img src="https://w7.pngwing.com/pngs/29/173/png-transparent-null-pointer-symbol-computer-icons-pi-miscellaneous-angle-trademark.png" alt="null" style="height: 1.5rem;"></td>
+                            <td class="d-flex justify-content-center">
+                                <img src="https://w7.pngwing.com/pngs/29/173/png-transparent-null-pointer-symbol-computer-icons-pi-miscellaneous-angle-trademark.png" alt="null" style="height: 1.5rem;">
+                            </td>
                         @endif
                         <td>{{ $transaction->transactionDate }}</td>
                         {{-- verify transaction --}}

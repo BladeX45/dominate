@@ -4,10 +4,10 @@
     <div class="card">
         <div class="card-header">
             <div class="d-flex justify-content-between">
-            <h3 class="title">Pengeluaran</h3>
+            <h3 class="title">Expense</h3>
             <button type="button" class="btn btn-sm btn-primary me-3" data-bs-toggle="modal" data-bs-target="#expense">
                 <span>
-                    <i class="tim-icons icon-basket-simple"><b> Tambah Transaksi</b></i>
+                    <i class="tim-icons icon-basket-simple"><b> Add Expense</b></i>
                 </span>
             </button>
         </div>
@@ -18,11 +18,11 @@
                     <thead class="thead">
                         <tr>
                             <th>No</th>
-                            <th>ID Transaksi</th>
-                            <th>Nama Transaksi</th>
-                            <th>Jumlah Keluar</th>
-                            <th>Tanggal Transaksi</th>
-                            <th>deskripsi</th>
+                            <th>Transaction ID</th>
+                            <th>Transaction Name</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Description</th>
                         </tr>
                     </thead>
                     <div class="tbody">
@@ -47,22 +47,22 @@
         <x-form action="{{route('admin.addExpense')}}" method="post">
             {{-- expense Name --}}
             <div class="form-group">
-                <label for="expenseName">Nama Pengeluaran</label>
+                <label for="expenseName">Transaction Name</label>
                 <input type="text" class="form-control" id="expenseName" name="expenseName" placeholder="Nama Pengeluaran" required>
             </div>
             {{-- expense Amount --}}
             <div class="form-group">
-                <label for="expenseAmount">Jumlah Pengeluaran</label>
+                <label for="expenseAmount">Amount</label>
                 <input type="number" class="form-control" id="expenseAmount" name="expenseAmount" placeholder="Jumlah Pengeluaran" required>
             </div>
             {{-- expense Date --}}
             <div class="form-group">
-                <label for="expenseDate">Tanggal Pengeluaran</label>
+                <label for="expenseDate">Date</label>
                 <input type="date" class="form-control" id="expenseDate" name="expenseDate" placeholder="Tanggal Pengeluaran" required>
             </div>
             {{-- expense Description --}}
             <div class="form-group">
-                <label for="expenseDescription">Deskripsi Pengeluaran</label>
+                <label for="expenseDescription">Description</label>
                 <textarea class="form-control" id="expenseDescription" name="expenseDescription" rows="3" placeholder="Deskripsi Pengeluaran" required></textarea>
             </div>
 
