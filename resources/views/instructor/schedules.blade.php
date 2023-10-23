@@ -4,7 +4,7 @@
     <div class="content">
         <div class="container-fluid">
             <div class="row">
-                <div class="card bg-primary">
+                <div class="card">
                     <div class="card-header title">
                         <h3 class="title">
                             <i class="tim-icons icon-calendar-60 text-primary"></i> {{ __('Schedules') }}
@@ -50,8 +50,8 @@
                                             {{-- check nilai --}}
                                             <td>
                                                 {{-- penilaian instruktur --}}
-                                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#score{{$schedule->id}}">
-                                                    Cek Nilai
+                                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rating{{$schedule->id}}">
+                                                    Cek Rating
                                                 </button>
                                             </td>
                                         @elseif($schedule->status === 'need rating')
@@ -69,13 +69,36 @@
                                         <td>
                                         @elseif ($schedule->status == 'pending')
                                         <td>
-                                            <x-form action="{{ route('instructor.train')}}" method="post">
-                                                {{-- hidden input --}}
-                                                <input type="hidden" name="scheduleID" value="{{$schedule->id}}">
-                                                <button type="submit" class="btn btn-primary btn-sm">
-                                                    {{ __('Mulai Latihan')}}
-                                                </button>
-                                            </x-form>
+
+                                            {{-- button modal confirmation --}}
+                                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#Confirmation{{$schedule->id}}">
+                                                {{ __('Start Training')}}
+                                            </button>
+                                            <x-modal title="" idModal="Confirmation{{$schedule->id}}" customStyle="">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <h3 class="text-light d-flex justify-content-center">
+                                                                    Are you sure want to start training?
+                                                                </h3>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-6 d-flex justify-content-center">
+                                                                <form action="{{route('instructor.train')}}" method="post">
+                                                                    @csrf
+                                                                    <input type="hidden" name="scheduleID" value="{{$schedule->id}}">
+                                                                    <button type="submit" class="btn btn-primary">Yes</button>
+                                                                </form>
+                                                            </div>
+                                                            <div class="col-md-6 d-flex justify-content-center">
+                                                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">No</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </x-modal>
                                         </td>
                                         @else
                                             <td>
@@ -83,7 +106,6 @@
                                                     Penilaian
                                                 </button>
                                             </td>
-
                                     @endif
                                 </tr>
                                 @endforeach
@@ -100,231 +122,199 @@
         </div>
     </div>
 
-    @foreach ($scores as $score )
-        <x-modal idModal="score{{$score->scheduleID}}" title="Nilai Peserta" customStyle="modal-lg">
-            {{--  --}}
-            <div class="row">
-                <div class="col-md-8">
-                    {{-- nama customer --}}
-                    <p class="text-primary">Nama Peserta : {{$score->customer->firstName}} {{$score->customer->lastName}}</p>
-                    {{-- nama instructor --}}
-                    <p class="text-primary">Nama Instruktur : {{$score->instructor->firstName}} {{$score->instructor->lastName}}</p>
-                    {{-- tanggal latihan --}}
-                    <p class="text-primary">Tanggal Latihan : {{$score->schedule->date}}, Sesi : {{$score->schedule->session}}</p>
-                    {{-- score : theoryKnowledge, practicalDriving, hazardPerception, trafficRulesCompliance, confidenceAndAttitude, overallAssessment, overallAssessment, dalam bahasa indonesia --}}
-                    <p class="text-primary">Nilai : </p>
-                    <ul>
-                        <li>Pengetahuan Teori : {{$score->theoryKnowledge}}</li>
-                        <li>Praktik Mengemudi : {{$score->practicalDriving}}</li>
-                        <li>Persepsi Bahaya : {{$score->hazardPerception}}</li>
-                        <li>Kepatuhan Aturan Lalu Lintas : {{$score->trafficRulesCompliance}}</li>
-                        <li>Kepercayaan Diri dan Sikap : {{$score->confidenceAndAttitude}}</li>
-                        <li>Penilaian Keseluruhan : {{$score->overallAssessment}}</li>
-                    </ul>
+    @foreach ($ratings as $rating)
+    <x-modal title="Rate From Customer" idModal="rating{{$rating->scheduleID}}" customStyle="">
+        {{-- Ratings Meter --}}
+        <div class="row">
+            <div class="col-md-12">
+                {{-- scale rating->rating to /100 --}}
+                @php
+                    // temp rating
+                    $temp_rating = $rating->rating;
+                    $rating->rating = $rating->rating * 10;
+                @endphp
+                {{-- rating meter --}}
+                {{-- if ratings => 70 --}}
+                @if ($rating->rating >= 70)
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-success text-dark" role="progressbar" aria-valuenow="{{$rating->rating}}" aria-valuemin="0" aria-valuemax="100" style="width: {{$rating->rating}}%;">{{$temp_rating}}/10</div>
+                    </div>
+                {{-- if ratings 40 > x < 70 --}}
+                @elseif ($rating->rating < 70 && $rating->rating >= 40)
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-waring text-dark" role="progressbar" aria-valuenow="{{$rating->rating}}" aria-valuemin="0" aria-valuemax="100" style="width: {{$rating->rating}}%">{{$temp_rating}}/10</div>
+                    </div>
+                {{-- if ratings < 40 --}}
+                @else
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger text-dark" role="progressbar" aria-valuenow="{{$rating->rating}}" aria-valuemin="0" aria-valuemax="100" style="width: {{$rating->rating}}%">{{$temp_rating}}/10</div>
+                    </div>
+                @endif
 
-                    {{-- additional comment --}}
-                    <p class="text-primary">Komentar : {{$score->additionalComment}}</p>
-                    {{-- if isFinal -> 1 && overallAssessment 70> then show generate certificate  --}}
-                    @if ($score->isFinal === 1 && $score->overallAssessment >= 70)
-                        {{-- form button generate certificate --}}
-                        <form action="{{route('customer.generateCertificate')}}" method="post">
-                            @csrf
-                            {{-- hidden scheduleID --}}
-                            <input type="hidden" name="scheduleID" value="{{$score->scheduleID}}">
-                            {{-- hidden customerID --}}
-                            <input type="hidden" name="customerID" value="{{$score->customerID}}">
-                            {{-- hidden instructorID --}}
-                            <input type="hidden" name="instructorID" value="{{$score->instructorID}}">
-                            {{-- hidden scoreID --}}
-                            <input type="hidden" name="scoreID" value="{{$score->id}}">
-                            {{-- button generate certificate --}}
-                            <button type="submit" class="btn btn-primary">Generate Certificate</button>
-                        </form>
-                    @endif
-                </div>
+                {{-- comment box --}}
+                <div class="form-group pt-2">
+                    <label for="exampleFormControlTextarea1">Comment :</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" readonly>{{$rating->comment}}</textarea>
+                  </div>
             </div>
-        </x-modal>
+        </div>
+    </x-modal>
     @endforeach
 
-    @if($schedules)
-    @foreach ($schedules as $schedule)
-    <x-modal idModal="rate{{$schedule->id}}" title="Form Penilaian" customStyle="modal-lg">
-        <x-form action="{{ route('instructor.addScore')}}" method="post">
-            <div class="row">
-                <div class="col" style="padding-left: 0">
-                    <div class="container-fluid">
-                        <p style="list-style: none; padding-left: 0;" class="text-primary">{{ __('Nama Peserta :') }} <br> {{$schedule->customer->firstName}} {{$schedule->customer->lastName}}</p>
-                        <p style="list-style: none; padding-left: 0;" class="text-primary">{{ __('Nama Instruktur :') }} <br> {{$schedule->instructor->firstName}} {{$schedule->instructor->lastName}}</p>
+    @foreach ($scores as $score )
+    <x-modal idModal="score{{$score->scheduleID}}" title="Participant Score" customStyle="">
+        {{--  --}}
+        <div class="row">
+            <div class="col-md-12">
+                {{-- customer name --}}
+                <p class="text-primary">Participant Name: {{$score->customer->firstName}} {{$score->customer->lastName}}</p>
+                {{-- instructor name --}}
+                <p class="text-primary">Instructor Name: {{$score->instructor->firstName}} {{$score->instructor->lastName}}</p>
+                {{-- training date --}}
+                <p class="text-primary">Training Date: {{$score->schedule->date}}, Session: {{$score->schedule->session}}</p>
+                {{-- scores: theoryKnowledge, practicalDriving, hazardPerception, trafficRulesCompliance, confidenceAndAttitude, overallAssessment --}}
+                <p class="text-primary">Scores: </p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="theoryKnowledge" class="text-primary">{{ __('Theory Knowledge Score')}}</label><br>
+                            <input type="number" class="w-100" id="theoryKnowledge" name="theoryKnowledge" value="{{$score->theoryKnowledge}}" readonly><br>
+                        </div>
+                        <div class="form-group">
+                            <label for="practicalDriving" class="text-primary">{{ __('Practical Driving Score')}}</label><br>
+                            <input type a="number" class="w-100" id="practicalDriving" name="practicalDriving" value="{{$score->practicalDriving}}" readonly><br>
+                        </div>
+                        <div class="form-group">
+                            <label for="hazardPerception" class="text-primary">{{ __('Hazard Perception Score')}}</label><br>
+                            <input type="number" class="w-100" id="hazardPerception" name="hazardPerception" value="{{$score->hazardPerception}}" readonly><br>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="trafficRulesCompliance" class="text-primary">{{ __('Traffic Rules Compliance Score')}}</label><br>
+                            <input type="number" class="w-100" id="trafficRulesCompliance" name="trafficRulesCompliance" value="{{$score->trafficRulesCompliance}}" readonly><br>
+                        </div>
+                        <div class="form-group">
+                            <label for="confidenceAndAttitude" class="text-primary">{{ __('Confidence and Attitude Score')}}</label><br>
+                            <input type="number" class="w-100" id="confidenceAndAttitude" name="confidenceAndAttitude" value="{{$score->confidenceAndAttitude}}" readonly><br>
+                        </div>
+                        <div class="form-group">
+                            <label for="overallAssessment" class="text-primary">{{ __('Overall Score')}}</label><br>
+                            <input type="number" class="w-100" id="overallAssessment" name="overallAssessment" value="{{$score->overallAssessment}}" readonly><br>
+                        </div>
                     </div>
                 </div>
-                <div class="col">
-                    {{-- date --}}
-                    <p class="text-primary">{{ __('Tanggal, Sesi')}}  {{$schedule->date}}, Sesi : {{$schedule->session}}</p>
+                {{-- additional comment --}}
+                <p class="text-primary">Comment: {{$score->additionalComment}}</p>
+                {{-- if isFinal -> 1 && overallAssessment >= 70 then show generate certificate  --}}
+                @if ($score->isFinal === 1 && $score->overallAssessment >= 70)
+                    {{-- certificate generation button form --}}
+                    <form action="{{route('customer.generateCertificate')}}" method="post">
+                        @csrf
+                        {{-- hidden scheduleID --}}
+                        <input type="hidden" name="scheduleID" value="{{$score->scheduleID}}">
+                        {{-- hidden customerID --}}
+                        <input type="hidden" name="customerID" value="{{$score->customerID}}">
+                        {{-- hidden instructorID --}}
+                        <input type="hidden" name="instructorID" value="{{$score->instructorID}}">
+                        {{-- hidden scoreID --}}
+                        <input type="hidden" name="scoreID" value="{{$score->id}}">
+                        {{-- generate certificate button --}}
+                        <button type="submit" class="btn btn-primary">Generate Certificate</button>
+                    </form>
+                @endif
+            </div>
+        </div>
+    </x-modal>
+@endforeach
+@if($schedules)
+    @foreach ($schedules as $schedule)
+    <x-modal idModal="rate{{$schedule->id}}" title="Form Penilaian" customStyle="modal-lg">
+        <x-form action="{{ route('instructor.addScore') }}" method="post">
+            <!-- Your HTML structure for participant and instructor information -->
+            <div class="row">
+                <div class="col-6">
+                    <div class="form-group">
+                        <label for="theoryKnowledge{{$schedule->id}}" class="text-primary">{{ __('Theory Knowledge Score')}}</label><br>
+                        <input type="number" class="w-100" id="theoryKnowledge{{$schedule->id}}" name="theoryKnowledge" required><br>
+                    </div>
+                    <div class="form-group">
+                        <label for="practicalDriving{{$schedule->id}}" class="text-primary">{{ __('Practical Driving Score')}}</label><br>
+                        <input type="number" class="w-100" id="practicalDriving{{$schedule->id}}" name="practicalDriving" required><br>
+                    </div>
+                    <div class="form-group">
+                        <label for="hazardPerception{{$schedule->id}}" class="text-primary">{{ __('Hazard Perception Score')}}</label><br>
+                        <input type="number" class="w-100" id="hazardPerception{{$schedule->id}}" name="hazardPerception" required><br>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group">
+                        <label for="trafficRulesCompliance{{$schedule->id}}" class="text-primary">{{ __('Traffic Rules Compliance Score')}}</label><br>
+                        <input type="number" class="w-100" id="trafficRulesCompliance{{$schedule->id}}" name="trafficRulesCompliance" required><br>
+                    </div>
+                    <div class="form-group">
+                        <label for="confidenceAndAttitude{{$schedule->id}}" class="text-primary">{{ __('Confidence and Attitude Score')}}</label><br>
+                        <input type="number" class="w-100" id="confidenceAndAttitude{{$schedule->id}}" name="confidenceAndAttitude" required><br>
+                    </div>
+                    <div class="form-group">
+                        <label for="overallAssessment{{$schedule->id}}" class="text-primary">{{ __('Overall Score')}}</label><br>
+                        <input type="number" class="w-100" id="overallAssessment{{$schedule->id}}" name="overallAssessment" readonly><br>
+                    </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-6">
-                    <label for="theoryKnowledge{{$schedule->id}}" class="text-primary">{{ __('Nilai Teori Pengetahuan')}}</label><br>
-                    <input type="number" class="w-100" id="theoryKnowledge{{$schedule->id}}" name="theoryKnowledge" required><br>
-                    <label for="practicalDriving{{$schedule->id}}" class="text-primary">{{ __('Nilai Practical Mengemudi')}}</label><br>
-                    <input type="number" class="w-100" id="practicalDriving{{$schedule->id}}" name="practicalDriving" required><br>
-                    <label for="hazardPerception{{$schedule->id}}" class="text-primary">{{ __('Nilai Kesadaran Mengemudi')}}</label><br>
-                    <input type="number" class="w-100" id="hazardPerception{{$schedule->id}}" name="hazardPerception" required><br>
-                </div>
-                <div class="col-6">
-                    <label for="trafficRulesCompliance{{$schedule->id}}" class="text-primary">{{ __('Nilai Kepatuhan Lalu Lintas')}}</label><br>
-                    <input type="number" class="w-100" id="trafficRulesCompliance{{$schedule->id}}" name="trafficRulesCompliance" required><br>
-                    <label for="confidenceAndAttitude{{$schedule->id}}" class="text-primary">{{ __('Nilai Percaya Diri dan Perilaku')}}</label><br>
-                    <input type="number" class="w-100" id="confidenceAndAttitude{{$schedule->id}}" name="confidenceAndAttitude" required><br>
-                    <label for="overallAssessment{{$schedule->id}}" class="text-primary">{{ __('Rata-rata Nilai')}}</label><br>
-                    <input type="number" class="w-100" id="overallAssessment{{$schedule->id}}" name="overallAssessment" readonly><br>
-                </div>
-            </div>
-            <div class="row">
                 <div class="col">
-                    <label for="additionalComment{{$schedule->id}}" class="text-primary">{{ __('Tambahan Komentar')}}</label>
+                    <label for="additionalComment{{$schedule->id}}" class="text-primary">{{ __('Additional Comment') }}</label>
                     <textarea id="additionalComment{{$schedule->id}}" class="w-100" name="additionalComment" rows="4"></textarea>
                 </div>
             </div>
-            {{-- checkbox button isFinal --}}
-            <input type="radio" name="isFinal" id="isFinal{{$schedule->id}}">
-            <label for="isFinal{{$schedule->id}}" class="text-primary">{{ __('Nilai Akhir')}}</label><br>
-            {{-- hidden input scheduleID --}}
-            <input type="hidden" name="scheduleID" value="{{$schedule->id}}">
-            {{-- hidden input customerID --}}
-            <input type="hidden" name="customerID" value="{{$schedule->customer->id}}">
-            {{-- hidden input instructorID --}}
             <div class="row">
                 <div class="col">
-                    <button type="submit" class="btn btn-primary">{{ __('Kirim')}}</button>
+                    <input type="radio" name="isFinal{{$schedule->id}}" id="isFinal{{$schedule->id}}" value="1">
+                    <label for="isFinal{{$schedule->id}}" class="text-primary">{{ __('Certificate') }}</label><br>
                 </div>
             </div>
-            <script>
-                // Fungsi untuk menghitung rata-rata
-                function hitungRataRata(modalId) {
-                    // Mendapatkan elemen-elemen input berdasarkan modalId
-                    var teoriPengetahuanInput = document.getElementById("theoryKnowledge" + modalId);
-                    var practicalMengemudiInput = document.getElementById("practicalDriving" + modalId);
-                    var kesadaranMengemudiInput = document.getElementById("hazardPerception" + modalId);
-                    var kepatuhanLalinInput = document.getElementById("trafficRulesCompliance" + modalId);
-                    var percayaDiridanPerilakuInput = document.getElementById("confidenceAndAttitude" + modalId);
-                    var ratarataInput = document.getElementById("overallAssessment" + modalId);
-
-                    // Mendengarkan perubahan nilai input
-                    teoriPengetahuanInput.addEventListener("input", function () {
-                        hitungRataRata(modalId);
-                    });
-                    practicalMengemudiInput.addEventListener("input", function () {
-                        hitungRataRata(modalId);
-                    });
-                    kesadaranMengemudiInput.addEventListener("input", function () {
-                        hitungRataRata(modalId);
-                    });
-                    kepatuhanLalinInput.addEventListener("input", function () {
-                        hitungRataRata(modalId);
-                    });
-                    percayaDiridanPerilakuInput.addEventListener("input", function () {
-                        hitungRataRata(modalId);
-                    });
-
-                    // Fungsi untuk menghitung rata-rata
-                    function hitungRataRata(modalId) {
-                        var teoriPengetahuan = parseFloat(teoriPengetahuanInput.value) || 0;
-                        var practicalMengemudi = parseFloat(practicalMengemudiInput.value) || 0;
-                        var kesadaranMengemudi = parseFloat(kesadaranMengemudiInput.value) || 0;
-                        var kepatuhanLalin = parseFloat(kepatuhanLalinInput.value) || 0;
-                        var percayaDiridanPerilaku = parseFloat(percayaDiridanPerilakuInput.value) || 0;
-
-                        // Menghitung rata-rata
-                        var totalNilai = teoriPengetahuan + practicalMengemudi + kesadaranMengemudi + kepatuhanLalin + percayaDiridanPerilaku;
-                        var rataRata = totalNilai / 5;
-
-                        // Menetapkan nilai rata-rata ke input ratarata
-                        ratarataInput.value = rataRata.toFixed(2); // Menampilkan dua angka desimal
-                    }
-                }
-                // Panggil fungsi hitungRataRata dengan idModal yang sesuai
-                hitungRataRata("{{$schedule->id}}");
-            </script>
+            <input type="hidden" name="scheduleID" value="{{$schedule->id}}">
+            <input type="hidden" name="customerID" value="{{$schedule->customer->id}}">
+            <input type="hidden" name="instructorID" value="{{$schedule->instructor->id}}">
+            <div class="row">
+                <div class="col">
+                    <button type="submit" class="btn btn-primary">{{ __('Kirim') }}</button>
+                </div>
+            </div>
         </x-form>
     </x-modal>
+    <script>
+        // Function for calculating average
+        function hitungRataRata(scheduleId) {
+            // Get input elements by scheduleId
+            var teoriPengetahuanInput = document.getElementById("theoryKnowledge" + scheduleId);
+            var practicalMengemudiInput = document.getElementById("practicalDriving" + scheduleId);
+            var kesadaranMengemudiInput = document.getElementById("hazardPerception" + scheduleId);
+            var kepatuhanLalinInput = document.getElementById("trafficRulesCompliance" + scheduleId);
+            var percayaDiriInput = document.getElementById("confidenceAndAttitude" + scheduleId);
+            var ratarataInput = document.getElementById("overallAssessment" + scheduleId);
+
+            // Validate input values (ensure they are numbers)
+            var teoriPengetahuan = parseFloat(teoriPengetahuanInput.value) || 0;
+            var practicalMengemudi = parseFloat(practicalMengemudiInput.value) || 0;
+            var kesadaranMengemudi = parseFloat(kesadaranMengemudiInput.value) || 0;
+            var kepatuhanLalin = parseFloat(kepatuhanLalinInput.value) || 0;
+            var percayaDiri = parseFloat(percayaDiriInput.value) || 0;
+
+            // Calculate average
+            var totalNilai = teoriPengetahuan + practicalMengemudi + kesadaranMengemudi + kepatuhanLalin + percayaDiri;
+            var rataRata = totalNilai / 5;
+
+            // Set average value to the overall assessment input
+            ratarataInput.value = rataRata.toFixed(2); // Show two decimal places
+        }
+
+        // Call the function when the page loads for each schedule
+        hitungRataRata({{ $schedule->id }});
+    </script>
     @endforeach
-    @endif
-
-
-    {{-- if  --}}
-@if (count($schedules) > 0)
-
-@foreach ($schedules as $schedule)
-    {{-- modal penilaian instruktur --}}
-    <x-modal idModal="rate{{$schedule->id}}" title="Penilaian Instruktur" customStyle="modal-lg">
-        <x-form action="{{route('customer.rating')}}" method="post">
-            {{-- hidden instructorID --}}
-            <input type="hidden" name="instructorID" value="{{ $schedule->instructor->id }}">
-            {{-- hidden scheduleID --}}
-            <input type="hidden" name="scheduleID" value="{{ $schedule->id }}">
-            {{-- input rating 1-10 --}}
-            <div class="form-group">
-                <label for="rating">Rating</label>
-                <input type="number" name="rating" id="rating" class="form-control" min="1" max="10">
-            </div>
-            {{-- input comment --}}
-            <div class="form-group">
-                <label for="comment">Komentar</label>
-                <textarea name="comment" id="comment" cols="30" rows="10" class="form-control"></textarea>
-            </div>
-            {{-- button submit --}}
-            <button type="submit" class="btn btn-primary">Simpan</button>
-        </x-form>
-    </x-modal>
-@endforeach
-
 @endif
 
-    <script>
-        // Fungsi untuk menghitung rata-rata
-        function hitungRataRata(modalId) {
-            // Mendapatkan elemen-elemen input berdasarkan modalId
-            var teoriPengetahuanInput = document.getElementById("theoryKnowledge" + modalId);
-            var practicalMengemudiInput = document.getElementById("practicalDriving" + modalId);
-            var kesadaranMengemudiInput = document.getElementById("hazardPerception" + modalId);
-            var kepatuhanLalinInput = document.getElementById("trafficRulesCompliance" + modalId);
-            var percayaDiridanPerilakuInput = document.getElementById("confidenceAndAttitude" + modalId);
-            var ratarataInput = document.getElementById("overallAssessment" + modalId);
-
-            // Mendengarkan perubahan nilai input
-            teoriPengetahuanInput.addEventListener("input", function () {
-                hitungRataRata(modalId);
-            });
-            practicalMengemudiInput.addEventListener("input", function () {
-                hitungRataRata(modalId);
-            });
-            kesadaranMengemudiInput.addEventListener("input", function () {
-                hitungRataRata(modalId);
-            });
-            kepatuhanLalinInput.addEventListener("input", function () {
-                hitungRataRata(modalId);
-            });
-            percayaDiridanPerilakuInput.addEventListener("input", function () {
-                hitungRataRata(modalId);
-            });
-
-            // Fungsi untuk menghitung rata-rata
-            function hitungRataRata(modalId) {
-                var teoriPengetahuan = parseFloat(teoriPengetahuanInput.value) || 0;
-                var practicalMengemudi = parseFloat(practicalMengemudiInput.value) || 0;
-                var kesadaranMengemudi = parseFloat(kesadaranMengemudiInput.value) || 0;
-                var kepatuhanLalin = parseFloat(kepatuhanLalinInput.value) || 0;
-                var percayaDiridanPerilaku = parseFloat(percayaDiridanPerilakuInput.value) || 0;
-
-                // Menghitung rata-rata
-                var totalNilai = teoriPengetahuan + practicalMengemudi + kesadaranMengemudi + kepatuhanLalin + percayaDiridanPerilaku;
-                var rataRata = totalNilai / 5;
-
-                // Menetapkan nilai rata-rata ke input ratarata
-                ratarataInput.value = rataRata.toFixed(2); // Menampilkan dua angka desimal
-            }
-        }
-    </script>
 
 @endsection

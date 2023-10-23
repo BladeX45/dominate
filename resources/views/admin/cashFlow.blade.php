@@ -80,6 +80,7 @@
         </div>
     </div>
 
+
     <script>
         document.getElementById("filterMonth").addEventListener("change", filterTable);
         document.getElementById("filterYear").addEventListener("change", filterTable);

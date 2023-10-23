@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Car;
 use App\Models\Score;
+use App\Models\rating;
 use App\Models\Customer;
 use App\Models\Schedule;
 use App\Models\instructor;
@@ -199,10 +200,12 @@ class ScheduleController extends Controller
         // ddd(Auth::user()->id);
         $instructor = instructor::where('userID', Auth::user()->id)->first();
         $schedules = Schedule::where('instructorID', $instructor->id)->get();
+        // rating
+        $ratings = rating::where('instructorID', $instructor->id)->get();
         // score
         $scores = Score::all();
 
-        return view('instructor.schedules', compact('schedules', 'scores'));
+        return view('instructor.schedules', compact('schedules', 'scores','ratings'));
     }
 
     // train

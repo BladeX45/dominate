@@ -13,7 +13,7 @@
                     <div class="card">
                         <div class="card-header">
                             <h2 class="title">
-                                {{ __('Jadwal') }}
+                                {{ __('Schedule') }}
                             </h2>
                         </div>
                         <div class="card-body">
@@ -25,10 +25,10 @@
                                                 {{ __('No') }}
                                             </th>
                                             <th>
-                                                {{ __('Nama') }}
+                                                {{ __('Customer Name') }}
                                             </th>
                                             <th>
-                                                {{ __('Tanggal') }}
+                                                {{ __('Date') }}
                                             </th>
                                             <th>
                                                 {{ __('Status') }}
@@ -86,12 +86,12 @@
                                             {{ __('No') }}
                                         </th>
                                         <th>
-                                            {{ __('Nama') }}
+                                            {{ __('Customer Name') }}
                                         </th>
                                         <th>
-                                            {{ __('ID Transaksi') }}
+                                            {{ __('Transaction ID') }}
                                         <th>
-                                            {{ __('Aksi') }}
+                                            {{ __('Action') }}
                                         </th>
                                     </tr>
                                 </thead>
@@ -108,8 +108,8 @@
                                                 {{ $score->id }}
                                             </td>
                                             <td>
-                                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#score{{$schedule->id}}">
-                                                    Cek Nilai
+                                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#score{{$score->scheduleID}}">
+                                                    Check score
                                                 </button>
                                             </td>
                                         </tr>
@@ -124,52 +124,72 @@
     </div>
 
     {{-- x-modal for score customer --}}
-@foreach ($scores as $score )
-<x-modal idModal="score{{$score->scheduleID}}" title="Nilai Peserta" customStyle="modal-lg">
-    {{--  --}}
-    <div class="row">
-        <div class="col-md-8">
-            {{-- nama customer --}}
-            <p class="text-primary">Nama Peserta : {{$score->customer->firstName}} {{$score->customer->lastName}}</p>
-            {{-- nama instructor --}}
-            <p class="text-primary">Nama Instruktur : {{$score->instructor->firstName}} {{$score->instructor->lastName}}</p>
-            {{-- tanggal latihan --}}
-            <p class="text-primary">Tanggal Latihan : {{$score->schedule->date}}, Sesi : {{$score->schedule->session}}</p>
-            {{-- score : theoryKnowledge, practicalDriving, hazardPerception, trafficRulesCompliance, confidenceAndAttitude, overallAssessment, overallAssessment, dalam bahasa indonesia --}}
-            <p class="text-primary">Nilai : </p>
-            <ul>
-                <li>Pengetahuan Teori : {{$score->theoryKnowledge}}</li>
-                <li>Praktik Mengemudi : {{$score->practicalDriving}}</li>
-                <li>Persepsi Bahaya : {{$score->hazardPerception}}</li>
-                <li>Kepatuhan Aturan Lalu Lintas : {{$score->trafficRulesCompliance}}</li>
-                <li>Kepercayaan Diri dan Sikap : {{$score->confidenceAndAttitude}}</li>
-                <li>Penilaian Keseluruhan : {{$score->overallAssessment}}</li>
-            </ul>
-
-            {{-- additional comment --}}
-            <p class="text-primary">Komentar : {{$score->additionalComment}}</p>
-            {{-- if isFinal -> 1 && overallAssessment 70> then show generate certificate  --}}
-            @if ($score->isFinal === 1 && $score->overallAssessment >= 70)
-                {{-- form button generate certificate --}}
-                <form action="{{route('customer.generateCertificate')}}" method="post">
-                    @csrf
-                    {{-- hidden scheduleID --}}
-                    <input type="hidden" name="scheduleID" value="{{$score->scheduleID}}">
-                    {{-- hidden customerID --}}
-                    <input type="hidden" name="customerID" value="{{$score->customerID}}">
-                    {{-- hidden instructorID --}}
-                    <input type="hidden" name="instructorID" value="{{$score->instructorID}}">
-                    {{-- hidden scoreID --}}
-                    <input type="hidden" name="scoreID" value="{{$score->id}}">
-                    {{-- button generate certificate --}}
-                    <button type="submit" class="btn btn-primary">Generate Certificate</button>
-                </form>
-            @endif
+    @foreach ($scores as $score )
+    <x-modal idModal="score{{$score->scheduleID}}" title="Nilai Peserta" customStyle="">
+        {{--  --}}
+        <div class="row">
+            <div class="col-md-12">
+                {{-- nama customer --}}
+                <p class="text-primary">Nama Peserta : {{$score->customer->firstName}} {{$score->customer->lastName}}</p>
+                {{-- nama instructor --}}
+                <p class="text-primary">Nama Instruktur : {{$score->instructor->firstName}} {{$score->instructor->lastName}}</p>
+                {{-- tanggal latihan --}}
+                <p class="text-primary">Tanggal Latihan : {{$score->schedule->date}}, Sesi : {{$score->schedule->session}}</p>
+                {{-- score : theoryKnowledge, practicalDriving, hazardPerception, trafficRulesCompliance, confidenceAndAttitude, overallAssessment, overallAssessment, dalam bahasa indonesia --}}
+                <p class="text-primary">Nilai : </p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="theoryKnowledge{{$score->id}}" class="text-primary">{{ __('Nilai Teori Pengetahuan')}}</label><br>
+                            <input type="number" class="w-100" id="theoryKnowledge{{$score->id}}" name="theoryKnowledge" value="{{$score->theoryKnowledge}}" readonly><br>
+                        </div>
+                        <div class="form-group">
+                            <label for="practicalDriving{{$score->id}}" class="text-primary">{{ __('Nilai Practical Mengemudi')}}</label><br>
+                            <input type="number" class="w-100" id="practicalDriving{{$score->id}}" name="practicalDriving" value="{{$score->practicalDriving}}" readonly><br>
+                        </div>
+                        <div class="form-group">
+                            <label for="hazardPerception{{$score->id}}" class="text-primary">{{ __('Nilai Kesadaran Mengemudi')}}</label><br>
+                            <input type="number" class="w-100" id="hazardPerception{{$score->id}}" name="hazardPerception" value="{{$score->hazardPerception}}" readonly><br>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="trafficRulesCompliance{{$score->id}}" class="text-primary">{{ __('Nilai Kepatuhan Lalu Lintas')}}</label><br>
+                            <input type="number" class="w-100" id="trafficRulesCompliance{{$score->id}}" name="trafficRulesCompliance" value="{{$score->trafficRulesCompliance}}" readonly><br>
+                        </div>
+                        <div class="form-group">
+                            <label for="confidenceAndAttitude{{$score->id}}" class="text-primary">{{ __('Nilai Percaya Diri dan Perilaku')}}</label><br>
+                            <input type="number" class="w-100" id="confidenceAndAttitude{{$score->id}}" name="confidenceAndAttitude" value="{{$score->confidenceAndAttitude}}" readonly><br>
+                        </div>
+                        <div class="form-group">
+                            <label for="overallAssessment{{$score->id}}" class="text-primary">{{ __('Rata-rata Nilai')}}</label><br>
+                            <input type="number" class="w-100" id="overallAssessment{{$score->id}}" name="overallAssessment" value="{{$score->overallAssessment}}" readonly><br>
+                        </div>
+                    </div>
+                </div>
+                {{-- additional comment --}}
+                <p class="text-primary">Komentar : {{$score->additionalComment}}</p>
+                {{-- if isFinal -> 1 && overallAssessment 70> then show generate certificate  --}}
+                @if ($score->isFinal === 1 && $score->overallAssessment >= 70)
+                    {{-- form button generate certificate --}}
+                    <form action="{{route('customer.generateCertificate')}}" method="post">
+                        @csrf
+                        {{-- hidden scheduleID --}}
+                        <input type="hidden" name="scheduleID" value="{{$score->scheduleID}}">
+                        {{-- hidden customerID --}}
+                        <input type="hidden" name="customerID" value="{{$score->customerID}}">
+                        {{-- hidden instructorID --}}
+                        <input type="hidden" name="instructorID" value="{{$score->instructorID}}">
+                        {{-- hidden scoreID --}}
+                        <input type="hidden" name="scoreID" value="{{$score->id}}">
+                        {{-- button generate certificate --}}
+                        <button type="submit" class="btn btn-primary">Generate Certificate</button>
+                    </form>
+                @endif
+            </div>
         </div>
-    </div>
-</x-modal>
+    </x-modal>
 @endforeach
-
 @endsection
 
 @push('js')
