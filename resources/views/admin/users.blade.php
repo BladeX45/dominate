@@ -15,6 +15,15 @@
                                 <a href="{{-- route('admin.plans.create') --}}" class="btn btn-info btn-round" data-toggle="modal" data-target="#addUser">Add User</a>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="container-fluid">
+                                <div class="col-md-4">
+                                    <div class="searchInput">
+                                        <input type="text" name="search" id="searchInput" class="form-control" placeholder="Search Transaction">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -73,6 +82,7 @@
                                    @endforeach
                                </tbody>
                            </table>
+                           <p id="noDataFoundMessage" style="display: none; color: red;">Data not Found</p>
                            <nav aria-label="...">
                                <ul class="pagination">
                                    <!-- Tombol Previous -->

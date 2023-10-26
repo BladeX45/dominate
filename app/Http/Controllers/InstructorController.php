@@ -134,6 +134,24 @@ class InstructorController extends Controller
         return redirect()->route('instructors.index')->withStatus('Data instruktur berhasil diperbarui.');
     }
 
+    // certifUpdate upload image
+    public function certifUpdate(Request $request){
+        // dd($request->all());
+        $validatedData = $request->validate([
+            'certificate' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+
+        $imageName = time().'.'.$request->certificate->extension();
+        // upload to storage
+        $request->certificate->storeAs('certificate', $imageName, 'public');
+
+        // dd($imageName);
+        $instructor = Instructor::where('userID', auth()->user()->id)->first();
+        $instructor->certificate = $imageName;
+        $instructor->save();
+        return redirect()->route('instructor.profile')->withStatus('Sertifikat berhasil diupload.');
+    }
     /**
      * Menghapus data instruktur dari penyimpanan.
      */

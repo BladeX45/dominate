@@ -12,7 +12,7 @@
         <div class="container-fluid">
             <div class="col-md-4">
                 <div class="searchInput">
-                    <input type="text" name="search" id="searchInput" class="form-control" placeholder="Cari Jadwal">
+                    <input type="text" name="search" id="searchInput" class="form-control" placeholder="Search Transaction">
                 </div>
             </div>
         </div>
@@ -84,6 +84,7 @@
                     @endforeach
                 </tbody>
             </table>
+            <p id="noDataFoundMessage" style="display: none; color: red;">Data not Found</p>
         </div>
     </div>
 </div>

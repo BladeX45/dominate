@@ -8,7 +8,7 @@
                     <span class="navbar-toggler-bar bar3"></span>
                 </button>
             </div>
-            <a class="navbar-brand" href="#">{{ $page ?? 'WELCOME' }}</a>
+            <a class="navbar-brand" href="{{route('welcome')}}">{{ $page ?? 'WELCOME' }}</a>
         </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -18,9 +18,11 @@
         <div class="collapse navbar-collapse" id="navigation">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a href="{{ route('welcome') }}" class="nav-link text-primary">
-                        <i class="tim-icons icon-minimal-left"></i> {{ __('Landing Page') }}
-                    </a>
+
+                    <!-- Button to open the modal -->
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#checkCertificate">
+                        <i class="tim-icons icon-minimal-left"></i> Check Certificate
+                    </button>
                 </li>
                 <li class="nav-item ">
                     <a href="{{ route('register') }}" class="nav-link">
@@ -36,3 +38,18 @@
         </div>
     </div>
 </nav>
+
+<x-modal title="Check Certificate" idModal="checkCertificate" customStyle="">
+    <x-form action="{{ route('check-certificate')}}" method="post">
+        {{-- certificate number --}}
+        <div class="form-group">
+            <label for="certificateNumber">Certificate Number</label>
+            <input type="text" class="form-control" id="certificateNumber" name="certificateNumber" placeholder="Certificate Number" required>
+        </div>
+
+        {{-- submit --}}
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Check</button>
+        </div>
+    </x-form>
+</x-modal>

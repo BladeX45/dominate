@@ -55,6 +55,7 @@ class UserController extends Controller
                 'email' => $request->email,
                 'email_verified_at' => now(),
                 'password' => Hash::make($request->password),
+                'remember_token'=> '',
             ]);
 
             // update
@@ -101,6 +102,7 @@ class UserController extends Controller
                 'birthDate' => 'required_if:role,customer|date',
                 'phone' => 'required_if:role,customer|string|max:255',
                 'gender' => ['required_if:role,customer', Rule::in(['male', 'female', 'other'])],
+
             ]);
 
             if ($validator->fails()) {
@@ -114,6 +116,8 @@ class UserController extends Controller
                 'password' => Hash::make($request->password),
                 // email_verified_at
                 'email_verified_at' => now(),
+                // remember_token
+                // 'remember_token' => '',
             ]);
 
             // dd($user);
@@ -128,6 +132,7 @@ class UserController extends Controller
                 'phone' => $request->phone,
                 'gender' => $request->gender,
                 'address' => $request->address,
+                // 'remember_token' => '',
             ]);
 
             // auth attempt

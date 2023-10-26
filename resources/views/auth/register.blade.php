@@ -91,7 +91,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="password_confirmation">Password Confirmation</label>
-                                        <input type="password" class="form-control w-100" id="password_confirmation" name="password_confirmation">
+                                        <input type="password" class="form-control w-100" id="password_confirmation" onkeydown="return event.key != 'Enter';" name="password_confirmation">
                                     </div>
                                 </div>
                                 <div class="col-md-6">

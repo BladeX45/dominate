@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Customer;
+use App\Models\Instructor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\ProfileRequest;
@@ -28,12 +30,35 @@ class ProfileController extends Controller
      * @param  \App\Http\Requests\ProfileRequest  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(ProfileRequest $request)
+    public function update(Request $request)
     {
-        auth()->user()->update($request->all());
+        $user = User::find(auth()->user()->id);
+
+        if ($user) {
+            if ($user->roleID == 3) {
+                // Update user
+                $user->update($request->only(['name', 'email', 'password']));
+
+                // Update instructor
+                $instructor = Instructor::where('userID', auth()->user()->id)->first();
+                $instructor->update($request->only(['firstName', 'lastName', 'NIN', 'birthDate', 'gender', 'phoneNumber', 'address']));
+
+                return back()->withStatus(__('Profile successfully updated.'));
+            } elseif ($user->roleID == 2) {
+                // Update user
+                $user->update($request->only(['name', 'email', 'password']));
+
+                // Update customer
+                $customer = Customer::where('userID', auth()->user()->id)->first();
+                $customer->update($request->only(['firstName', 'lastName', 'NIN', 'birthDate', 'gender', 'phoneNumber', 'address']));
+
+                return back()->withStatus(__('Profile successfully updated.'));
+            }
+        }
 
         return back()->withStatus(__('Profile successfully updated.'));
     }
+
 
     public function updatePhoto(Request $request)
     {

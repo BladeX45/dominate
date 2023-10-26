@@ -10,7 +10,7 @@
                     <h3 class="title">Pricing</h3>
                     <button type="button" class="btn btn-sm btn-primary me-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
                         <span>
-                            <i class="tim-icons icon-basket-simple"><b> Cart</b></i>
+                            <i class="tim-icons icon-basket-simple"><b> Order</b></i>
                         </span>
                     </button>
                 </div>

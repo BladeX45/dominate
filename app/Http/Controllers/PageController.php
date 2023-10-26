@@ -279,9 +279,27 @@ class PageController extends Controller
         // Mengambil semua data rating dari tabel 'ratings' asc
         $ratings = rating::orderBy('created_at', 'asc')->get();
 
+        // dd($ratings);
+
         return view('welcome', compact('dataManual', 'dataMatic', 'ratings'));
     }
 
+    // checCertificate with certificate number
+    public function checkCertificate(Request $request){
+        // get input
+        $certificateNumber = $request->input('certificateNumber');
+        // get data certificate
+        $certificate = Certificate::where('certificateNumber', $certificateNumber)->first();
+        // if certificate isExist then redirect to show certificate
+        if($certificate != null){
+            // get data customer
+
+            // dd($scores);
+            return view('pages.certificate', compact('certificate'));
+        }
+        // if certificate is notExist then redirect back
+        return redirect()->back()->with('error', 'Certificate not found!');
+    }
     /**
      * Display upgrade page
      *
@@ -350,6 +368,15 @@ class PageController extends Controller
                 $instructors = instructor::find($instructorID);
                 // get data score
                 $scores = Score::where('customerID', $customerID)->where('scheduleID', $scheduleID)->first();
+
+                // dd($scores);
+                // if certificate customer ID and schedule ID isExist then redirect back
+                if(Certificate::where('customerID', $customerID)->where('scoreID', $scores->id)->exists()){
+                    // redirect to show customer certicate
+
+                    $certificate = Certificate::where('customerID', $customerID)->where('scoreID', $scores->id)->first();
+                    return view('pages.certificate', compact('schedules', 'customer', 'scores', 'instructors', 'certificate'));
+                }
 
 
                 // if certificate number isExist then create new number

@@ -3,14 +3,27 @@
 @section('content')
     <div class="card">
         <div class="card-header">
-            <div class="d-flex justify-content-between">
-            <h3 class="title">Expense</h3>
-            <button type="button" class="btn btn-sm btn-primary me-3" data-bs-toggle="modal" data-bs-target="#expense">
-                <span>
-                    <i class="tim-icons icon-basket-simple"><b> Add Expense</b></i>
-                </span>
-            </button>
-        </div>
+            <div class="row">
+                <div class="col-md-12">
+                   <h3 class="title">
+                    {{__('Expense')}}
+                   </h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="d-flex justify-content-between">
+                        <div class="searchInput">
+                            <input type="text" name="search" id="searchInput" class="form-control w-100" placeholder="Cari Jadwal">
+                        </div>
+                        <button type="button" class="btn btn-md btn-primary me-3" data-bs-toggle="modal" data-bs-target="#expense">
+                            <span>
+                                <i class="tim-icons icon-basket-simple"><b> Add Expense</b></i>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -38,6 +51,7 @@
                         @endforeach
                     </div>
                 </table>
+                 <p id="noDataFoundMessage" style="display: none; color: red;">Data not Found</p>
             </div>
         </div>
     </div>

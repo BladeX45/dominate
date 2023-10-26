@@ -23,6 +23,12 @@ class rating extends Model
         return $avgRate;
     }
 
+    // customer
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'customerID');
+    }
+
     // count rate
     public static function countRate($instructorID)
     {

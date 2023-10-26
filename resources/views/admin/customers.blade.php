@@ -33,9 +33,6 @@
                       Email
                     </th>
                     <th>
-                      Role
-                    </th>
-                    <th>
                       Action
                     </th>
                   </thead>
@@ -52,9 +49,6 @@
                         {{ $user->email }}
                       </td>
                       <td>
-                        {{ $user->roleID }}
-                      </td>
-                      <td>
                         <a href="#" rel="tooltip" class="btn btn-info btn-sm btn-round btn-icon"
                         data-toggle="modal" data-target="#customer{{ $user->id }}" data-placement="top" title="Data Customer"
                         data-userID="{{ $user->id }}">
@@ -69,6 +63,7 @@
                     @endforeach
                   </tbody>
                 </table>
+                <p id="noDataFoundMessage" style="display: none; color: red;">Data not Found</p>
                 <nav aria-label="...">
                     <ul class="pagination">
                       <!-- Tombol Previous -->

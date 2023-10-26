@@ -68,7 +68,7 @@
                                     <td>{{ $dt->paymentStatus }}</td>
                                     <td>
                                         <button type="button" class="btn btn-primary evidence-button" data-toggle="modal" data-target="#modalE{{$dt->id}}" data-user-id="{{$dt->id}}">
-                                            Upload Bukti Pembayaran
+                                            Upload Evidence
                                         </button>
                                         <!-- Add a hidden input field to store the userId for each row -->
                                         <input type="hidden" id="user-id-input{{$dt->id}}">
@@ -92,7 +92,7 @@
     </div>
 
     @foreach ($data as $dt)
-        <x-modal title="Bukti Pembayaran" idModal="modalE{{$dt->id}}" customStyle="">
+        <x-modal title="Evidence" idModal="modalE{{$dt->id}}" customStyle="">
             <x-form-update id="{{$dt->id}}" data="Transaction" action="{{route('customer.uploadEvidence')}}" >
                 <!-- Display a field with the data -->
                 {{-- input hidden idTransaction --}}

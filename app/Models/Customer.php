@@ -20,4 +20,21 @@ class Customer extends Model
     {
         return $this->hasMany('App\Models\Score', 'customerID');
     }
+
+    public function transactions()
+    {
+        return $this->hasMany('App\Models\Transaction', 'customerID');
+    }
+
+    public function schedules()
+    {
+        return $this->hasMany('App\Models\Schedule', 'customerID');
+    }
+
+    public function certificates()
+    {
+        return $this->hasMany('App\Models\Certificate', 'customerID');
+    }
+
+
 }

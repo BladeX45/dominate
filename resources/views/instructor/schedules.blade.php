@@ -43,7 +43,7 @@
                                         @if('trained' === $schedule->status )
                                             <td>
                                                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#rate{{$schedule->id}}" >
-                                                    Penilaian
+                                                    Score
                                                 </button>
                                             </td>
                                         @elseif ($schedule->status === 'completed' || 'done' === $schedule->status)
@@ -51,19 +51,19 @@
                                             <td>
                                                 {{-- penilaian instruktur --}}
                                                 <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rating{{$schedule->id}}">
-                                                    Cek Rating
+                                                    Check Rating
                                                 </button>
                                             </td>
                                         @elseif($schedule->status === 'need rating')
                                             <td>
                                                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#rate" disabled>
-                                                    Penilaian
+                                                    Score
                                                 </button>
                                             </td>
                                         @elseif ($schedule->status === 'canceled')
                                             <td>
                                                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#rate" disabled>
-                                                    Penilaian
+                                                    Score
                                                 </button>
                                             </td>
                                         <td>
@@ -116,6 +116,37 @@
                                 @endif
                             </tbody>
                           </table>
+                          {{-- pagination --}}
+                          <ul class="pagination">
+                            <!-- Tombol Previous -->
+                            @if ($schedules->onFirstPage())
+                            <li class="page-item disabled">
+                              <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Sebelumnya</a>
+                            </li>
+                            @else
+                            <li class="page-item">
+                              <a class="page-link" href="{{ $schedules->previousPageUrl() }}" tabindex="-1">Sebelumnya</a>
+                            </li>
+                            @endif
+
+                            <!-- Tombol halaman -->
+                            @foreach ($schedules->getUrlRange(1, $schedules->lastPage()) as $page => $url)
+                            <li class="page-item{{ ($schedules->currentPage() == $page) ? ' active' : '' }}">
+                              <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                            </li>
+                            @endforeach
+
+                            <!-- Tombol Next -->
+                            @if ($schedules->hasMorePages())
+                            <li class="page-item">
+                              <a class="page-link" href="{{ $schedules->nextPageUrl() }}">Selanjutnya</a>
+                            </li>
+                            @else
+                            <li class="page-item disabled">
+                              <a class="page-link" href="#">Selanjutnya</a>
+                            </li>
+                            @endif
+                          </ul>
                     </div>
                 </div>
             </div>
@@ -236,42 +267,42 @@
                 <div class="col-6">
                     <div class="form-group">
                         <label for="theoryKnowledge{{$schedule->id}}" class="text-primary">{{ __('Theory Knowledge Score')}}</label><br>
-                        <input type="number" class="w-100" id="theoryKnowledge{{$schedule->id}}" name="theoryKnowledge" required><br>
+                        <input type="number" class="w-100" id="theoryKnowledge{{$schedule->id}}" min="0" max="100" name="theoryKnowledge"  required oninput="hitungRataRata({{ $schedule->id }})"><br>
                     </div>
                     <div class="form-group">
                         <label for="practicalDriving{{$schedule->id}}" class="text-primary">{{ __('Practical Driving Score')}}</label><br>
-                        <input type="number" class="w-100" id="practicalDriving{{$schedule->id}}" name="practicalDriving" required><br>
+                        <input type="number" class="w-100" id="practicalDriving{{$schedule->id}}"min="0" max="100" name="practicalDriving" required oninput="hitungRataRata({{ $schedule->id }})"><br>
                     </div>
                     <div class="form-group">
                         <label for="hazardPerception{{$schedule->id}}" class="text-primary">{{ __('Hazard Perception Score')}}</label><br>
-                        <input type="number" class="w-100" id="hazardPerception{{$schedule->id}}" name="hazardPerception" required><br>
+                        <input type="number" class="w-100" id="hazardPerception{{$schedule->id}}"min="0" max="100" name="hazardPerception" required oninput="hitungRataRata({{ $schedule->id }})"><br>
                     </div>
                 </div>
                 <div class="col-6">
                     <div class="form-group">
                         <label for="trafficRulesCompliance{{$schedule->id}}" class="text-primary">{{ __('Traffic Rules Compliance Score')}}</label><br>
-                        <input type="number" class="w-100" id="trafficRulesCompliance{{$schedule->id}}" name="trafficRulesCompliance" required><br>
+                        <input type="number" class="w-100" id="trafficRulesCompliance{{$schedule->id}}"min="0" max="100" name="trafficRulesCompliance" required oninput="hitungRataRata({{ $schedule->id }})"><br>
                     </div>
                     <div class="form-group">
                         <label for="confidenceAndAttitude{{$schedule->id}}" class="text-primary">{{ __('Confidence and Attitude Score')}}</label><br>
-                        <input type="number" class="w-100" id="confidenceAndAttitude{{$schedule->id}}" name="confidenceAndAttitude" required><br>
+                        <input type="number" class="w-100" id="confidenceAndAttitude{{$schedule->id}}"min="0" max="100" name="confidenceAndAttitude" required oninput="hitungRataRata({{ $schedule->id }})"><br>
                     </div>
                     <div class="form-group">
                         <label for="overallAssessment{{$schedule->id}}" class="text-primary">{{ __('Overall Score')}}</label><br>
-                        <input type="number" class="w-100" id="overallAssessment{{$schedule->id}}" name="overallAssessment" readonly><br>
+                        <input type="number" class="w-100" id="overallAssessment{{$schedule->id}}" name="overallAssessment" readonly oninput="hitungRataRata({{ $schedule->id }})"><br>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col">
                     <label for="additionalComment{{$schedule->id}}" class="text-primary">{{ __('Additional Comment') }}</label>
-                    <textarea id="additionalComment{{$schedule->id}}" class="w-100" name="additionalComment" rows="4"></textarea>
+                    <textarea id="additionalComment{{$schedule->id}}" class="w-100" name="additionalComment" rows="4" required></textarea>
                 </div>
             </div>
             <div class="row">
                 <div class="col">
-                    <input type="radio" name="isFinal{{$schedule->id}}" id="isFinal{{$schedule->id}}" value="1">
-                    <label for="isFinal{{$schedule->id}}" class="text-primary">{{ __('Certificate') }}</label><br>
+                    <input type="radio" name="isFinal" id="isFinal" value="1">
+                    <label for="isFinal" class="text-primary">{{ __('Certificate') }}</label><br>
                 </div>
             </div>
             <input type="hidden" name="scheduleID" value="{{$schedule->id}}">
@@ -288,12 +319,15 @@
         // Function for calculating average
         function hitungRataRata(scheduleId) {
             // Get input elements by scheduleId
+
+            console.log(scheduleId);
             var teoriPengetahuanInput = document.getElementById("theoryKnowledge" + scheduleId);
             var practicalMengemudiInput = document.getElementById("practicalDriving" + scheduleId);
             var kesadaranMengemudiInput = document.getElementById("hazardPerception" + scheduleId);
             var kepatuhanLalinInput = document.getElementById("trafficRulesCompliance" + scheduleId);
             var percayaDiriInput = document.getElementById("confidenceAndAttitude" + scheduleId);
             var ratarataInput = document.getElementById("overallAssessment" + scheduleId);
+            console.log(ratarataInput);
 
             // Validate input values (ensure they are numbers)
             var teoriPengetahuan = parseFloat(teoriPengetahuanInput.value) || 0;

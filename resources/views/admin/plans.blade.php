@@ -130,6 +130,7 @@
                         @endforeach
                     </tbody>
                 </table>
+                <p id="noDataFoundMessage" style="display: none; color: red;">Data not Found</p>
 
 
                 <nav aria-label="...">

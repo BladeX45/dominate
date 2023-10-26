@@ -40,12 +40,6 @@
                 @if (count($schedules) > 0)
                 <div class="card">
                     <table class="table">
-                        {{-- alert error  --}}
-                        @if (session('error'))
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <strong>{{ session('error') }}</strong>
-                            </div>
-                        @endif
                         <thead>
                             <tr>
                                 <th scope="col">No</th>
@@ -158,6 +152,10 @@
                             @endforeach
                         </tbody>
                     </table>
+                    {{-- Pagination --}}
+                    <div class="d-flex justify-content-center">
+                        {!! $schedules->links() !!}
+                    </div>
                 </div>
                 @else
                     <p>There are no available schedules.</p>
@@ -180,12 +178,12 @@
                 {{-- input rating 1-10 --}}
                 <div class="form-group">
                     <label for="rating">Rating</label>
-                    <input type="number" name="rating" id="rating" class="form-control" min="1" max="10">
+                    <input type="number" name="rating" id="rating" class="form-control" min="1" max="10" required>
                 </div>
                 {{-- input comment --}}
                 <div class="form-group">
                     <label for="comment">Komentar</label>
-                    <textarea name="comment" id="comment" cols="30" rows="10" class="form-control"></textarea>
+                    <textarea name="comment" id="comment" cols="30" rows="10" class="form-control" required></textarea>
                 </div>
                 {{-- button submit --}}
                 <button type="submit" class="btn btn-primary">Simpan</button>
@@ -219,11 +217,10 @@
             <label for="session">Pilih Sesi</label>
             <select name="session" id="session" class="form-control" required>
                 <option class="bg-primary">--- Choose Session ---</option>
-                <option class="bg-primary" value="1">08:00-09:45</option>
-                <option class="bg-primary" value="2">10:00-11:45</option>
-                <option class="bg-primary" value="3">14:00-15:45</option>
-                <option class="bg-primary" value="4">16:00-17:45</option>
-                <option class="bg-primary" value="5">19:00-30:45</option>
+                <option class="bg-primary" value="1">08:00-10:00</option>
+                <option class="bg-primary" value="2">10:15-12:15</option>
+                <option class="bg-primary" value="3">13:00-15:00</option>
+                <option class="bg-primary" value="4">15:00-17:15</option>
             </select>
 
             <p class="text-danger pt-3 text-center">After submitting, the schedule cannot be canceled!</p>
@@ -299,7 +296,7 @@
     <x-modal idModal="score{{$score->scheduleID}}" title="Nilai Peserta" customStyle="modal-lg">
         {{--  --}}
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-12">
                 {{-- nama customer --}}
                 <p class="text-primary">Nama Peserta : {{$score->customer->firstName}} {{$score->customer->lastName}}</p>
                 {{-- nama instructor --}}
@@ -308,17 +305,39 @@
                 <p class="text-primary">Tanggal Latihan : {{$score->schedule->date}}, Sesi : {{$score->schedule->session}}</p>
                 {{-- score : theoryKnowledge, practicalDriving, hazardPerception, trafficRulesCompliance, confidenceAndAttitude, overallAssessment, overallAssessment, dalam bahasa indonesia --}}
                 <p class="text-primary">Nilai : </p>
-                <ul>
-                    <li>Pengetahuan Teori : {{$score->theoryKnowledge}}</li>
-                    <li>Praktik Mengemudi : {{$score->practicalDriving}}</li>
-                    <li>Persepsi Bahaya : {{$score->hazardPerception}}</li>
-                    <li>Kepatuhan Aturan Lalu Lintas : {{$score->trafficRulesCompliance}}</li>
-                    <li>Kepercayaan Diri dan Sikap : {{$score->confidenceAndAttitude}}</li>
-                    <li>Penilaian Keseluruhan : {{$score->overallAssessment}}</li>
-                </ul>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="theoryKnowledge{{$score->id}}" class="text-primary">{{ __('Theory Knowledge Score')}}</label><br>
+                            <input type="number" class="w-100" id="theoryKnowledge{{$score->id}}" name="theoryKnowledge" readonly value="{{$score->theoryKnowledge}}"><br>
+                        </div>
+                        <div class="form-group">
+                            <label for="practicalDriving{{$score->id}}" class="text-primary">{{ __('Practical Driving Score')}}</label><br>
+                            <input type="number" class="w-100" id="practicalDriving{{$score->id}}" name="practicalDriving" readonly value="{{$score->practicalDriving}}"><br>
+                        </div>
+                        <div class="form-group">
+                            <label for="hazardPerception{{$score->id}}" class="text-primary">{{ __('Hazard Perception Score')}}</label><br>
+                            <input type="number" class="w-100" id="hazardPerception{{$score->id}}" name="hazardPerception" readonly value="{{$score->hazardPerception}}"><br>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="trafficRulesCompliance{{$score->id}}" class="text-primary">{{ __('Traffic Rules Compliance Score')}}</label><br>
+                            <input type="number" class="w-100" id="trafficRulesCompliance{{$score->id}}" name="trafficRulesCompliance" readonly value="{{$score->trafficRulesCompliance}}"><br>
+                        </div>
+                        <div class="form-group">
+                            <label for="confidenceAndAttitude{{$score->id}}" class="text-primary">{{ __('Confidence and Attitude Score')}}</label><br>
+                            <input type="number" class="w-100" id="confidenceAndAttitude{{$score->id}}" name="confidenceAndAttitude" readonly value="{{$score->confidenceAndAttitude}}"><br>
+                        </div>
+                        <div class="form-group">
+                            <label for="overallAssessment{{$score->id}}" class="text-primary">{{ __('Overall Score')}}</label><br>
+                            <input type="number" class="w-100" id="overallAssessment{{$score->id}}" name="overallAssessment" readonly value="{{$score->overallAssessment}}"><br>
+                        </div>
+                    </div>
+                </div>
 
                 {{-- additional comment --}}
-                <p class="text-primary">Komentar : {{$score->additionalComment}}</p>
+                <p class="text-primary">Comment : {{$score->additionalComment}}</p>
                 {{-- if isFinal -> 1 && overallAssessment 70> then show generate certificate  --}}
                 @if ($score->isFinal === 1 && $score->overallAssessment >= 70)
                     {{-- form button generate certificate --}}

@@ -16,6 +16,12 @@ class Certificate extends Model
         return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)))),1,$length);
     }
 
+    // customer
+    public function customer()
+    {
+        return $this->belongsTo('App\Models\Customer', 'customerID');
+    }
+
     // check isExist
     public static function isExist($hash) {
         $certificate = Certificate::where('hash', $hash)->first();

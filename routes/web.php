@@ -119,6 +119,8 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::put('profile', ['as' => 'profile.update', 'uses' => 'App\Http\Controllers\ProfileController@update']);
 	Route::put('profile', ['as' => 'profile.photo', 'uses' => 'App\Http\Controllers\ProfileController@updatePhoto']);
 	Route::put('profile/password', ['as' => 'profile.password', 'uses' => 'App\Http\Controllers\ProfileController@password']);
+    // instructor.certifUpdate
+    Route::put('instructor/certifUpdate', [InstructorController::class, 'certifUpdate'])->name('instructor.certifUpdate');
 });
 
 // Route group prefix for customer
@@ -162,4 +164,7 @@ Route::get('/email/verify', function () {
 Route::get('/email/verify/{id}/{hash}', [PageController::class, 'verificationVerify'])->middleware(['auth', 'signed'])->name('verification.verify');
 // route verification.send
 Route::get('/email/verify', [PageController::class, 'verificationSend'])->name('verification.send');
+
+// check certrificate
+Route::post('/check-certificate', [PageController::class, 'checkCertificate'])->name('check-certificate');
 // verifiaction resend

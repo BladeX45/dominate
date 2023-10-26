@@ -21,19 +21,19 @@
             <li @if ($pageSlug == 'pricing') class="active " @endif>
                 <a href="{{ route('pages.pricing') }}">
                     <i class="tim-icons icon-basket-simple"></i>
-                    <p>{{ __('Daftar Paket') }}</p>
+                    <p>{{ __('Plans') }}</p>
                 </a>
             </li>
             <li @if ($pageSlug == 'transaction') class="active " @endif>
                 <a href="{{ route('customer.transactions') }}">
                     <i class="tim-icons icon-bullet-list-67"></i>
-                    <p>{{ __('Daftar Transaksi') }}</p>
+                    <p>{{ __('Transaction History') }}</p>
                 </a>
             </li>
             <li @if ($pageSlug == 'schedule') class="active " @endif>
                 <a href="{{ route('customer.schedules') }}">
                     <i class="tim-icons icon-bell-55"></i>
-                    <p>{{ __('Jadwal Latihan') }}</p>
+                    <p>{{ __('Training Schedule') }}</p>
                 </a>
             </li>
         </ul>
