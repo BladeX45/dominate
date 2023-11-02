@@ -67,3 +67,4 @@ class User extends Authenticatable
         return $this->hasOne(Instructor::class, 'userID');
     }
 }
+

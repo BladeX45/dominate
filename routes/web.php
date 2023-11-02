@@ -3,17 +3,18 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CarController;
-use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ScoreController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CashFlowController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\InstructureController;
 use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\ScheduleController;
-use App\Http\Controllers\ScoreController;
 
 /*
 |--------------------------------------------------------------------------
@@ -93,6 +94,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'verified']], functi
     Route::post('/cancel', [ScheduleController::class, 'cancel'])->name('admin.cancel');
     // reject evidence
     Route::post('/reject-evidence', [TransactionController::class, 'rejectEvidence'])->name('admin.rejectTransaction');
+    // admin setModal
+    Route::post('/set-modal', [CashFlowController::class, 'setModal'])->name('admin.setModal');
 });
 
 Route::group(['middleware' => 'auth', 'verified'], function () {

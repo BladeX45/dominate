@@ -75,11 +75,11 @@
                     <th>
                       Plate Number
                     </th>
-                    <th>
+                    <th id="carStatus" onclick="sortAvail()">
                       Car Status
                     </th>
                   </thead>
-                  <tbody>
+                  <tbody id="data">
                     @foreach ($cars as $car)
                     <tr>
                         <td>
@@ -200,38 +200,16 @@
                     @endforeach
                   </tbody>
                 </table>
-                <nav aria-label="...">
-                    <ul class="pagination">
-                      <!-- Tombol Previous -->
-                      @if ($cars->onFirstPage())
-                      <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Sebelumnya</a>
-                      </li>
-                      @else
-                      <li class="page-item">
-                        <a class="page-link" href="{{ $cars->previousPageUrl() }}" tabindex="-1">Sebelumnya</a>
-                      </li>
-                      @endif
-
-                      <!-- Tombol halaman -->
-                      @foreach ($cars->getUrlRange(1, $cars->lastPage()) as $page => $url)
-                      <li class="page-item{{ ($cars->currentPage() == $page) ? ' active' : '' }}">
-                        <a class="page-link" href="{{ $url }}">{{ $page }}</a>
-                      </li>
-                      @endforeach
-
-                      <!-- Tombol Next -->
-                      @if ($cars->hasMorePages())
-                      <li class="page-item">
-                        <a class="page-link" href="{{ $cars->nextPageUrl() }}">Selanjutnya</a>
-                      </li>
-                      @else
-                      <li class="page-item disabled">
-                        <a class="page-link" href="#">Selanjutnya</a>
-                      </li>
-                      @endif
-                    </ul>
-                  </nav>
+                <div class="row">
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination">
+                                <li class="page-item"><a class="page-link" href="#" id="prev">Previous</a></li>
+                                <li class="page-item"><a class="page-link" href="#" id="next">Next</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
               </div>
             </div>
           </div>
@@ -300,6 +278,53 @@
 
 
 @push('js')
+<!-- ... Your HTML content ... -->
+
+    <script>
+    //    sortAvail -> a-z
+    //    sortAvailDesc -> z-a
+    //    sortAvailAsc -> a-z
+
+        function sortAvail() {
+            var table, rows, switching, i, x, y, shouldSwitch;
+            table = document.getElementById("data");
+            switching = true;
+            /*Make a loop that will continue until
+            no switching has been done:*/
+            while (switching) {
+            //start by saying: no switching is done:
+            switching = false;
+            rows = table.rows;
+            /*Loop through all table rows (except the
+            first, which contains table headers):*/
+            // for (i = 1; i < (rows.length - 1); i++) {
+            for (i = 1; i < (rows.length - 1); i++) {
+                //start by saying there should be no switching:
+                shouldSwitch = false;
+                /*Get the two elements you want to compare,
+                one from current row and one from the next:*/
+                // x = rows[i].getElementsByTagName("TD")[0];
+                // y = rows[i + 1].getElementsByTagName("TD")[0];
+                x = rows[i].getElementsByTagName("TD")[6];
+                y = rows[i + 1].getElementsByTagName("TD")[6];
+                //check if the two rows should switch place:
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                //if so, mark as a switch and break the loop:
+                shouldSwitch = true;
+                break;
+                }
+            }
+            if (shouldSwitch) {
+                /*If a switch has been marked, make the switch
+                and mark that a switch has been done:*/
+                // rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+            }
+            }
+        }
+
+    </script>
     <script src="{{ asset('black') }}/js/plugins/chartjs.min.js"></script>
     <script>
         $(document).ready(function() {

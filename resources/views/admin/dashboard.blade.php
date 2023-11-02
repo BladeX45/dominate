@@ -57,9 +57,9 @@
                                                 Penjualan Paket
                                             </h3>
                                         </div>
-                                        <div class="card-body" style="flex: 1; overflow-y: auto;">
+                                        <div class="card-body table-responsive" style="height: 57vh">
                                             {{-- planChart --}}
-                                            <canvas id="planChart" style="max-height: 130px;"></canvas>
+                                            <canvas id="planChart" style="max-height: 40vh;"></canvas>
                                         </div>
                                     </div>
                                 </div>
@@ -77,7 +77,6 @@
                                                     <tr>
                                                         <th>No</th>
                                                         <th>Nama Mobil</th>
-                                                        <th>Tipe Mobil</th>
                                                         <th>Jenis Transmisi</th>
                                                         <th>status Mobil</th>
                                                     </tr>
@@ -89,8 +88,7 @@
                                                     @foreach ($cars as $car)
                                                         <tr>
                                                             <td>{{$iCars++}}</td>
-                                                            <td>{{$car->carName}}</td>
-                                                            <td>{{$car->carModel}}</td>
+                                                            <td>{{$car->carName}} {{$car->carModel}}</td>
                                                             <td>{{$car->Transmission}}</td>
                                                             <td>{{$car->carStatus}}</td>
                                                         </tr>

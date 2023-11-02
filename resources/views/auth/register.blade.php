@@ -148,10 +148,10 @@
                             <div class="row">
                                 {{-- previous and submit --}}
                                 <div class="col-md-6">
-                                    <button type="button" class="prev-step btn">Previous</button>
+                                    <button type="button" class="prev-step btn">{{__('Previous')}}</button>
                                 </div>
                                 <div class="col-md-6">
-                                    <button type="submit" class="next-step btn">{{__('Daftar')}}</button>
+                                    <button type="submit" class="next-step btn">{{__('Register')}}</button>
                                 </div>
                             </div>
                         </div>

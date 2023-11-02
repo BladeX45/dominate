@@ -15,7 +15,7 @@
                 <strong>{{ session('success') }}</strong>
             </div>
         @endif
-        <div class="card bg-primary">
+        <div class="card">
             <div class="card-header">
                 <div class="d-flex justify-content-between">
                     <h3 class="title">Schedule</h3>
@@ -39,60 +39,103 @@
             <div class="card-body">
                 @if (count($schedules) > 0)
                 <div class="card">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">No</th>
-                                <th scope="col">Instructor Name</th>
-                                <th scope="col">Tranmission</th>
-                                <th scope="col">Date</th>
-                                <th scope="col">Session</th>
-                                <th scope="col">Status</th>
-                                <th scope="col">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($schedules as $schedule)
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
                                 <tr>
-                                    <th scope="row">{{ $loop->iteration }}</th>
-                                    <td>{{ $schedule->instructor->firstName }} {{ $schedule->instructor->lastName }}</td>
-                                    <td>{{ $schedule->carType }}</td>
-                                    <td>{{ $schedule->carID}}</td>
-                                    <td>{{ $schedule->date }}</td>
-                                    <td>{{ $schedule->status }}</td>
-                                    {{-- if roleID == 0 | 1 --}}
-                                    @if (auth()->user()->roleID == 0 || auth()->user()->roleID == 1)
-                                        @if('pending' === $schedule->status )
-                                        {{-- cancel button --}}
-                                        <td>
-                                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#cancelSchedule{{$schedule->id}}">
-                                                {{ __('Cancel')}}
-                                            </button>
-                                        </td>
-                                        <x-modal title="Cancel Schedule" idModal="cancelSchedule{{$schedule->id}}" customStyle="">
-                                            <x-form action="{{ route('admin.cancel', ['id' => $schedule->id]) }}" method="post">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <h3 class="text-light">
-                                                           {{__('Are you sure you want to cancel this schedule?')}}
-                                                        </h3>
+                                    <th scope="col">No</th>
+                                    <th scope="col">Instructor Name</th>
+                                    <th scope="col">Tranmission</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Session</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="data">
+                                @foreach ($schedules as $schedule)
+                                    <tr>
+                                        <th scope="row">{{ $loop->iteration }}</th>
+                                        <td>{{ $schedule->instructor->firstName }} {{ $schedule->instructor->lastName }}</td>
+                                        <td>{{ $schedule->carType }}</td>
+                                        <td>{{ $schedule->carID}}</td>
+                                        <td>{{ $schedule->date }}</td>
+                                        <td>{{ $schedule->status }}</td>
+                                        {{-- if roleID == 0 | 1 --}}
+                                        @if (auth()->user()->roleID == 0 || auth()->user()->roleID == 1)
+                                            @if('pending' === $schedule->status )
+                                            {{-- cancel button --}}
+                                            <td>
+                                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#cancelSchedule{{$schedule->id}}">
+                                                    {{ __('Cancel')}}
+                                                </button>
+                                            </td>
+                                            <x-modal title="Cancel Schedule" idModal="cancelSchedule{{$schedule->id}}" customStyle="">
+                                                <x-form action="{{ route('admin.cancel') }}" method="post">
+                                                    {{-- hidden scheduleID --}}
+                                                    <input type="hidden" name="scheduleID" value="{{$schedule->id}}">
+                                                    {{-- hidden instructorID --}}
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <h3 class="text-light">
+                                                               {{__('Are you sure you want to cancel this schedule?')}}
+                                                            </h3>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        {{-- Cancel Button --}}
-                                                        <button type="submit" class="btn btn-danger">Cancel</button>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            {{-- Cancel Button --}}
+                                                            <button type="submit" class="btn btn-danger">Cancel</button>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            {{-- Close Button --}}
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                        </div>
                                                     </div>
-                                                    <div class="col-md-6">
-                                                        {{-- Close Button --}}
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                    </div>
-                                                </div>
-                                            </x-form>
-                                        </x-modal>
+                                                </x-form>
+                                            </x-modal>
+                                            @else
+                                                {{-- if status is done cek nilai --}}
+                                                @if ($schedule->status === 'done' || $schedule->status === 'completed')
+                                                    <td>
+                                                        {{-- penilaian instruktur --}}
+                                                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#score{{$schedule->id}}">
+                                                            Check Score
+                                                        </button>
+                                                    </td>
+                                                @else
+                                                    {{-- button cancel disabled --}}
+                                                    <td>
+                                                        <button type="button" class="btn btn-primary btn-sm" disabled>
+                                                            {{ __('Cancel')}}
+                                                        </button>
+                                                    </td>
+                                                @endif
+                                            @endif
                                         @else
-                                            {{-- if status is done cek nilai --}}
-                                            @if ($schedule->status === 'done' || $schedule->status === 'completed')
+                                            @if ($schedule->status === 'pending')
+                                                <td>
+                                                    {{-- penilaian instruktur --}}
+                                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate" disabled>
+                                                        Rate
+                                                    </button>
+                                                </td>
+                                            @elseif ($schedule->status === 'trained')
+                                                <td>
+                                                    {{-- penilaian instruktur --}}
+                                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate" disabled>
+                                                        Rate
+                                                    </button>
+                                                </td>
+                                                {{-- need penilaian instruktur --}}
+                                            @elseif ($schedule->status === 'need rating')
+                                                <td>
+                                                    {{-- penilaian instruktur --}}
+                                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate{{$schedule->id}}">
+                                                        Rate
+                                                    </button>
+                                                </td>
+                                            @elseif ($schedule->status === 'done' || $schedule->status === 'completed')
                                                 <td>
                                                     {{-- penilaian instruktur --}}
                                                     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#score{{$schedule->id}}">
@@ -100,61 +143,29 @@
                                                     </button>
                                                 </td>
                                             @else
-                                                {{-- button cancel disabled --}}
                                                 <td>
-                                                    <button type="button" class="btn btn-primary btn-sm" disabled>
-                                                        {{ __('Cancel')}}
+                                                    {{-- penilaian instruktur --}}
+                                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate" disabled>
+                                                        Canceled
                                                     </button>
                                                 </td>
                                             @endif
                                         @endif
-                                    @else
-                                        @if ($schedule->status === 'pending')
-                                            <td>
-                                                {{-- penilaian instruktur --}}
-                                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate" disabled>
-                                                    Rate
-                                                </button>
-                                            </td>
-                                        @elseif ($schedule->status === 'trained')
-                                            <td>
-                                                {{-- penilaian instruktur --}}
-                                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate" disabled>
-                                                    Rate
-                                                </button>
-                                            </td>
-                                            {{-- need penilaian instruktur --}}
-                                        @elseif ($schedule->status === 'need rating')
-                                            <td>
-                                                {{-- penilaian instruktur --}}
-                                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate{{$schedule->id}}">
-                                                    Rate
-                                                </button>
-                                            </td>
-                                        @elseif ($schedule->status === 'done' || $schedule->status === 'completed')
-                                            <td>
-                                                {{-- penilaian instruktur --}}
-                                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#score{{$schedule->id}}">
-                                                    Check Score
-                                                </button>
-                                            </td>
-                                        @else
-                                            <td>
-                                                {{-- penilaian instruktur --}}
-                                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#rate" disabled>
-                                                    Canceled
-                                                </button>
-                                            </td>
-                                        @endif
-                                    @endif
-                                    {{-- pending, trained, completed --}}
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                    {{-- Pagination --}}
-                    <div class="d-flex justify-content-center">
-                        {!! $schedules->links() !!}
+                                        {{-- pending, trained, completed --}}
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 d-flex justify-content-center">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination">
+                                    <li class="page-item"><a class="page-link" href="#" id="prev">Previous</a></li>
+                                    <li class="page-item"><a class="page-link" href="#" id="next">Next</a></li>
+                                </ul>
+                            </nav>
+                        </div>
                     </div>
                 </div>
                 @else

@@ -1,13 +1,35 @@
 @extends('layouts.app', ['pageSlug' => 'admin.cashFlow'])
 
 @section('content')
+    {{-- if any error --}}
+    @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>{{ session('error') }}</strong>
+        </div>
+    @endif
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>{{ session('success') }}</strong>
+        </div>
+    @endif
+
     <div class="row">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title text-secondary">
-                        Cash Flow
-                    </h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h3 class="card-title text-secondary">
+                                Cash Flow
+                            </h3>
+                        </div>
+                        <div class="col-md-6 d-flex justify-content-center">
+                            {{-- add button setModal --}}
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#setModal">
+                               Add Balance
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body p-4">
                     <div class="container-fluid">
@@ -57,10 +79,14 @@
                                         @foreach ($cashflows as $cashflow)
                                             <tr>
                                                 {{-- transaction_id / expense_id --}}
-                                                @if($cashflow->transaction_id != null)
-                                                    <td>{{$cashflow->transaction->transactionID}}</td>
+                                                @if($cashflow->transaction_id == null)
+                                                    @if($cashflow->debitAmount != null)
+                                                        <td>Added Balance</td>
+                                                    @else
+                                                        <td>{{$cashflow->expense->transactionID}}</td>
+                                                    @endif
                                                 @else
-                                                    <td>{{$cashflow->expense->transactionID}}</td>
+                                                    <td>{{$cashflow->transaction->transactionID}}</td>
                                                 @endif
                                                 <td>{{$cashflow->date}}</td>
                                                 <td>Rp. {{ number_format($cashflow->debitAmount, 0, ',', '.') }} IDR</td>
@@ -72,7 +98,6 @@
                                 </table>
                                 <p id="noTransactions" style="display: none; color: red;">No Transaction This Month</p>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -80,6 +105,16 @@
         </div>
     </div>
 
+    <x-modal title="Set Starting Balance" idModal="setModal" customStyle="">
+        <x-form action="{{route('admin.setModal')}}" method="post">
+            @csrf
+            <div class="form-group">
+                <label for="startingBalance">Starting Balance</label>
+                <input type="number" class="form-control" id="startingBalance" name="startingBalance" placeholder="Enter Starting Balance" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </x-form>
+    </x-modal>
 
     <script>
         document.getElementById("filterMonth").addEventListener("change", filterTable);
@@ -115,5 +150,4 @@
         // Initial table filter
         filterTable();
     </script>
-</script>
 @endsection

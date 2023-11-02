@@ -20,20 +20,21 @@ class ScheduleController extends Controller
     public function index()
     {
         if(Auth::user()->roleID == 1 || Auth::user()->roleID == 0){
-            $schedules = Schedule::paginate(10);
+            $schedules = Schedule::orderBy('date', 'desc')->paginate(15);
 
-            $instructors = instructor::all();
+            $instructors = Instructor::all();
 
             $scores = Score::all();
 
             return view('pages.schedules', compact('schedules', 'instructors', 'scores'));
+
         }
         elseif(Auth::user()->roleID == 2){
             // get customerID
             $customerID = Customer::where('userID', Auth::user()->id)->first();
 
             // get schedule paginate asc status
-            $schedules = Schedule::where('customerID', $customerID->id)->orderBy('status', 'asc')->paginate(5);
+            $schedules = Schedule::where('customerID', $customerID->id)->orderBy('status', 'asc')->paginate(15);
             // dd($schedules);
             // get all instructors
             $instructors = instructor::all();
@@ -45,7 +46,7 @@ class ScheduleController extends Controller
             return view('pages.schedules', compact('schedules', 'customerID', 'instructors', 'scores'));
         }
         else{
-            $schedules = Schedule::where('instructorID', Auth::user()->roleID)->paginate(5);
+            $schedules = Schedule::where('instructorID', Auth::user()->roleID)->paginate(15);
 
             $instructors = instructor::all();
 
@@ -56,35 +57,28 @@ class ScheduleController extends Controller
     }
 
     // cancel schedule
-    public function cancel(Request $request){
-        // dd($request->all());
-        // get schedule
-        $schedule = Schedule::find($request->scheduleID);
-        // dd($schedule);
-        // update status
-        $schedule->status = 'canceled';
-        $schedule->save();
-        // dd($schedule);
+    public function cancel(Request $request) {
+        // Find the schedule by ID and update its status
+        $schedule = Schedule::where('id', $request->scheduleID)->first();
+        if ($schedule) {
+            $schedule->update(['status' => 'canceled']);
 
-        // check car type
-        if($schedule->carType === 'manual'){
-            // get customer
+            // Find the customer by ID
             $customer = Customer::find($schedule->customerID);
-            // update manual session
-            $customer->ManualSession = $customer->ManualSession + 1;
-            $customer->save();
-        }
-        else{
-            // get customer
-            $customer = Customer::find($schedule->customerID);
-            // update matic session
-            $customer->MaticSession = $customer->MaticSession + 1;
-            $customer->save();
+            if ($customer) {
+                // Update the session based on car type
+                $sessionType = ($schedule->carType === 'manual') ? 'ManualSession' : 'MaticSession';
+                $customer->$sessionType += 1;
+                $customer->save();
+            }
+
+            return redirect()->back()->with('success', 'Schedule canceled successfully');
         }
 
-        // redirect
-        return redirect()->back()->with('success', 'Schedule canceled successfully');
+        // Handle the case when the schedule is not found
+        return redirect()->back()->with('error', 'Schedule not found');
     }
+
 
     /**
      * Check availability of schedule.
@@ -118,75 +112,94 @@ class ScheduleController extends Controller
      */
     public function store(Request $request)
     {
-        // Get customer data
         $customer = Customer::where('userID', auth()->user()->id)->first();
 
-        // Get the date, session, and instructor from the request
         $date = $request->input('date');
         $session = $request->input('session');
         $instructor = $request->input('instructor');
 
-        // Check if a schedule record exists for the specified criteria
         $existingSchedule = Schedule::where('date', $date)
             ->where('session', $session)
             ->where('instructorID', $instructor)
             ->first();
 
         if ($existingSchedule) {
-            return redirect()->back()->with('error', 'Schedule is Full Book');
+            return $this->redirectWithError('Schedule is Full Book');
         }
 
-        // Check request type (manual or automatic)
         if ($request->type === 'manual') {
-            if ($customer->ManualSession <= 0) {
-                return redirect()->back()->with('error', 'You have no manual session left');
-            }
-            // Check if the user has a schedule at the same date and session
-            $schedule = Schedule::where('customerID', $customer->id)
-                ->where('date', $date)
-                ->where('session', $session)
-                ->first();
-
-            if ($schedule) {
-                return redirect()->back()->with('error', 'You have a schedule at the same date and session');
-            }
-
-            // Find an available manual car for the selected date and session
-            $car = $this->findAvailableCar($date, $session, 'manual');
-
-            if (!$car) {
-                return redirect()->back()->with('error', 'No available manual car for the selected date and session');
-            }
-
-            // Create schedule
-            $this->createSchedule($customer, $instructor, $date, $session, 'manual', $car);
-
-            // Update manual session
-            $this->updateSession($customer, 'ManualSession', -1);
-
-            return redirect()->back()->with('success', 'Schedule created successfully');
+            return $this->createManualSchedule($customer, $date, $session, $instructor);
         } elseif ($request->type === 'matic') {
-            if ($customer->MaticSession <= 0) {
-                return redirect()->back()->with('error', 'You have no automatic session left');
-            }
-
-            // Find an available automatic car for the selected date and session
-            $car = $this->findAvailableCar($date, $session, 'automatic');
-
-            if (!$car) {
-                return redirect()->back()->with('error', 'No available automatic car for the selected date and session');
-            }
-
-            // Create schedule
-            $this->createSchedule($customer, $instructor, $date, $session, 'automatic', $car);
-
-            // Update automatic session
-            $this->updateSession($customer, 'MaticSession', -1);
-
-            return redirect()->back()->with('success', 'Schedule created successfully');
+            return $this->createAutomaticSchedule($customer, $date, $session, $instructor);
         } else {
-            return redirect()->back()->with('error', 'Something went wrong');
+            return $this->redirectWithError('Something went wrong');
         }
+    }
+
+    private function redirectWithError($message)
+    {
+        return redirect()->back()->with('error', $message);
+    }
+
+    private function createManualSchedule($customer, $date, $session, $instructor)
+    {
+        if ($customer->ManualSession <= 0) {
+            return $this->redirectWithError('You have no manual session left');
+        }
+
+        $schedule = $this->findScheduleByCustomer($customer, $date, $session);
+
+        if ($schedule) {
+            return $this->redirectWithError('You have a schedule at the same date and session');
+        }
+
+        return $this->createSchedule($customer, $instructor, $date, $session, 'manual', -1);
+    }
+
+    private function createAutomaticSchedule($customer, $date, $session, $instructor)
+    {
+        if ($customer->MaticSession <= 0) {
+            return $this->redirectWithError('You have no automatic session left');
+        }
+
+        return $this->createSchedule($customer, $instructor, $date, $session, 'automatic', -1);
+    }
+
+    private function findScheduleByCustomer($customer, $date, $session)
+    {
+        return Schedule::where('customerID', $customer->id)
+            ->where('date', $date)
+            ->where('session', $session)
+            ->first();
+    }
+
+    private function createSchedule($customer, $instructor, $date, $session, $transmission, $sessionValue)
+    {
+        $car = $this->findAvailableCar($date, $session, $transmission);
+
+        if (!$car) {
+            return $this->redirectWithError("No available $transmission car for the selected date and session");
+        }
+
+        Schedule::create([
+            'customerID' => $customer->id,
+            'instructorID' => $instructor,
+            'date' => $date,
+            'session' => $session,
+            'status' => 'pending',
+            'carID' => $car->id,
+        ]);
+
+        // realue tramission
+        if($transmission === 'manual'){
+            $transmission = 'Manual';
+        }
+        else{
+            $transmission = 'Matic';
+        }
+        $this->updateSession($customer, $transmission . 'Session', $sessionValue);
+
+        return redirect()->back()->with('success', 'Schedule created successfully');
     }
 
     private function findAvailableCar($date, $session, $transmission)
@@ -196,21 +209,10 @@ class ScheduleController extends Controller
         })->where('carStatus', 'available')->where('Transmission', $transmission)->first();
     }
 
-    private function createSchedule($customer, $instructor, $date, $session, $carType, $car)
-    {
-        Schedule::create([
-            'customerID' => $customer->id,
-            'instructorID' => $instructor,
-            'date' => $date,
-            'session' => $session,
-            'carType' => $carType,
-            'status' => 'pending',
-            'carID' => $car->id,
-        ]);
-    }
-
     private function updateSession($customer, $sessionType, $value)
     {
+        // revalue session type value
+
         $customer->$sessionType = $customer->$sessionType + $value;
         $customer->save();
     }
@@ -229,7 +231,7 @@ class ScheduleController extends Controller
     public function instructorSchedules(){
         // ddd(Auth::user()->id);
         $instructor = instructor::where('userID', Auth::user()->id)->first();
-        $schedules = Schedule::where('instructorID', $instructor->id)->paginate(5);
+        $schedules = Schedule::where('instructorID', $instructor->id)->paginate(15);
         // rating
         $ratings = rating::where('instructorID', $instructor->id)->get();
         // score

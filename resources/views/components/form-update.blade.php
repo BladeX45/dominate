@@ -21,8 +21,7 @@
         // console.log("Function previewImage called for ID " + id);
         var input = document.getElementById('evidence' + id);
         var imagePreview = document.getElementById('image-preview-' + id);
-        console.log(input);
-        // console.log(imagePreview);
+
         input.addEventListener('change', function () {
             if (input.files && input.files[0]) {
                 if (input.files[0].type.startsWith('image/')) {

@@ -19,6 +19,8 @@ class InstructorSeeder extends Seeder
             'firstName' => 'instructor',
             // lastName
             'lastName' =>'seeder',
+            // NIN
+            'NIN'=> '323412323242',
             // gender Male
             'gender'    => 'Female',
             // birthDate format DD/MM/YYYY

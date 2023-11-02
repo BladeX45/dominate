@@ -216,28 +216,35 @@
             var searchInput = document.getElementById("searchInput");
             var rows = document.querySelectorAll("tbody tr");
             var noDataFoundMessage = document.getElementById("noDataFoundMessage");
+            var maxResults = 99; // Jumlah maksimal hasil pencarian yang ingin ditampilkan
 
             searchInput.addEventListener("input", function () {
                 var searchText = searchInput.value.toLowerCase();
                 var dataFound = false;
+                var resultsCount = 0; // Menghitung jumlah hasil pencarian yang sudah ditemukan
 
                 rows.forEach(function (row) {
-                    var cells = row.getElementsByTagName("td");
-                    var shouldShow = false;
+                    if (resultsCount < maxResults) {
+                        var cells = row.getElementsByTagName("td");
+                        var shouldShow = false;
 
-                    for (var i = 0; i < cells.length; i++) {
-                        var cellText = cells[i].textContent.toLowerCase();
-                        if (cellText.includes(searchText)) {
-                            shouldShow = true;
-                            break;
+                        for (var i = 0; i < cells.length; i++) {
+                            var cellText = cells[i].textContent.toLowerCase();
+                            if (cellText.includes(searchText)) {
+                                shouldShow = true;
+                                break;
+                            }
                         }
-                    }
 
-                    if (shouldShow) {
-                        row.style.display = "table-row";
-                        dataFound = true;
+                        if (shouldShow) {
+                            row.style.display = "table-row";
+                            dataFound = true;
+                            resultsCount++; // Menambah jumlah hasil pencarian yang sudah ditemukan
+                        } else {
+                            row.style.display = "none";
+                        }
                     } else {
-                        row.style.display = "none";
+                        row.style.display = "none"; // Sembunyikan baris jika jumlah maksimal hasil pencarian telah tercapai
                     }
                 });
 
@@ -248,6 +255,62 @@
                     noDataFoundMessage.style.display = "none";
                 }
             });
+        </script>
+        <script>
+            const itemsPerPage = 5;
+            const data = document.querySelector('#data');
+            const items = data.querySelectorAll('tr');
+            const numPages = Math.ceil(items.length / itemsPerPage);
+
+            let currentPage = 1;
+
+            function showPage(page) {
+                items.forEach((item, index) => {
+                    if (index >= (page - 1) * itemsPerPage && index < page * itemsPerPage) {
+                        item.style.display = 'table-row';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }
+
+            function updatePaginationButtons() {
+                const prevButton = document.querySelector('#prev');
+                const nextButton = document.querySelector('#next');
+
+                if (currentPage === 1) {
+                    prevButton.disabled = true;
+                } else {
+                    prevButton.disabled = false;
+                }
+
+                if (currentPage === numPages) {
+                    nextButton.disabled = true;
+                } else {
+                    nextButton.disabled = false;
+                }
+            }
+
+            function goToPage(page) {
+                if (page >= 1 && page <= numPages) {
+                    currentPage = page;
+                    showPage(currentPage);
+                    updatePaginationButtons();
+                }
+            }
+
+            const prevButton = document.querySelector('#prev');
+            prevButton.addEventListener('click', () => {
+                goToPage(currentPage - 1);
+            });
+
+            const nextButton = document.querySelector('#next');
+            nextButton.addEventListener('click', () => {
+                goToPage(currentPage + 1);
+            });
+
+            showPage(currentPage);
+            updatePaginationButtons();
         </script>
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

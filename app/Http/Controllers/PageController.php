@@ -87,7 +87,7 @@ class PageController extends Controller
         // check auth role 0 / 1
         switch (auth()->user()->roleID) {
             case 0:
-                $users = User::where('roleID', 1)->paginate(10);
+                $users = User::where('roleID', 1)->paginate(5);
                 return view('owner.users', compact('users',));
                 break;
             case 1:
@@ -169,7 +169,7 @@ class PageController extends Controller
             return redirect()->back();
         }
         // role = 2
-        $users = User::where('roleID', 2)->paginate(10);
+        $users = User::where('roleID', 2)->paginate(15);
         return view('admin.customers', compact('users'));
     }
 
@@ -179,7 +179,8 @@ class PageController extends Controller
             return redirect()->back();
         }
         // get car paginate 10
-        $cars = Car::paginate(10);
+        $cars = Car::all();
+        // dd($cars);
         return view('admin.assets', compact('cars'));
 
     }
@@ -191,7 +192,7 @@ class PageController extends Controller
         }
 
         // get plan paginate 10
-        $plans = Plan::paginate(10);
+        $plans = Plan::all();
         return view('admin.plans', compact('plans'));
     }
     // End Admin Pages
@@ -311,35 +312,47 @@ class PageController extends Controller
     }
     public function checkAvailability(Request $request)
     {
+        // Get request parameters
         $instructorId = $request->input('instructor');
         $date = $request->input('date');
         $session = $request->input('session');
         $type = $request->input('type');
 
-        // revalue type to manual or automatic
-        if($type == 'manual'){
-            $type = 'manual';
-        }else{
-            $type = 'automatic';
-        }
+        // Map the type to 'manual' or 'automatic'
+        $type = ($type === 'manual') ? 'manual' : 'automatic';
 
-        // Periksa apakah jadwal tersedia berdasarkan instruktur, tanggal, dan sesi
-        $isAvailable = !Schedule::where('instructorID', $instructorId)
+        // Check instructor availability
+        $instructorAvailability = !$this->isInstructorScheduleConflict($instructorId, $date, $session);
+
+        // Check car availability
+        $carAvailability = $this->isCarAvailable($type, $date, $session);
+
+        // Determine overall availability
+        $isAvailable = $instructorAvailability && $carAvailability;
+
+        return response()->json(['isAvailable' => $carAvailability]);
+    }
+
+    protected function isInstructorScheduleConflict($instructorId, $date, $session)
+    {
+        return Schedule::where('instructorID', $instructorId)
             ->where('date', $date)
             ->where('session', $session)
             ->exists();
-
-        $car = Car::whereDoesntHave('schedules', function($query) use ($request){
-            $query->where('date', $request->date)->where('session', $request->session);
-        })->where('carStatus', 'available')->where('Transmission', $type)->first();
-
-        // check if car is available
-        if($car == null){
-            $isAvailable = false;
-        }
-
-        return response()->json(['isAvailable' => $isAvailable]);
     }
+
+    // create function isCarAvailable with request parameter
+    // find car where carStatus = available and transmission = request type and doesnt have schedule with date and session
+    protected function isCarAvailable($type, $date, $session)
+    {
+        return Car::where('carStatus','=', 'available')
+            ->where('Transmission', $type)
+            ->whereDoesntHave('schedules', function ($query) use ($date, $session) {
+                $query->where('date', $date)->where('session', $session);
+            })
+            ->exists();
+    }
+
 
     // certificate page
     public function certificate(Request $request){

@@ -108,7 +108,9 @@ class TransactionController extends Controller
     }
 
     public function cashFlow(){
-        $cashflows = Cashflow::all();
+
+        // order by date
+        $cashflows = Cashflow::orderBy('date', 'desc')->get();
 
         return view('admin.cashflow', compact('cashflows'));
     }
@@ -315,12 +317,13 @@ class TransactionController extends Controller
 
     // rejectEvidence
     public function rejectEvidence(Request $request){
-        // update
-        $transaction = Transaction::find($request->transactionID);
-        // change status to rejected
-        $transaction->paymentStatus = 'Rejected';
-        $transaction->receiptTransfer = null;
-        $transaction->save();
+        // find transaction where transactionID == request->transactionID
+        $transaction = Transaction::where('transactionID', $request->transactionID)->firstOrFail();
+        // update paymentStatus to failed
+        $transaction->update(['paymentStatus' => 'failed']);
+        // update receiptTransfer to null
+        $transaction->update(['receiptTransfer' => null]);
+
 
         // You would typically associate this with the user's record or the transaction record
 
@@ -328,49 +331,37 @@ class TransactionController extends Controller
         return redirect()->back()->with('success', 'Receipt rejected successfully');
     }
 
-    public function verifyTransaction(Request $request){
+    public function verifyTransaction(Request $request) {
         try {
-            // Find the transaction with transactionID where request->transactionID == transactionID
             $transaction = Transaction::where('transactionID', $request->transactionID)->firstOrFail();
-            // Update paymentStatus to success
             $transaction->update(['paymentStatus' => 'success']);
-            // get last balance if exists
-            $lastBalance = Cashflow::orderBy('id', 'desc')->first();
 
-            // update cashflow
-            $cashflow = Cashflow::create([
-                // fk transaction -> nullable
+            // Find the last balance if it exists
+            $lastBalance = Cashflow::orderBy('id', 'desc')->first();
+            $balance = $lastBalance ? $lastBalance->balance : 0;
+
+            // Create a new cashflow entry
+            Cashflow::create([
                 'transaction_id' => $transaction->id,
-                // debitAmount
                 'debitAmount' => $transaction->paymentAmount,
-                // date
-                'date' => Carbon::now(),
-                // update balance balance + debitAmount
-                'balance' => $lastBalance->balance + $transaction->paymentAmount,
+                'date' => now(),
+                'balance' => $balance + $transaction->paymentAmount,
             ]);
-            // dd($cashflow);
 
             $customer = Customer::where('userID', $transaction->userID)->firstOrFail();
-            // check planID === 1 || 2 || 3 || 4
-            if($transaction->planID === 1 ||$transaction->planID === 2 ||$transaction->planID === 3 ||$transaction->planID === 4){
-                // update debitAmount to table cashflows with model cashflow
-                $customer->update(['ManualSession'=> $transaction->totalSession + $customer->ManualSession]);
-            }
-            else{
-                $customer->update(['MaticSession'=> $transaction->totalSession + $customer->MaticSession]);
-            }
-            // You can also do additional actions here if needed
 
-            // Return a response indicating success
-            return response()->json(['message' => 'Transaction successfully verified and updated.']);
+            $sessionField = ($transaction->planID >= 1 && $transaction->planID <= 4) ? 'ManualSession' : 'MaticSession';
+            $customer->update([$sessionField => $transaction->totalSession + $customer->$sessionField]);
+
+            // Redirect or return a response to indicate success
+            return redirect()->back()->with('success', 'Transaction verified successfully');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            // Handle the case where the transaction with the specified transactionID was not found
-            return response()->json(['error' => 'Transaction not found.'], 404);
+            return redirect()->back()->with('error', 'Transaction not found');
         } catch (\Exception $e) {
-            // Handle any other exceptions that may occur during the process
-            return response()->json(['error' => 'An error occurred while verifying the transaction.'], 500);
+            return redirect()->back()->with('error', 'An error occurred while verifying the transaction');
         }
     }
+
 
     public function invoice(Request $request){
         // dd($request->all());

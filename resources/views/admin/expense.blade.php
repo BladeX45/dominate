@@ -38,19 +38,31 @@
                             <th>Description</th>
                         </tr>
                     </thead>
-                    <div class="tbody">
+                    <tbody class="tbody" id="data">
                         @foreach ($expenses as $expense)
                         <tr>
                             <td>1</td>
                             <td>{{$expense->transactionID}}</td>
                             <td>{{$expense->expenseName}}</td>
-                            <td>{{$expense->expenseAmount}}</td>
+                            {{-- format amount currency --}}
+                            <td>Rp. {{number_format($expense->expenseAmount, 0, ',', '.')}}</td>
                             <td>{{$expense->expenseDate}}</td>
                             <td>{{$expense->expenseDescription}}</td>
                         </tr>
                         @endforeach
-                    </div>
+                    </tbody>
                 </table>
+                {{-- pagination --}}
+                <div class="row">
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination">
+                                <li class="page-item"><a class="page-link" href="#" id="prev">Previous</a></li>
+                                <li class="page-item"><a class="page-link" href="#" id="next">Next</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
                  <p id="noDataFoundMessage" style="display: none; color: red;">Data not Found</p>
             </div>
         </div>

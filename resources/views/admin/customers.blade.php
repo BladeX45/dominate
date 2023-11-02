@@ -36,7 +36,7 @@
                       Action
                     </th>
                   </thead>
-                  <tbody>
+                  <tbody id="data">
                     @foreach ($users as $user)
                     <tr>
                       <td>
@@ -64,38 +64,16 @@
                   </tbody>
                 </table>
                 <p id="noDataFoundMessage" style="display: none; color: red;">Data not Found</p>
-                <nav aria-label="...">
-                    <ul class="pagination">
-                      <!-- Tombol Previous -->
-                      @if ($users->onFirstPage())
-                      <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Sebelumnya</a>
-                      </li>
-                      @else
-                      <li class="page-item">
-                        <a class="page-link" href="{{ $users->previousPageUrl() }}" tabindex="-1">Sebelumnya</a>
-                      </li>
-                      @endif
-
-                      <!-- Tombol halaman -->
-                      @foreach ($users->getUrlRange(1, $users->lastPage()) as $page => $url)
-                      <li class="page-item{{ ($users->currentPage() == $page) ? ' active' : '' }}">
-                        <a class="page-link" href="{{ $url }}">{{ $page }}</a>
-                      </li>
-                      @endforeach
-
-                      <!-- Tombol Next -->
-                      @if ($users->hasMorePages())
-                      <li class="page-item">
-                        <a class="page-link" href="{{ $users->nextPageUrl() }}">Selanjutnya</a>
-                      </li>
-                      @else
-                      <li class="page-item disabled">
-                        <a class="page-link" href="#">Selanjutnya</a>
-                      </li>
-                      @endif
-                    </ul>
-                  </nav>
+                <div class="row">
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination">
+                                <li class="page-item"><a class="page-link" href="#" id="prev">Previous</a></li>
+                                <li class="page-item"><a class="page-link" href="#" id="next">Next</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
               </div>
             </div>
           </div>

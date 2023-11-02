@@ -1,4 +1,4 @@
-@extends('layouts.app', ['pageSlug' => 'admin.users'])
+@extends('layouts.app', ['pageSlug' => 'Instructors'])
 
 @section('content')
 <div class="content">
@@ -19,7 +19,7 @@
                             <div class="container-fluid">
                                 <div class="col-md-4">
                                     <div class="searchInput">
-                                        <input type="text" name="search" id="searchInput" class="form-control" placeholder="Search Transaction">
+                                        <input type="text" name="search" id="searchInput" class="form-control" placeholder="Search Instructor">
                                     </div>
                                 </div>
                             </div>
@@ -39,13 +39,10 @@
                                         Email
                                     </th>
                                     <th>
-                                        Role
-                                    </th>
-                                    <th>
                                         Action
                                     </th>
                                 </thead>
-                                <tbody>
+                                <tbody id="data">
                                     @php
                                     $increment = 1; // Inisialisasi nomor baris (increment) awal
                                     @endphp
@@ -60,9 +57,6 @@
                                         </td>
                                         <td>
                                             {{ $user->userEmail }}
-                                        </td>
-                                        <td>
-                                            {{ $user->roleName }}
                                         </td>
                                         <td>
                                             <a href="#" rel="tooltip" class="btn btn-info btn-sm btn-round btn-icon"
@@ -83,36 +77,16 @@
                                </tbody>
                            </table>
                            <p id="noDataFoundMessage" style="display: none; color: red;">Data not Found</p>
-                           <nav aria-label="...">
-                               <ul class="pagination">
-                                   <!-- Tombol Previous -->
-                                   @if ($data->onFirstPage())
-                                   <li class="page-item disabled">
-                                       <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Sebelumnya</a>
-                                   </li>
-                                   @else
-                                   <li class="page-item">
-                                       <a class="page-link" href="{{ $data->previousPageUrl() }}" tabindex="-1">Sebelumnya</a>
-                                   </li>
-                                   @endif
-                                   <!-- Tombol halaman -->
-                                   @foreach ($data->getUrlRange(1, $data->lastPage()) as $page => $url)
-                                   <li class="page-item{{ ($data->currentPage() == $page) ? ' active' : '' }}">
-                                       <a class="page-link" href="{{ $url }}">{{ $page }}</a>
-                                   </li>
-                                   @endforeach
-                                   <!-- Tombol Next -->
-                                   @if ($data->hasMorePages())
-                                   <li class="page-item">
-                                       <a class="page-link" href="{{ $data->nextPageUrl() }}">Selanjutnya</a>
-                                   </li>
-                                   @else
-                                   <li class="page-item disabled">
-                                       <a class="page-link" href="#">Selanjutnya</a>
-                                   </li>
-                                   @endif
-                               </ul>
-                           </nav>
+                           <div class="row">
+                            <div class="col-md-12 d-flex justify-content-center">
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination">
+                                        <li class="page-item"><a class="page-link" href="#" id="prev">Previous</a></li>
+                                        <li class="page-item"><a class="page-link" href="#" id="next">Next</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
                        </div>
                    </div>
                </div>
