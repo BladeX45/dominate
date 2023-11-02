@@ -13,7 +13,7 @@
             </li>
             <li @if ($pageSlug == 'dashboard') class="active " @endif>
                 <a href="{{ route('instructor.dashboard') }}">
-                    <i class="tim-icons icon-bell-55"></i>
+                    <i class="tim-icons icon-chart-pie-36"></i>
                     <p>{{ __('Dashboard') }}</p>
                 </a>
             </li>

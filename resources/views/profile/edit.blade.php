@@ -50,11 +50,30 @@
                             </div>
                         </div>
                         {{-- Birth Date --}}
+                        {{-- check auth instructor or not --}}
+                        @if(Auth::user()->roleID == 3)
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group{{ $errors->has('birthDate') ? ' has-danger' : '' }}">
+                                    <label for="birthDate">{{__('Birth Date')}}</label>
+                                    <input type="date" name="birthDate" class="form-control {{ $errors->has('birthDate') ? ' is-invalid' : '' }}" placeholder="{{ __('Birth Date') }}" value="{{ old('birthDate', (auth()->user()->instructor ? auth()->user()->instructor->birthDate : (auth()->user()->customer ? auth()->user()->customer->birthDate : ''))) }}">
+                                    </div>
+                                </div>
+                                {{-- drivingExperience --}}
+                                <div class="col">
+                                    <div class="form-group{{ $errors->has('drvingExperience') ? ' has-danger' : '' }}">
+                                        <label for="drivingExperience">{{__('Driving Experience')}}</label>
+                                        <input type="text" name="drivingExperience" class="form-control {{ $errors->has('drivingExperience') ? ' is-invalid' : '' }}" placeholder="{{ __('Driving Experience') }}" value="{{ old('drivingExperience', (auth()->user()->instructor ? auth()->user()->instructor->drivingExperience : (auth()->user()->customer ? auth()->user()->customer->drivingExperience : ''))) }}">
+                                    </div>
+                                </div>
+                            </div>
+                        @else
                         <div class="form-group{{ $errors->has('birthDate') ? ' has-danger' : '' }}">
-                            <label>{{ __('Birth Date') }}</label>
-                            <input type="date" name="birthDate" class="form-control {{ $errors->has('birthDate') ? ' is-invalid' : '' }}" value="{{ old('birthDate', (auth()->user()->instructor ? auth()->user()->instructor->birthDate : (auth()->user()->customer ? auth()->user()->customer->birthDate : ''))) }}">
-                            @include('alerts.feedback', ['field' => 'birthDate'])
+                            <label for="birthDate">{{__('Birth Date')}}</label>
+                            <input type="date" name="birthDate" class="form-control {{ $errors->has('birthDate') ? ' is-invalid' : '' }}" placeholder="{{ __('Birth Date') }}" value="{{ old('birthDate', (auth()->user()->instructor ? auth()->user()->instructor->birthDate : (auth()->user()->customer ? auth()->user()->customer->birthDate : ''))) }}">
                         </div>
+                        @endif
+
                         {{-- Gender --}}
                         <fieldset class="form-group{{ $errors->has('gender') ? ' has-danger' : '' }}">
                             <div class="row">
@@ -167,7 +186,7 @@
 
                             <br>
                             <div class="card-footer">
-                                <button type="submit" class="btn btn-fill btn-primary">{{ __('Upload image') }}</button>
+                                <button type="submit" class="btn btn-fill btn-primary">{{ __('Upload Image') }}</button>
                             </div>
                         </form>
 
@@ -250,7 +269,7 @@
 
             <br>
             <div class="card-footer d-flex justify-content-center" class="mx-auto">
-                <button type="submit" class="btn btn-fill btn-primary ">{{ __('Upload image') }}</button>
+                <button type="submit" class="btn btn-fill btn-primary ">{{ __('Upload Certificate') }}</button>
             </div>
         </form>
         @endif

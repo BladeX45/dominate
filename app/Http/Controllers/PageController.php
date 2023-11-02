@@ -87,7 +87,7 @@ class PageController extends Controller
         // check auth role 0 / 1
         switch (auth()->user()->roleID) {
             case 0:
-                $users = User::where('roleID', 1)->paginate(5);
+                $users = User::where('roleID', 1)->all();
                 return view('owner.users', compact('users',));
                 break;
             case 1:
@@ -426,8 +426,8 @@ class PageController extends Controller
         }
         // get data instructor
         $instructor = instructor::where('userID', Auth::user()->id)->first();
-        // get all schedule
-        $schedules = Schedule::where('instructorID', $instructor->id)->get();
+        // get all schedule order by Date
+        $schedules = Schedule::where('instructorID', $instructor->id)->orderBy('date', 'asc')->get();
         // get data instructor
         $instructors = instructor::all();
         // get overallassessment and scheduleID asc created at

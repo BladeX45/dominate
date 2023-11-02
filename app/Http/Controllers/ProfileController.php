@@ -41,7 +41,7 @@ class ProfileController extends Controller
 
                 // Update instructor
                 $instructor = Instructor::where('userID', auth()->user()->id)->first();
-                $instructor->update($request->only(['firstName', 'lastName', 'NIN', 'birthDate', 'gender', 'phoneNumber', 'address']));
+                $instructor->update($request->only(['firstName', 'lastName', 'NIN', 'birthDate', 'gender', 'drivingExperience', 'phone', 'address']));
 
                 return back()->withStatus(__('Profile successfully updated.'));
             } elseif ($user->roleID == 2) {
