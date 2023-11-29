@@ -116,7 +116,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="birthDate">Date of Birth</label>
-                                        <input type="date" class="form-control w-100" id="birthDate" name="birthDate" max="<?php echo date('Y-m-d', strtotime('-17 years')); ?>">
+                                        <input type="date" class="form-control w-100" id="birthDate" name="birthDate">
                                     </div>
                                     {{-- phone --}}
                                     <div class="form-group">

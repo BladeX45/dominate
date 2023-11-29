@@ -35,50 +35,37 @@ class TransactionController extends Controller
     }
 
     // transaction out
-    public function expenses()
-    {
-        // Pemeriksaan peran: Hanya admin yang dapat mengakses halaman pengeluaran
-        if (auth()->user()->roleID === '1') {
-            // Ambil semua data pengeluaran
-            $expenses = Expense::all();
+    public function expenses(){
+        $expenses = Expense::all();
 
-            // Kirim data pengeluaran ke tampilan
-            return view('admin.expense', compact('expenses'));
-        } else {
-            // Redirect atau berikan respons kesalahan jika bukan admin
-            return redirect()->back()->with('error', 'Access denied. You do not have permission to view expenses.');
-        }
+        return view('admin.expense', compact('expenses'));
     }
 
-
     // generate unique TransactionID
-    public function generateUniqueTransactionIDExpense()
-    {
+    public function generateUniqueTransactionIDExpense(){
         $prefix = 'EXP-'; // Prefix untuk ID transaksi
 
-        do {
-            // 8 random number
-            $randomPart = mt_rand(00000000, 9999999);
+        // 8 random number
+        $randomPart = mt_rand(00000000,9999999);
+
+        $uniqueID = $prefix . $randomPart;
+        // Pastikan ID ini belum digunakan sebelumnya dalam database
+        while (Expense::where('transactionID', $uniqueID)->exists()) {
+            $randomPart = mt_rand(00000000,9999999);
             $uniqueID = $prefix . $randomPart;
-        } while (Expense::where('transactionID', $uniqueID)->exists());
+        }
 
         return $uniqueID;
     }
+    // addExpense
+    public function addExpense(Request $request){
 
-    public function addExpense(Request $request)
-    {
-        // Validasi data yang dikirim dari form
-        $request->validate([
-            'expenseName' => 'required|string|max:255',
-            'expenseAmount' => 'required|numeric',
-            'expenseDate' => 'required|date',
-            'expenseDescription' => 'nullable|string',
-        ]);
+        // dd($request->all());
 
-        // transactionID
+        // transactionnID
         $transactionID = $this->generateUniqueTransactionIDExpense();
 
-        // Create expense record
+        // dd($transactionID);
         $expense = Expense::create([
             'transactionID' => $transactionID,
             'expenseName' => $request->expenseName,
@@ -87,28 +74,36 @@ class TransactionController extends Controller
             'expenseDescription' => $request->expenseDescription,
         ]);
 
-        // Get last balance or create a new cashflow entry if null
+        // get last balance
         $lastBalance = Cashflow::orderBy('id', 'desc')->first();
 
-        if ($lastBalance == null) {
+        // if null
+        if($lastBalance == null){
             $lastBalance = Cashflow::create([
+                // fk transaction -> nullable
                 'expense_id' => $expense->id,
+                // debitAmount
                 'creditAmount' => $expense->expenseAmount,
+                // date
                 'date' => Carbon::now(),
+                // update balance balance - creditAmount
                 'balance' => 0 - $expense->expenseAmount,
             ]);
-
             return redirect()->back()->with('success', 'Expense added successfully');
         }
 
-        // Insert to cashflow
+        // insert to cashflow
         $cashflow = Cashflow::create([
+            // fk transaction -> nullable
             'expense_id' => $expense->id,
+            // debitAmount
             'creditAmount' => $expense->expenseAmount,
+            // date
             'date' => Carbon::now(),
+            // update balance balance - creditAmount
             'balance' => $lastBalance->balance - $expense->expenseAmount,
         ]);
-
+        // dd($expense);
         return redirect()->back()->with('success', 'Expense added successfully');
     }
 
@@ -159,32 +154,37 @@ class TransactionController extends Controller
     {
         //
     }
-    public function customerTransactions()
-    {
+
+    public function customerTransactions(){
         // Memeriksa apakah pengguna sudah login atau belum
         if (Auth::check()) {
             // cek admin or not?
-            if (auth()->user()->roleID === 1) {
+            if(auth()->user()->roleID === 1){
                 $data = Transaction::all();
                 return view('pages.transactions', ['data' => $data]);
-            } else {
-                $data = Transaction::where('userID', Auth::user()->id)->get();
-                return view('pages.transactions', ['data' => $data]);
             }
+            $data = Transaction::where('userID', Auth::user()->id)->paginate(10);
+
+            return view('pages.transactions', ['data' => $data]);
         } else {
             // Redirect atau tindakan lain jika pengguna belum login
-            return redirect()->route('login')->with('error', 'You need to log in to view transactions.'); // Ganti 'login' dengan nama rute halaman login
+            return redirect()->route('login'); // Ganti 'login' dengan nama rute halaman login
         }
     }
 
-
     // upload receipt Transfer
-    public function uploadReceipt(Request $request)
-    {
+    public function uploadReceipt(Request $request){
         // Validate the incoming request data, e.g., check if a file is uploaded
+        dd($request->all());
+
         $request->validate([
             'evidence' => 'required|file|mimes:jpeg,png,pdf|max:2048', // Adjust validation rules as needed
         ]);
+
+        // if null
+        if($request->evidence == null){
+            return redirect()->back()->with('error', 'Receipt not found');
+        }
 
         // Check if the user is authenticated or authorized to upload receipts
         // You can add your authentication/authorization logic here
@@ -192,55 +192,49 @@ class TransactionController extends Controller
         // Get the uploaded file
         $uploadedFile = $request->file('evidence');
 
-        // if null
-        if ($uploadedFile == null) {
-            return redirect()->back()->with('error', 'Receipt not found');
-        }
-
         // Generate a unique filename for the uploaded file
         $filename = uniqid() . '_' . time() . '.' . $uploadedFile->getClientOriginalExtension();
 
         // Move the uploaded file to a storage location (e.g., public storage)
         $uploadedFile->storeAs('receipts', $filename, 'public');
 
-        // Update the transaction record with the filename
+        // update
         $transaction = Transaction::find($request->transactionID);
+        $transaction->receiptTransfer = $filename;
+        $transaction->save();
 
-        // Check if the transaction record exists
-        if ($transaction) {
-            $transaction->receiptTransfer = $filename;
-            $transaction->save();
+        // You would typically associate this with the user's record or the transaction record
 
-            // You would typically associate this with the user's record or the transaction record
-
-            // Redirect or return a response to indicate success
-            return redirect()->back()->with('success', 'Receipt uploaded successfully');
-        } else {
-            return redirect()->back()->with('error', 'Transaction not found');
-        }
+        // Redirect or return a response to indicate success
+        return redirect()->back()->with('success', 'Receipt uploaded successfully');
     }
-
 
 
     public function generateUniqueTransactionID()
     {
         $prefix = 'TX-'; // Prefix untuk ID transaksi
 
-        do {
-            // 8 random number
-            $randomPart = mt_rand(00000000, 9999999);
+        // 8 random number
+        $randomPart = mt_rand(00000000,9999999);
+
+        $uniqueID = $prefix . $randomPart;
+        // Pastikan ID ini belum digunakan sebelumnya dalam database
+        while (Transaction::where('transactionID', $uniqueID)->exists()) {
+            $randomPart = mt_rand(00000000,9999999);
             $uniqueID = $prefix . $randomPart;
-        } while (Transaction::where('transactionID', $uniqueID)->exists());
+        }
 
         return $uniqueID;
     }
 
-    public function order(Request $request)
-    {
-        // Dump and die to inspect the request data
-        // dd($request->all());
+    // order
+    public function order(Request $request){
+        // Contoh data dari form transmisi
+        $transmissionType = $request->transmissionType;
+        $selectedPlan = $request->plan;
+        $planNameToCheck = $request->planName;
 
-        // Validation rules
+        // Validasi data permintaan
         $validator = Validator::make($request->all(), [
             'transmissionType' => 'required|in:manual,automatic',
             'plan' => 'required|string',
@@ -250,45 +244,41 @@ class TransactionController extends Controller
             'paymentMethod' => 'required|in:transfer,cash',
         ]);
 
-        // Check if validation fails
+        // Jika validasi gagal
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
         }
 
-        // Find the matching plan based on transmission type and selected plan
-        $matchingPlan = Plan::where('planType', $request->transmissionType)
-                            ->where('planName', $request->plan)
+        // Ambil data dari tabel plans berdasarkan jenis transmisi dan opsi yang dipilih
+        $matchingPlan = Plan::where('planType', $transmissionType)
+                            ->where('planName', $selectedPlan)
                             ->first();
 
-        // Validate if the plan is found
-        if (!$matchingPlan) {
-            return redirect()->back()->with('error', 'Selected plan not found');
-        }
-
-        // Calculate total price and total session
+        // Menghitung total harga dan total sesi
         $totalPrice = $request->totalPrice ?? ($request->amount * $matchingPlan->planPrice);
-        $totalSession = $request->totalSession ?? ($request->amount * $matchingPlan->planSession);
+        $totalSession = $request->totalSession ?? ($request->amount * $matchingPlan->totalSession);
 
-        // Create a new transaction record
+        // Simpan data transaksi ke database
         $transaction = new Transaction();
-        $transaction->userID = Auth::user()->id; // Replace with your method to get the user ID
+        $transaction->userID = Auth::user()->id; // Ganti dengan cara Anda untuk mendapatkan ID pengguna yang sedang login
         $transaction->planID = $matchingPlan->id;
         $transaction->planAmount = $request->amount;
         $transaction->totalSession = $totalSession;
-        $transaction->transactionID = $this->generateUniqueTransactionID(); // Replace with your method to generate a unique transaction ID
-        $transaction->paymentMethod = $request->paymentMethod;
-        $transaction->paymentStatus = 'Pending';
+        $transaction->transactionID = $this->generateUniqueTransactionID(); // Ganti dengan cara Anda untuk menghasilkan ID transaksi unik
+        $transaction->paymentMethod = $request->paymentMethod;; // Anda mungkin perlu mengatur metode pembayaran sesuai dengan proses Anda
+        $transaction->paymentStatus = 'Pending'; //  Anda mungkin perlu mengatur status pembayaran sesuai dengan proses Anda
         $transaction->paymentAmount = $totalPrice;
-        $transaction->receiptTransfer = null; // Set this according to your process
+        $transaction->receiptTransfer = null; // Anda mungkin perlu mengatur ini sesuai dengan proses Anda
         $transaction->save();
 
-        // Redirect or perform other actions after saving data
-        return redirect()->route('customer.transactions')->with('success', 'Order placed successfully'); // Replace with the appropriate route name
+        // Redirect atau tindakan lain setelah data tersimpan
+        return redirect()->route('customer.transactions'); // Ganti 'transaction.success' dengan nama rute yang sesuai
+
+        // Anda juga perlu mendefinisikan metode generateUniqueTransactionID()
+        // dan pastikan Anda telah mengimpor model Transaction dan Auth di atas
     }
-
-
 
     public function uploadEvidence(Request $request){
         // Validate the incoming request data, e.g., check if a file is uploaded
@@ -341,20 +331,16 @@ class TransactionController extends Controller
         return redirect()->back()->with('success', 'Receipt rejected successfully');
     }
 
-    public function verifyTransaction(Request $request)
-    {
+    public function verifyTransaction(Request $request) {
         try {
-            // Cari transaksi berdasarkan ID atau hasilkan ModelNotFoundException jika tidak ditemukan
             $transaction = Transaction::where('transactionID', $request->transactionID)->firstOrFail();
-
-            // Perbarui status pembayaran menjadi 'success'
             $transaction->update(['paymentStatus' => 'success']);
 
-            // Ambil saldo terakhir jika ada
+            // Find the last balance if it exists
             $lastBalance = Cashflow::orderBy('id', 'desc')->first();
             $balance = $lastBalance ? $lastBalance->balance : 0;
 
-            // Buat entri cashflow baru
+            // Create a new cashflow entry
             Cashflow::create([
                 'transaction_id' => $transaction->id,
                 'debitAmount' => $transaction->paymentAmount,
@@ -362,22 +348,16 @@ class TransactionController extends Controller
                 'balance' => $balance + $transaction->paymentAmount,
             ]);
 
-            // Temukan pelanggan berdasarkan ID pengguna transaksi
             $customer = Customer::where('userID', $transaction->userID)->firstOrFail();
 
-            // Tentukan field sesi berdasarkan jenis rencana
             $sessionField = ($transaction->planID >= 1 && $transaction->planID <= 4) ? 'ManualSession' : 'MaticSession';
-
-            // Perbarui jumlah sesi pelanggan
             $customer->update([$sessionField => $transaction->totalSession + $customer->$sessionField]);
 
-            // Redirect atau kembalikan respons untuk menunjukkan keberhasilan
+            // Redirect or return a response to indicate success
             return redirect()->back()->with('success', 'Transaction verified successfully');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            // Tangani ketika transaksi tidak ditemukan
             return redirect()->back()->with('error', 'Transaction not found');
         } catch (\Exception $e) {
-            // Tangani kesalahan umum
             return redirect()->back()->with('error', 'An error occurred while verifying the transaction');
         }
     }

@@ -15,91 +15,96 @@ class ScoreController extends Controller
     // customer Score
     public function addCustomerScore(Request $request)
     {
-        // Validasi request jika diperlukan
-        $request->validate([
-            'customerID' => 'required|exists:customers,id',
-            'scheduleID' => 'required|exists:schedules,id',
-            'isFinal' => 'nullable|boolean',
-            'theoryKnowledge' => 'required|numeric',
-            'practicalDriving' => 'required|numeric',
-            'hazardPerception' => 'required|numeric',
-            'trafficRulesCompliance' => 'required|numeric',
-            'confidenceAndAttitude' => 'required|numeric',
-            'overallAssessment' => 'required|numeric',
-            'additionalComment' => 'nullable|string',
-        ]);
+        /**
+            customerID
+            scheduleID
+            isFinal
+            theoryKnowledge
+            practicalDriving
+            hazardPerception
+            trafficRulesCompliance
+            confidenceAndAttitude
+            overallAssessment
+            additionalComment
+         **/
 
-        // Get data instructor based on the authenticated user
+        //  get data auth user and find on table instructor
         $instructor = Instructor::where('userID', auth()->user()->id)->first();
-
-        // Revalue isFinal based on the request
-        $isFinal = $request->has('isFinal') ? 1 : 0;
-
-        // Check if the score already exists
-        if (Score::where('customerID', $request->customerID)->where('scheduleID', $request->scheduleID)->exists()) {
-            return redirect()->back()->with('error', 'Score already exists');
+        // revalue isFinal
+        if($request->input('isFinal') == 'on'){
+            $request->merge(['isFinal' => 1]);
+        }else{
+            $request->merge(['isFinal' => 0]);
         }
 
-        // Create a new score
-        $score = new Score([
-            'scheduleID' => $request->scheduleID,
-            'customerID' => $request->customerID,
-            'instructorID' => $instructor->id,
-            'isFinal' => $isFinal,
-            'theoryKnowledge' => $request->theoryKnowledge,
-            'practicalDriving' => $request->practicalDriving,
-            'hazardPerception' => $request->hazardPerception,
-            'trafficRulesCompliance' => $request->trafficRulesCompliance,
-            'confidenceAndAttitude' => $request->confidenceAndAttitude,
-            'overallAssessment' => $request->overallAssessment,
-            'additionalComment' => $request->additionalComment,
-        ]);
+        // dd($request->all());
 
-        $score->save();
+        // if exist redirect else create
+        if(Score::where('customerID', $request->input('customerID'))->where('scheduleID', $request->input('scheduleID'))->exists()){
+            dd('exist');
+            return redirect()->back()->with('error', 'Score already exist');
+        }else{
+            $score = new Score();
+            $score->scheduleID = $request->input('scheduleID');
+            $score->customerID = $request->input('customerID');
+            $score->instructorID = $instructor->id;
+            $score->isFinal = $request->input('isFinal');
+            $score->theoryKnowledge = $request->input('theoryKnowledge');
+            $score->practicalDriving = $request->input('practicalDriving');
+            $score->hazardPerception = $request->input('hazardPerception');
+            $score->trafficRulesCompliance = $request->input('trafficRulesCompliance');
+            $score->confidenceAndAttitude = $request->input('confidenceAndAttitude');
+            $score->overallAssessment = $request->input('overallAssessment');
+            $score->additionalComment = $request->input('additionalComment');
+            $score->save();
+            // dd($score);
+            // update schedule status
+            $schedule = Schedule::find($request->input('scheduleID'));
+            $schedule->status = 'need rating';
+            $schedule->save();
 
-        // Update schedule status to 'need rating'
-        $schedule = Schedule::find($request->scheduleID);
-        $schedule->status = 'need rating';
-        $schedule->save();
-
-        return redirect()->back()->with('success', 'Score added successfully');
+            return redirect()->back()->with('success', 'Score added successfully');
+        }
     }
-
 
     // instructor rating
     public function ratingInstructor(Request $request)
     {
-        // Get data of authenticated user from the Customer model
+        /**
+            instructorID
+            customerID
+            rating
+            comment
+         **/
+        // get data auth user and find on table customer
         $customer = Customer::where('userID', auth()->user()->id)->first();
-    
-        // Check if a rating already exists for the given schedule and customer
-        if (Rating::where('scheduleID', $request->input('scheduleID'))
-            ->where('customerID', $customer->id)
-            ->exists()) {
-            return redirect()->back()->with('error', 'Rating already exists');
-        }
-    
-        // Create a new rating
-        $rating = Rating::create([
-            'scheduleID' => $request->input('scheduleID'),
-            'customerID' => $customer->id,
-            'instructorID' => $request->input('instructorID'),
-            'rating' => $request->input('rating'),
-            'comment' => $request->input('comment'),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-    
-        // Update schedule status to 'completed' if found
-        if ($schedule = Schedule::find($request->input('scheduleID'))) {
-            $schedule->update(['status' => 'completed']);
+        // if exist rating where condition scheduleID and customerID redirect else create
+        if(rating::where('scheduleID', $request->input('scheduleID'))->where('customerID', $customer->id)->exists()){
+            return redirect()->back()->with('error', 'Rating already exist');
+        }else{
+            $rating = new rating();
+            $rating->scheduleID = $request->input('scheduleID');
+            $rating->customerID = $customer->id;
+            $rating->instructorID = $request->input('instructorID');
+            $rating->rating = $request->input('rating');
+            $rating->comment = $request->input('comment');
+            // timestamp
+            $rating->created_at = now();
+            $rating->updated_at = now();
+            $rating->save();
+
+            // update schedule status
+            $schedule = Schedule::find($request->input('scheduleID'));
+            $schedule->status = 'done';
+            $schedule->save();
+
+            // update status schedule to completed
+            $schedule = Schedule::find($request->input('scheduleID'));
+            $schedule->status = 'completed';
+
             return redirect()->back()->with('success', 'Rating added successfully');
         }
-    
-        // If the schedule is not found, redirect back with an error message
-        return redirect()->back()->with('error', 'Schedule not found');
     }
-    
     /**
      * Display a listing of the resource.
      */

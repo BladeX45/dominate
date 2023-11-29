@@ -46,7 +46,7 @@ Route::group(['prefix' => 'customer', 'middleware' => ['auth', 'verified']], fun
     // get score customer
     Route::get('/score', [CustomerController::class, 'show'])->name('customer.score');
     Route::get('/dashboard', [PageController::class, 'customerDashboard'])->name('customer.dashboard');
-    Route::post('/orders', [TransactionController::class, 'order'])->name('customer-order');
+    Route::post('/orders', [TransactionController::class, 'order'])->name('customer.orders');
     Route::get('/transactions', [TransactionController::class, 'customerTransactions'])->name('customer.transactions');
     // upload evidence
     Route::put('/upload-evidence', [TransactionController::class, 'uploadEvidence'])->name('customer.uploadEvidence');

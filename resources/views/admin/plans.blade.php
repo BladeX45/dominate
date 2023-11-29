@@ -58,7 +58,6 @@
                         <th>Price</th>
                         <th>Description</th>
                         <th>Status</th>
-                        <th>Action</th>
                     </thead>
                     <tbody id="data">
                         @foreach ($plans as $plan)
@@ -67,7 +66,7 @@
                             <td>{{ $plan->planName }}</td>
                             <td>{{ $plan->planSession }}</td>
                             <td>{{ $plan->planType }}</td>
-                            <td>Rp. {{number_format($plan->planPrice, 0, ',', '.')}}</td>
+                            <td>{{ $plan->planPrice }}</td>
                             <td>{{ $plan->planDescription }}</td>
                             {{-- 1 = active / 0 = inactive --}}
                             <td>
@@ -115,11 +114,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="planStatus">Plan Status</label>
-                                            {{-- dropdown 1/0 --}}
-                                            <select name="planStatus" id="planStatus" class="form-control bg-dark">
-                                                <option value="1" {{old('planStatus',$plan->planStatus) == 1 ? 'selected' : ''}}>Active</option>
-                                                <option value="0" {{old('planStatus',$plan->planStatus) == 0 ? 'selected' : ''}}>Inactive</option>
-                                            </select>
+                                            <input type="text" name="planStatus" id="planStatus" class="form-control" value="{{old('planStatus',$plan->planStatus)}}" placeholder="Plan Status">
                                         </div>
                                     </div>
                                 </div>
@@ -184,11 +179,7 @@
                     </div>
                     <div class="form-group">
                         <label for="planStatus">Plan Status</label>
-                        {{-- dropdown --}}
-                        <select name="planStatus" id="planStatus" class="form-control bg-dark">
-                            <option value="1" {{old($plan->planStatus) == 1 ? 'selected' : ''}}>Active</option>
-                            <option value="0" {{old($plan->planStatus) == 0 ? 'selected' : ''}}>Inactive</option>
-                        </select>
+                        <input type="text" name="planStatus" id="planStatus" class="form-control" value="{{old($plan->planStatus)}}" placeholder="Plan Status">
                     </div>
                 </div>
             </div>
@@ -199,6 +190,7 @@
             </div>
         </x-form>
     </x-modal>
+
 @endsection
 
 @push('js')

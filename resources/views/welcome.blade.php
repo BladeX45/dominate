@@ -127,26 +127,24 @@
                             <div class="card-body">
                                 <div class="row">
                                     @foreach ($dataManual as $dm)
-                                        @if($dm->planStatus == 1)
-                                        <div class="col-md-3">
-                                            <div class="card bg-primary">
-                                                <div class="card-header">
-                                                    <h2 class="title">
-                                                        {{ $dm->planName }}
-                                                    </h2>
-                                                </div>
-                                                <div class="card-body">
+                                    <div class="col-md-3">
+                                        <div class="card bg-primary">
+                                            <div class="card-header">
+                                                <h2 class="title">
+                                                    {{ $dm->planName }}
+                                                </h2>
+                                            </div>
+                                            <div class="card-body">
 
-                                                    <p class="lead">
-                                                        {{ $dm->planDescription }}
-                                                    </p>
-                                                    <p class="lead">
-                                                        Rp.{{ number_format($dm->planPrice, 0, ',', '.') }}
-                                                    </p>
-                                                </div>
+                                                <p class="lead">
+                                                    {{ $dm->planDescription }}
+                                                </p>
+                                                <p class="lead">
+                                                    Rp.{{ number_format($dm->planPrice, 0, ',', '.') }}
+                                                </p>
                                             </div>
                                         </div>
-                                        @endif
+                                    </div>
                                     @endforeach
                                 </div>
                             </div>
@@ -164,7 +162,6 @@
                             <div class="card-body">
                                 <div class="row">
                                     @foreach ($dataMatic as $da)
-                                    @if ($da->planStatus == 1)
                                     <div class="col-md-3">
                                         <div class="card bg-primary">
                                             <div class="card-header">
@@ -183,7 +180,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    @endif
                                     @endforeach
                                 </div>
                             </div>

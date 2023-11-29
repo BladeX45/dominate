@@ -1,7 +1,7 @@
 @extends('layouts.app', ['page' => __('dashboard'), 'pageSlug' => 'dashboard'])
 
 @section('content')
-    <div class="row bg-primary" style="max-height: 100vh">
+    <div class="row bg-primary">
         <div class="col-md-12">
             <div class="card bg-primary">
                 <div class="card-header">
@@ -13,7 +13,7 @@
             </div>
             <div class="card-body">
                 <div class="card bg-primary">
-                    <div class="row" style="max-height: 100vh">
+                    <div class="row">
                         <div class="col-md-6">
                             <div class="card">
                                 {{-- schedules --}}
@@ -23,7 +23,7 @@
                                         {{ __('Jadwal') }}
                                     </h3>
                                 </div>
-                                <div class="card-body">
+                                <div class="card-body" style="min-height: 56vh">
                                     <div class="table-responsive">
                                         <table class="table tablesorter " id="">
                                             <thead class=" text-primary">
@@ -74,7 +74,7 @@
                                     </h3>
                                 </div>
                                 <div class="card-body">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive" style="min-height: 52vh">
                                         <table class="table tablesorter" id="">
                                             <thead class=" text-primary">
                                                 <tr>
@@ -126,7 +126,7 @@
                                     </h3>
                                 </div>
                                 <div class="card-body">
-                                    <canvas id="myChart" width="400" height="50"></canvas>
+                                    <canvas id="myChart" width="400" height="200"></canvas>
                                 </div>
                             </div>
                         </div>

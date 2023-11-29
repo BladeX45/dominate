@@ -44,7 +44,6 @@ class PageController extends Controller
             return [
                 'Plan' => $item->plan->planName, // Anda perlu memiliki atribut 'name' di model Plan
                 'Percentage' => ($item->totalSales / $totalSales) * 100,
-                'population' => $item->totalSales,
             ];
         });
 
@@ -59,40 +58,32 @@ class PageController extends Controller
         return view('admin.dashboard', compact('transactions', 'percentageData', 'cars', 'expenses'));
     }
 
-    public function customerDashboard()
-    {
-        // Forbidden route if the user is not a customer
-        if (Auth::user()->roleID != '2') {
-            return redirect()->back()->with('error', 'Access denied. You do not have permission to view the customer dashboard.');
+    public function customerDashboard(){
+        // forbidden route if not admin back to previous page
+        if(Auth::user()->roleID != 2){
+            return redirect()->back();
         }
-
-        // Get customer data based on the authenticated user
+        // get data customer
         $customer = Customer::where('userID', Auth::user()->id)->first();
-
-        // Get all transactions for the customer
+        // get all transaction
         $transactions = Transaction::where('userID', Auth::user()->id)->get();
-
-        // Get all schedules for the customer
+        // get all schedule
         $schedules = Schedule::where('customerID', $customer->id)->get();
-
-        // Get all instructors
-        $instructors = Instructor::all();
-
-        // Get overall assessment and scheduleID ordered by created_at
+        // get data instructor
+        $instructors = instructor::all();
+        // get overallassessment and scheduleID asc created at
         $scores = Score::where('customerID', $customer->id)->orderBy('scheduleID', 'asc')->get();
 
-        // Convert scores to an array if needed
+        // If you want to retrieve the result as an array, you can use the toArray() method:
         $scores = $scores->toArray();
-
-        // Get all certificates for the customer
+        // dd($scores);
         $certificates = Certificate::where('customerID', $customer->id)->get();
-
+        // dd($scores);
         return view('layouts.dashboard.customer', compact('customer', 'schedules', 'instructors', 'scores', 'transactions', 'certificates'));
     }
 
     public function users()
     {
-        // dd(now());
         // check auth role 0 / 1
         switch (auth()->user()->roleID) {
             case 0:
@@ -133,12 +124,12 @@ class PageController extends Controller
     }
 
     // transactions page
+    public function indexTransactions(){
+        // check admin or not
+        // ddd(auth()->user()->roleID);
+        // call name on table users
 
-    public function indexTransactions()
-    {
-        // Periksa apakah pengguna adalah admin
-        if (auth()->user()->roleID === '1') {
-            // Query untuk mengambil data transaksi dengan informasi tambahan dari tabel users dan plans
+        if(auth()->user()->roleID === '1'){
             $data = DB::table('transactions')
                 ->join('users', 'transactions.userID', '=', 'users.id')
                 ->join('plans', 'transactions.planID', '=', 'plans.id')
@@ -148,25 +139,20 @@ class PageController extends Controller
                     'transactions.planID as planID',
                     'transactions.created_at as transactionDate',
                     'transactions.planAmount as planAmount',
-                    'transactions.paymentAmount as paymentAmount',
                     'transactions.paymentStatus as transactionStatus',
                     'transactions.paymentMethod as paymentMethod',
                     'transactions.receiptTransfer as receiptTransfer',
                     'transactions.totalSession as totalSession',
+                    'users.name as userName',
                     'plans.planName as planName',
                     'plans.planType as planType',
                     'plans.planPrice as planPrice'
                 )
-                ->get();
-
-            // Kirim data transaksi ke tampilan
+                ->paginate(10);
             return view('admin.transactions', compact('data'));
-        } else {
-            // Jika pengguna bukan admin, redirect dengan pesan kesalahan
-            return redirect()->back()->with('error', 'Access denied. You do not have permission to view transactions.');
         }
+        echo 'test';
     }
-
 
     public function verifyPayment(Request $request){
         // forbidden route if not admin back to previous page
@@ -188,19 +174,16 @@ class PageController extends Controller
     }
 
     public function assets(){
-        // Cek apakah pengguna saat ini adalah admin (roleID = 1)
-        if (Auth::user()->roleID != 1) {
-            // Jika bukan admin, larikan pengguna kembali ke halaman sebelumnya
+        // forbidden route if not admin back to previous page
+        if(Auth::user()->roleID != 1){
             return redirect()->back();
         }
-
-        // Jika pengguna adalah admin, lanjutkan untuk mengambil data kendaraan
+        // get car paginate 10
         $cars = Car::all();
-
-        // Kemudian kirim data kendaraan ke tampilan (view) 'admin.assets'
+        // dd($cars);
         return view('admin.assets', compact('cars'));
-    }
 
+    }
 
     public function plans(){
         // forbidden route if not admin back to previous page
@@ -341,17 +324,14 @@ class PageController extends Controller
         // Check instructor availability
         $instructorAvailability = !$this->isInstructorScheduleConflict($instructorId, $date, $session);
 
-
-
         // Check car availability
         $carAvailability = $this->isCarAvailable($type, $date, $session);
 
         // Determine overall availability
         $isAvailable = $instructorAvailability && $carAvailability;
 
-        return response()->json(['isAvailable' => $isAvailable]);
+        return response()->json(['isAvailable' => $carAvailability]);
     }
-
 
     protected function isInstructorScheduleConflict($instructorId, $date, $session)
     {
@@ -439,32 +419,31 @@ class PageController extends Controller
     }
 
     // dashboard instructor
-    public function instructorDashboard()
-    {
-        // Forbidden route if the user is not an instructor
-        if (Auth::user()->roleID != '3') {
-            return redirect()->back()->with('error', 'Access denied. You do not have permission to view the instructor dashboard.');
+    public function instructorDashboard(){
+        // forbidden route if not admin back to previous page
+        if(Auth::user()->roleID != 3){
+            return redirect()->back();
         }
-
-        // Get data instructor
-        $instructor = Instructor::where('userID', Auth::user()->id)->first();
-
-        // Get all schedules ordered by Date
+        // get data instructor
+        $instructor = instructor::where('userID', Auth::user()->id)->first();
+        // get all schedule order by Date
         $schedules = Schedule::where('instructorID', $instructor->id)->orderBy('date', 'asc')->get();
-
-        // Get overall assessment and scheduleID ordered by created_at
+        // get data instructor
+        $instructors = instructor::all();
+        // get overallassessment and scheduleID asc created at
         $scores = Score::where('instructorID', $instructor->id)->orderBy('scheduleID', 'asc')->get();
 
-        // Ratings line chart
-        $ratings = Rating::where('instructorID', $instructor->id)->get();
-
-        // Extract and format data for the chart
-        $formattedLabels = $ratings->pluck('created_at')->map(function ($timestamp) {
-            return date('Y-m-d', strtotime($timestamp));
-        });
-
+        // dd($scores);
+        // dd($scores);
+        // ratings line chart
+        $ratings = rating::where('instructorID', $instructor->id)->get();
+        // Now, extract and format the data for the chart as previously shown.
+        $labels = $ratings->pluck('created_at');
         $ratingsData = $ratings->pluck('rating');
 
+        $formattedLabels = $labels->map(function ($timestamp) {
+            return date('Y-m-d', strtotime($timestamp));
+        });
         return view('layouts.dashboard.instructor', compact('instructor', 'schedules', 'ratings', 'scores', 'formattedLabels', 'ratingsData'));
     }
 
@@ -474,6 +453,8 @@ class PageController extends Controller
 
         return view('auth.verify');
     }
+
+    // verification email resend
 
     // verification email resend
     public function verificationResend(Request $request){

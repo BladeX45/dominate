@@ -14,7 +14,7 @@
                 <div class="col-md-12">
                     <div class="d-flex justify-content-between">
                         <div class="searchInput">
-                            <input type="text" name="search" id="searchInput" class="form-control w-100" placeholder="Search Expense">
+                            <input type="text" name="search" id="searchInput" class="form-control w-100" placeholder="Cari Jadwal">
                         </div>
                         <button type="button" class="btn btn-md btn-primary me-3" data-bs-toggle="modal" data-bs-target="#expense">
                             <span>
@@ -46,7 +46,7 @@
                             <td>{{$expense->expenseName}}</td>
                             {{-- format amount currency --}}
                             <td>Rp. {{number_format($expense->expenseAmount, 0, ',', '.')}}</td>
-                            <td>{{ date('Y/m/d', strtotime($expense->expenseDate)) }}</td>
+                            <td>{{$expense->expenseDate}}</td>
                             <td>{{$expense->expenseDescription}}</td>
                         </tr>
                         @endforeach

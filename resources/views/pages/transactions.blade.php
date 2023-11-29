@@ -25,7 +25,7 @@
                 </div>
             @endif
 
-            <div class="card" style="min-height: 80vh;">
+            <div class="card bg-primary" style="min-height: 80vh;">
                 <div class="card-header">
                     Daftar Transaksi
                 </div>
@@ -55,7 +55,7 @@
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="data">
+                        <tbody>
                             @foreach ($data as $dt)
                                 <tr>
                                     <td>{{ $dt->transactionID }}</td>
@@ -68,7 +68,7 @@
                                     <td>{{ $dt->paymentStatus }}</td>
                                     <td>
                                         <button type="button" class="btn btn-primary evidence-button" data-toggle="modal" data-target="#modalE{{$dt->id}}" data-user-id="{{$dt->id}}">
-                                            Upload Receipt
+                                            Upload Evidence
                                         </button>
                                         <!-- Add a hidden input field to store the userId for each row -->
                                         <input type="hidden" id="user-id-input{{$dt->id}}">
@@ -79,15 +79,8 @@
                         </tbody>
                     </table>
                     {{-- paginate --}}
-                    <div class="row">
-                        <div class="col-md-12 d-flex justify-content-center">
-                            <nav aria-label="Page navigation example">
-                                <ul class="pagination">
-                                    <li class="page-item"><a class="page-link" href="#" id="prev">Previous</a></li>
-                                    <li class="page-item"><a class="page-link" href="#" id="next">Next</a></li>
-                                </ul>
-                            </nav>
-                        </div>
+                    <div class="d-flex justify-content-center">
+                        {!! $data->links() !!}
                     </div>
                     {{-- if transactions = 0 --}}
                     @else
@@ -99,7 +92,7 @@
     </div>
 
     @foreach ($data as $dt)
-        <x-modal title="Receipt" idModal="modalE{{$dt->id}}" customStyle="">
+        <x-modal title="Evidence" idModal="modalE{{$dt->id}}" customStyle="">
             <x-form-update id="{{$dt->id}}" data="Transaction" action="{{route('customer.uploadEvidence')}}" >
                 <!-- Display a field with the data -->
                 {{-- input hidden idTransaction --}}

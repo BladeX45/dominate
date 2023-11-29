@@ -30,7 +30,7 @@
                                 <th scope="col">{{ __('Aksi')}}</th>
                               </tr>
                             </thead>
-                            <tbody id="data">
+                            <tbody>
                                 {{-- if schedules is exists --}}
                                 @if($schedules)
                                 @foreach ($schedules as $schedule)
@@ -116,16 +116,37 @@
                                 @endif
                             </tbody>
                           </table>
-                          <div class="row">
-                            <div class="col-md-12 d-flex justify-content-center">
-                                <nav aria-label="Page navigation example">
-                                    <ul class="pagination">
-                                        <li class="page-item"><a class="page-link" href="#" id="prev">Previous</a></li>
-                                        <li class="page-item"><a class="page-link" href="#" id="next">Next</a></li>
-                                    </ul>
-                                </nav>
-                            </div>
-                        </div>
+                          {{-- pagination --}}
+                          <ul class="pagination">
+                            <!-- Tombol Previous -->
+                            @if ($schedules->onFirstPage())
+                            <li class="page-item disabled">
+                              <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Sebelumnya</a>
+                            </li>
+                            @else
+                            <li class="page-item">
+                              <a class="page-link" href="{{ $schedules->previousPageUrl() }}" tabindex="-1">Sebelumnya</a>
+                            </li>
+                            @endif
+
+                            <!-- Tombol halaman -->
+                            @foreach ($schedules->getUrlRange(1, $schedules->lastPage()) as $page => $url)
+                            <li class="page-item{{ ($schedules->currentPage() == $page) ? ' active' : '' }}">
+                              <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                            </li>
+                            @endforeach
+
+                            <!-- Tombol Next -->
+                            @if ($schedules->hasMorePages())
+                            <li class="page-item">
+                              <a class="page-link" href="{{ $schedules->nextPageUrl() }}">Selanjutnya</a>
+                            </li>
+                            @else
+                            <li class="page-item disabled">
+                              <a class="page-link" href="#">Selanjutnya</a>
+                            </li>
+                            @endif
+                          </ul>
                     </div>
                 </div>
             </div>

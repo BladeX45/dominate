@@ -1,8 +1,8 @@
 @extends('layouts.app', ['page' => __('pricing'), 'pageSlug' => 'pricing'])
 
 @section('content')
-<div class="row" style="max-height: 100vh">
-    <div class="col-md-12" style="">
+<div class="row">
+    <div class="col-md-12">
         <div class="card">
             <div class="card-header">
                 {{-- title and button cart --}}
@@ -38,11 +38,10 @@
                                                                 </div>
                                                                 <div class="card-body">
                                                                     <h5 class="planPrice">
-                                                                        {{-- IDR format --}}
-                                                                        {{ 'Rp. '.number_format($dt->planPrice, 0, ',', '.') }}
+                                                                        {{ $dt->planPrice }}
                                                                     </h5>
                                                                     <h5 class="planSession">
-                                                                        {{ $dt->planSession }} Session
+                                                                        {{ $dt->planSession }}
                                                                     </h5>
                                                                     <h5 class="planDescription">
                                                                         {{ $dt->planDescription }}
@@ -77,11 +76,10 @@
                                                             </div>
                                                             <div class="card-body">
                                                                 <h5 class="planPrice">
-                                                                    {{-- IDR format --}}
-                                                                    {{ 'Rp. '.number_format($dm->planPrice, 0, ',', '.') }}
+                                                                    {{ $dm->planPrice }}
                                                                 </h5>
                                                                 <h5 class="planSession">
-                                                                    {{ $dm->planSession }} Session
+                                                                    {{ $dm->planSession }}
                                                                 </h5>
                                                                 <h5 class="planDescription">
                                                                     {{ $dm->planDescription }}
@@ -111,7 +109,7 @@
                 <h1 class="modal-title fs-5 text-light" id="exampleModalLabel">Order Forms</h1>
             </div>
             <div class="modal-body">
-                <x-form class="bg-dark" action="{{ route('customer-order') }}" method="POST">
+                <form class="bg-dark" action="{{ route('customer.orders') }}" method="POST">
                     @csrf
                     {{-- transmission Type --}}
                     <div class="form-group">
@@ -129,7 +127,6 @@
                             <option value="Intermediate">Intermediate</option>
                             <option value="Advance">Advance</option>
                             <option value="1 Session">1 Session</option>
-                            <option value="Paket Hemat">Paket Hemat</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -155,9 +152,9 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
                     </div>
-                </x-form>
+                </form>
             </div>
         </div>
     </div>
