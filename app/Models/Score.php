@@ -26,4 +26,10 @@ class Score extends Model
         return $this->belongsTo(Schedule::class, 'scheduleID');
     }
 
+    // certificate
+    public function certificate()
+    {
+        return $this->hasOne(Certificate::class, 'scoreID');
+    }
+
 }

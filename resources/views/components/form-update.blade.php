@@ -9,7 +9,7 @@
     <!-- Image Preview -->
     <div class="form-group">
         <label for="evidence{{ $id }}">Preview:</label><br>
-        <img name="evidence" class="upload-trigger" id="image-preview-{{ $id }}" src="{{ $record->receiptTransfer ? asset('storage/receipts/'.$record->receiptTransfer) : asset('storage/icon/upload.png') }}" alt="evidence{{ $id }}" style="max-width: 300px">
+        <img name="evidence" name="evidence" id="image-preview-{{ $id }}" src="{{ $record->receiptTransfer ? asset('storage/receipts/'.$record->receiptTransfer) : asset('storage/icons/upload.png') }}" alt="evidence{{ $id }}" style="max-width: 300px">
     </div>
 
     {{ $slot }}
@@ -43,18 +43,5 @@
 
     // Call the previewImage function for each input field that should trigger image preview
     previewImage({{ $id }});
-</script>
-<script>
-    // Add a click event listener to the image preview element with the class "upload-trigger"
-    document.querySelectorAll('.upload-trigger').forEach(function (element) {
-        element.addEventListener('click', function () {
-            // Trigger a click event on the associated file input
-            var fileId = this.getAttribute('id').replace('image-preview-', ''); // Extract the ID of the associated file input
-            var fileInput = document.getElementById('evidence' + fileId);
-            if (fileInput) {
-                fileInput.click(); // Trigger the file input click event
-            }
-        });
-    });
 </script>
 

@@ -130,8 +130,9 @@
                                                                 <td>{{$iExpenses++}}</td>
                                                                 <td>{{$expense->transactionID}}</td>
                                                                 <td>{{$expense->expenseName}}</td>
-                                                                <td>{{$expense->expenseAmount}}</td>
-                                                                <td>{{$expense->expenseDate}}</td>
+                                                                {{-- IDR format  --}}
+                                                                <td>{{'Rp. '.number_format($expense->expenseAmount, 0, ',', '.')}}</td>
+                                                                <td>{{ date('Y/m/d', strtotime($expense->expenseDate)) }}</td>
                                                                 <td>{{$expense->expenseDescription}}</td>
                                                             </tr>
                                                         @endforeach
@@ -155,11 +156,12 @@
 
 <script>
   // Data persentase penjualan rencana (plan)
-  var percentageData = [
+        var percentageData = [
             @foreach($percentageData as $data)
                 {
                     label: '{{$data['Plan']}}',
                     value: {{$data['Percentage']}},
+                    population: {{$data['population']}},
                 },
             @endforeach
         ];
@@ -183,10 +185,24 @@
                         'rgba(75, 192, 192, 0.7)',
                         // Anda dapat menambahkan lebih banyak warna sesuai jumlah rencana
                     ],
+                },
+                {
+                    data: percentageData.map(function(item) {
+                            return item.population;
+                        }),
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            // Anda dapat menambahkan lebih banyak warna sesuai jumlah rencana
+                        ],
                 }],
+
                 labels: percentageData.map(function(item) {
                     return item.label;
                 }),
+
             },
             options: {
                 title: {
@@ -194,7 +210,7 @@
                     text: 'Persentase Penjualan Rencana',
                 },
             },
-        });
+  });
 </script>
 @endpush
 

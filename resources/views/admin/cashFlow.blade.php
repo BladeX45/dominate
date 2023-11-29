@@ -23,7 +23,7 @@
                                 Cash Flow
                             </h3>
                         </div>
-                        <div class="col-md-6 d-flex justify-content-center">
+                        <div class="col-md-6 d-flex justify-content-end">
                             {{-- add button setModal --}}
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#setModal">
                                Add Balance
@@ -75,7 +75,7 @@
                                             <th>Saldo</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="tbody" id="transactionTable">
+                                    <tbody class="tbody" id="transactionTable" >
                                         @foreach ($cashflows as $cashflow)
                                             <tr>
                                                 {{-- transaction_id / expense_id --}}
@@ -88,14 +88,24 @@
                                                 @else
                                                     <td>{{$cashflow->transaction->transactionID}}</td>
                                                 @endif
-                                                <td>{{$cashflow->date}}</td>
-                                                <td>Rp. {{ number_format($cashflow->debitAmount, 0, ',', '.') }} IDR</td>
-                                                <td>Rp. {{ number_format($cashflow->creditAmount, 0, ',', '.') }} IDR</td>
-                                                <td>Rp. {{ number_format($cashflow->balance, 0, ',', '.') }} IDR</td>
+                                                <td>{{ date('Y/m/d', strtotime($cashflow->created_at)) }}</td>
+                                                <td>Rp. {{ number_format($cashflow->debitAmount, 0, ',', '.') }}</td>
+                                                <td>Rp. {{ number_format($cashflow->creditAmount, 0, ',', '.') }}</td>
+                                                <td>Rp. {{ number_format($cashflow->balance, 0, ',', '.') }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
+                                <div class="row">
+                                    <div class="col-md-12 d-flex justify-content-center">
+                                        <nav aria-label="Page navigation example">
+                                            <ul class="pagination">
+                                                <li class="page-item"><a class="page-link" href="#" id="prev">Previous</a></li>
+                                                <li class="page-item"><a class="page-link" href="#" id="next">Next</a></li>
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
                                 <p id="noTransactions" style="display: none; color: red;">No Transaction This Month</p>
                             </div>
                         </div>
@@ -146,7 +156,6 @@
                 document.getElementById("noTransactions").style.display = "none";
             }
         }
-
         // Initial table filter
         filterTable();
     </script>
