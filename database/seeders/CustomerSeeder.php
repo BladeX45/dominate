@@ -34,8 +34,6 @@ class CustomerSeeder extends Seeder
             'ManualSession' => 10,
             // certificate -> default null
             'certificate' => null,
-            // isCertificatePass -> default 0
-            'isCertificatePass' => 0,
             // fk from user
             'userID' => 3,
         ]);

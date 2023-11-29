@@ -32,5 +32,11 @@ class Certificate extends Model
         }
     }
 
+    // score
+    public function score()
+    {
+        return $this->belongsTo('App\Models\Score', 'scoreID');
+    }
+
 
 }

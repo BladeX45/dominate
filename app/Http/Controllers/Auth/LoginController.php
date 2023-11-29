@@ -51,11 +51,11 @@ class LoginController extends Controller
                 return redirect()->route('verification.send')->with('error', 'Your account is not verified!');
             }
             // check role
-            if(Auth::user()->roleID == 1){
+            if(Auth::user()->roleID == '1'){
                 return redirect()->route('admin.dashboard');
-            }else if(Auth::user()->roleID == 2){
+            }else if(Auth::user()->roleID == '2'){
                 return redirect()->route('customer.dashboard');
-            }else if(Auth::user()->roleID == 3){
+            }else if(Auth::user()->roleID == '3'){
                 return redirect()->route('instructor.dashboard');
             }else{
                 return redirect()->route('welcome');

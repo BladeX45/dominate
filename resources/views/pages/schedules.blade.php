@@ -57,9 +57,9 @@
                                     <tr>
                                         <th scope="row">{{ $loop->iteration }}</th>
                                         <td>{{ $schedule->instructor->firstName }} {{ $schedule->instructor->lastName }}</td>
-                                        <td>{{ $schedule->carType }}</td>
-                                        <td>{{ $schedule->carID}}</td>
-                                        <td>{{ $schedule->date }}</td>
+                                        <td>{{ $schedule->car->Transmission }}</td>
+                                        <td>{{ date('Y/m/d', strtotime($schedule->date)) }}</td>
+                                        <td>{{ $schedule->session }}</td>
                                         <td>{{ $schedule->status }}</td>
                                         {{-- if roleID == 0 | 1 --}}
                                         @if (auth()->user()->roleID == 0 || auth()->user()->roleID == 1)
@@ -215,6 +215,7 @@
                 @endforeach
             </select>
 
+
             <label for="type">Choose Transmission</label>
             <select name="type" id="type" class="form-control" required>
                 <option class="bg-primary" value="manual">Manual</option>
@@ -260,6 +261,8 @@
                         type: type
                     },
                     success: function (response) {
+                        // Tanggapan dari server
+                        console.log(response);
                         var availabilityMessage = document.getElementById('availability-message');
                         if (response.isAvailable) {
                             // Jadwal tersedia, tambahkan class 'available' dan hapus class 'booked' (jika ada)
@@ -267,14 +270,14 @@
                             availabilityMessage.classList.add('bg');
                             availabilityMessage.classList.add('bg-success');
                             availabilityMessage.classList.remove('bg-danger');
-                            console.log(response);
+                            $('#submit-button').prop('disabled', false);
                         } else {
                             // Jadwal tidak tersedia, tambahkan class 'booked' dan hapus class 'available' (jika ada)
                             availabilityMessage.innerHTML = 'Jadwal sudah dipesan.';
                             availabilityMessage.classList.add('bg');
                             availabilityMessage.classList.add('bg-danger');
                             availabilityMessage.classList.remove('bg-success');
-                            console.log(response);
+                            document.getElementById("submit-button").disabled = true;
                         }
                     },
 
@@ -374,6 +377,7 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+
     var searchInput = document.getElementById("searchInput");
         // Dapatkan semua baris (tr) dalam tabel
         var rows = document.querySelectorAll("tbody tr");

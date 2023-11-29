@@ -31,7 +31,7 @@ class PlanController extends Controller
     public function store(Request $request)
     {
         // Validasi data yang dikirim dari form
-        $request->validate([
+        $validatedData = $request->validate([
             'planName' => 'required|string|max:255',
             'planSession' => 'required|integer',
             'planType' => 'required|in:manual,automatic',
@@ -40,19 +40,13 @@ class PlanController extends Controller
             'planStatus' => 'required|boolean',
         ]);
 
-        // Simpan data ke database
-        Plan::create([
-            'planName' => $request->planName,
-            'planSession' => $request->planSession,
-            'planType' => $request->planType,
-            'planPrice' => $request->planPrice,
-            'planDescription' => $request->planDescription,
-            'planStatus' => $request->planStatus,
-        ]);
+        // Simpan data ke database menggunakan mass assignment
+        Plan::create($validatedData);
 
         // Redirect ke halaman index
         return redirect()->route('admin.plans');
     }
+
 
     /**
      * Display the specified resource.
@@ -75,11 +69,11 @@ class PlanController extends Controller
      */
     public function update(Request $request)
     {
-        // find data plan berdasarkan id
-        $plan = Plan::find($request->planID);
+        // Cari data plan berdasarkan id
+        $plan = Plan::findOrFail($request->planID);
 
         // Validasi data yang dikirim dari form
-        $request->validate([
+        $validatedData = $request->validate([
             'planName' => 'string|max:255',
             'planSession' => 'integer',
             'planType' => 'in:manual,automatic',
@@ -87,21 +81,14 @@ class PlanController extends Controller
             'planDescription' => 'string',
             'planStatus' => 'boolean',
         ]);
-        // Update data pada database
 
-        $plan->update([
-            'planName' => $request->planName,
-            'planSession' => $request->planSession,
-            'planType' => $request->planType,
-            'planPrice' => $request->planPrice,
-            'planDescription' => $request->planDescription,
-            'planStatus' => $request->planStatus,
-        ]);
+        // Update data pada database menggunakan mass assignment
+        $plan->update($validatedData);
 
-        // return with status
+        // Kembali ke halaman sebelumnya dengan pesan sukses
         return back()->withStatus(__('Plan successfully updated.'));
-
     }
+
 
     /**
      * Remove the specified resource from storage.

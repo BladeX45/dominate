@@ -4,6 +4,16 @@
 <div class="content">
     <div class="container-fluid">
         <div class="row">
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header card-header-primary">
@@ -93,29 +103,78 @@
            </div>
        </div>
    </div>
-</div>
-
-<x-modal title="Add User" idModal="addUser" customStyle="">
+<x-modal title="Add User" idModal="addUser" customStyle="modal-lg">
     <x-form action="{{ route('admin.addUser') }}" method="post">
         {{ csrf_field() }}
-        <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" name="name" placeholder="Name" class="form-control" required>
+        <div class="row">
+            <input type="hidden" name="role" placeholder="Instructor" value="Instructor" class="form-control" hidden>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label for="name">username</label>
+                    <input type="text" name="name" placeholder="Name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    {{-- firstName --}}
+                    <label for="firstName">First Name</label>
+                    <input type="text" name="firstName" placeholder="First Name" class="form-control" required>
+                </div>
+                {{-- role = Instructor --}}
+                <div class="form-group">
+                    <label for="birthDate">birtday</label>
+                    <input type="date" name="birthDate" placeholder="Birth Day" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <label for="gender">Gender</label><br>
+                            <input type="radio" id="html" name="gender" value="male">
+                            <label for="html">Male</label>
+                            <input type="radio" id="css" name="gender" value="female">
+                            <label for="css">Female</label>
+                            <input type="radio" id="javascript" name="gender" value="other">
+                            <label for="javascript">Other</label>
+                        </div>
+                        <div class="col-md-5">
+                            {{-- drivingExperience --}}
+                            <label for="drivingExperience">Exp</label>
+                            <input type="text" name="drivingExperience" placeholder="Driving Experience" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    {{-- phone --}}
+                    <label for="phone">Phone</label>
+                    <input type="text" name="phone" placeholder="Phone" class="form-control" required>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+
+                    <label for="email">Email</label>
+                    <input type="text" name="email" placeholder="Email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    {{-- lastName --}}
+                    <label for="lastName">Last Name</label>
+                    <input type="text" name="lastName" placeholder="Last Name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    {{-- NIN --}}
+                    <label for="NIN">NIK</label>
+                    <input type="text" name="NIN" placeholder="NIN" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    {{-- address --}}
+                    <label for="address">Address</label>
+                    <textarea type="textarea" name="address" placeholder="Address" class="form-control" required></textarea>
+            </div>
+            <div class="input-group mb-3">
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" name="certificate" id="certificate" aria-describedby="inputGroupFileAddon01" onchange="updateFileName()">
+                    <label class="custom-file-label" for="certificate" id="fileLabel">Choose file</label>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="text" name="email" placeholder="Email" class="form-control" required>
-        </div>
-        {{-- role = Instructor --}}
-        <div class="form-group">
-            <label for="role">Role</label>
-            {{-- default value instructor --}}
-            <input type="text" name="role" placeholder="Instructor" value="Instructor" class="form-control" readonly>
-        </div>
-        {{-- password --}}
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="text" name="password" placeholder="Password" class="form-control" required>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -123,6 +182,23 @@
         </div>
     </x-form>
 </x-modal>
+</div>
+
+
+
+
+
+
+<script>
+    function updateFileName() {
+        // Get the input element and the label element
+        var input = document.getElementById('certificate');
+        var label = document.getElementById('fileLabel');
+
+        // Set the label text to the selected file name
+        label.innerHTML = input.files[0].name;
+    }
+</script>
 
 
 <script>
