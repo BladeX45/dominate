@@ -122,7 +122,7 @@
                                 <div class="card-header ">
                                     <h3 class="title">
                                         <i class="tim-icons icon-chart-pie-36 text-primary"></i>
-                                        {{ __('Grafik') }}
+                                        {{ __('Grafik Penilaian') }}
                                     </h3>
                                 </div>
                                 <div class="card-body">

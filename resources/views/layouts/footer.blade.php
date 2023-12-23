@@ -1,6 +1,6 @@
 {{-- check route(welcome) ? footer welcome : default footer --}}
 @if(Route::currentRouteName() == 'welcome')
-<footer class="footer">
+<footer class="footer bg-primary">
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-4">
@@ -34,7 +34,7 @@
 
 @else
 
-<footer class="footer">
+<footer class="footer bg-primary">
     <div class="container-fluid">
         <ul class="nav">
             <li class="nav-item">

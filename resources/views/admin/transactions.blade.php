@@ -73,14 +73,14 @@
                             </td>
                         @endif
                         {{-- date format DD/MM/yyy --}}
-                        <td>{{ date('d/m/Y', strtotime($transaction->transactionDate)) }}</td>
+                        <td>{{ date('Y/m/d', strtotime($transaction->transactionDate)) }}</td>
                         {{-- verify transaction --}}
                         <td>
                             {{-- if success disabled verify, when pending show button tolak and verify --}}
                             @if ($transaction->transactionStatus == 'success')
-                                <button type="button" class="btn btn-sm btn-primary evidence-button" disabled>Verify</button>
+                                <button type="button" class="btn btn-sm btn-info evidence-button" disabled>Verify</button>
                             @else
-                            <button type="button" class="btn btn-sm btn-primary evidence-button" data-toggle="modal" data-target="#verify{{ $transaction->transactionID }}">Verify</button>
+                            <button type="button" class="btn btn-sm btn-info evidence-button" data-toggle="modal" data-target="#verify{{ $transaction->transactionID }}">Verify</button>
                             {{-- Modal --}}
                             <x-modal title="Verify" idModal="verify{{ $transaction->transactionID }}" customStyle="">
                                 <h3 class="title">Are you sure to verify this transaction?</h3>

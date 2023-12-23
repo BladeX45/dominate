@@ -93,18 +93,18 @@
             </div>
             <div class="row" id="test">
                 <div class="row">
-                    <div class="d-flex justify-content-center py-3">
+                    <div class="d-flex justify-content-center ">
                         <h3 id="sub-header">Sertifikat ini diberikan kepada :</h3><br>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="d-flex justify-content-center py-1">
+                    <div class="d-flex justify-content-center">
                         <h1 id="name"><u>{{$certificate->customer->firstName}} {{$certificate->customer->lastName}}</u></h1>
                     </div>
                 </div>
                 <div class="row">
                     <div class="d-flex justify-content-center py-1">
-                        <h3 id="sub-content" class="p-2">Setelah Menyelesaikan Kursus Mengemudi Pada Tanggal <u>{{ \Carbon\Carbon::parse($certificate->certificationDate)->format('d-F-Y') }}
+                        <h3 id="sub-content" class="p-2">Setelah Menyelesaikan Kursus Mengemudi dari tanggal <u>{{ \Carbon\Carbon::parse($schedulesFirst->date)->format('d-F-Y') }}</u> hingga <u>{{ \Carbon\Carbon::parse($schedulesLast->date)->format('d-F-Y') }}</u>
                         </u> Yang Diselenggarakan oleh CV. Praba Jaya <br> Dengan Nilai :</h3><br>
                     </div>
                 </div>
@@ -140,6 +140,7 @@
                 <div class="col-md-4">
                     <div class="row d-flex justify-content-center">
                         <p class="fs-6 d-flex justify-content-center">Kepala Kursus</p>
+                        <p class="fs-6 d-flex justify-content-center" style="padding-top: -5px">Bogor, {{ \Carbon\Carbon::parse($certificate->certificationDate)->format('d-F-Y') }}</p>
                     </div>
                     <div class="row d-flex justify-content-center">
                         <img style="z-index: 10;width: 120px;left:43%; position: absolute;opacity:0.4 " src="{{asset('storage\icons\stample.png')}}" alt="">

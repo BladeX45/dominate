@@ -189,12 +189,12 @@
                 {{-- input rating 1-10 --}}
                 <div class="form-group">
                     <label for="rating">Rating</label>
-                    <input type="number" name="rating" id="rating" class="form-control" min="1" max="10" required>
+                    <input type="number" name="rating" id="rating" class="form-control text-dark" min="1" max="10" required>
                 </div>
                 {{-- input comment --}}
                 <div class="form-group">
                     <label for="comment">Komentar</label>
-                    <textarea name="comment" id="comment" cols="30" rows="10" class="form-control" required></textarea>
+                    <textarea name="comment" id="comment" cols="30" rows="10" class="form-control text-dark" required></textarea>
                 </div>
                 {{-- button submit --}}
                 <button type="submit" class="btn btn-primary">Simpan</button>
@@ -209,7 +209,7 @@
         <x-schedules>
             <div id="availability-message"></div>
             <label for="instructor">Choose Instructor</label>
-            <select name="instructor" id="instructor" class="form-control" required>
+            <select name="instructor" id="instructor" class="form-control text-dark" required>
                 @foreach ($instructors as $instructor)
                     <option class="bg-primary" value="{{ $instructor->id }}">{{ $instructor->firstName }} {{ $instructor->lastName }}</option>
                 @endforeach
@@ -217,17 +217,17 @@
 
 
             <label for="type">Choose Transmission</label>
-            <select name="type" id="type" class="form-control" required>
+            <select name="type" id="type" class="form-control text-dark" required>
                 <option class="bg-primary" value="manual">Manual</option>
                 <option class="bg-primary" value="matic">Matic</option>
             </select>
 
             <label for="date">Date</label>
-            <input type="date" name="date" id="date" class="form-control" required>
+            <input type="date" name="date" id="date" class="form-control text-dark" required>
             <span id="error-message" style="color: red;"></span>
 
             <label for="session">Pilih Sesi</label>
-            <select name="session" id="session" class="form-control" required>
+            <select name="session" id="session" class="form-control text-dark" required>
                 <option class="bg-primary">--- Choose Session ---</option>
                 <option class="bg-primary" value="1">08:00-10:00</option>
                 <option class="bg-primary" value="2">10:15-12:15</option>

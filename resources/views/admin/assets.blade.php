@@ -45,7 +45,7 @@
                         Cars Table
                     </div>
                     <div class="col">
-                        <a href="{{-- route('admin.plans.create') --}}" class="btn btn-info btn-round" data-toggle="modal" data-target="#addCar">Add Car</a>
+                        <a href="{{-- route('admin.plans.create') --}}" class="btn btn-primary btn-round" data-toggle="modal" data-target="#addCar">Add Car</a>
                     </div>
                 </div>
                 <div class="row">
@@ -128,39 +128,39 @@
                                     <input type="hidden" name="id" value="{{$car->id}}">
                                     {{-- carName --}}
                                     <div class="form-group">
-                                        <label for="carName">{{__('Nama Mobil')}}</label>
-                                        <input type="carName" name="carName" class="form-control" id="carName" value="{{old('carName',$car->carName)}}" placeholder="{{ $car->carName}}">
+                                        <label for="carName" class="text-dark">{{__('Nama Mobil')}}</label>
+                                        <input type="carName" name="carName" class="form-control text-dark" id="carName" value="{{old('carName',$car->carName)}}" placeholder="{{ $car->carName}}">
                                     </div>
                                     <div class="form-group">
                                         {{-- carModel --}}
-                                        <label for="carModel">{{__('Model Mobil')}}</label>
-                                        <input type="carModel" name="carModel" class="form-control" id="carModel" value="{{old('carModel',$car->carModel)}}" placeholder="{{ $car->carModel}}">
+                                        <label for="carModel" class="text-dark">{{__('Model Mobil')}}</label>
+                                        <input type="carModel" name="carModel" class="form-control text-dark" id="carModel" value="{{old('carModel',$car->carModel)}}" placeholder="{{ $car->carModel}}">
                                     </div>
                                     <div class="form-group">
                                         {{-- Transmission --}}
-                                        <label for="Transmission">{{__('Transmisi')}}</label>
-                                        <input type="Transmission" name="Transmission" class="form-control" id="Transmission" value="{{old('Transmission',$car->Transmission)}}" placeholder="{{ $car->Transmission}}">
+                                        <label for="Transmission" class="text-dark">{{__('Transmisi')}}</label>
+                                        <input type="Transmission" name="Transmission" class="form-control text-dark" id="Transmission" value="{{old('Transmission',$car->Transmission)}}" placeholder="{{ $car->Transmission}}">
                                     </div>
                                     <div class="form-group">
                                         {{-- carYear --}}
-                                        <label for="carYear">{{__('Tahun Mobil')}}</label>
-                                        <input type="carYear" name="carYear" class="form-control" id="carYear" value="{{old('carYear',$car->carYear)}}" placeholder="{{ $car->carYear}}">
+                                        <label for="carYear" class="text-dark">{{__('Tahun Mobil')}}</label>
+                                        <input type="carYear" name="carYear" class="form-control text-dark" id="carYear" value="{{old('carYear',$car->carYear)}}" placeholder="{{ $car->carYear}}">
                                     </div>
 
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         {{-- carColor --}}
-                                        <label for="carColor">{{__('Warna Mobil')}}</label>
-                                        <input type="carColor" name="carColor" class="form-control" id="carColor" value="{{old('carColor',$car->carColor)}}" placeholder="{{ $car->carColor}}">
+                                        <label for="carColor" class="text-dark">{{__('Warna Mobil')}}</label>
+                                        <input type="carColor" name="carColor" class="form-control text-dark" id="carColor" value="{{old('carColor',$car->carColor)}}" placeholder="{{ $car->carColor}}">
                                     </div>
                                     <div class="form-group">
                                         {{-- plateNumber --}}
-                                        <label for="plateNumber">{{__('Nomor Plat Mobil')}}</label>
-                                        <input type="plateNumber" name="carPlateNumber" class="form-control" id="plateNumber" value="{{old('carPlateNumber',$car->carPlateNumber)}}" placeholder="{{ $car->carPlateNumber}}">
+                                        <label for="plateNumber" class="text-dark">{{__('Nomor Plat Mobil')}}</label>
+                                        <input type="plateNumber" name="carPlateNumber" class="form-control text-dark" id="plateNumber" value="{{old('carPlateNumber',$car->carPlateNumber)}}" placeholder="{{ $car->carPlateNumber}}">
                                     </div>
                                     <div class="form-group">
-                                        <label for="carStatus">{{ __('Status Mobil') }}</label>
+                                        <label for="carStatus" class="text-dark">{{ __('Status Mobil') }}</label>
                                         <select class="form-control bg-dark" id="carStatus" name="carStatus">
                                             <option value="Available">Available</option>
                                             <option value="unavailable">Not Available</option>
@@ -215,16 +215,16 @@
         @csrf
         <div class="form-group">
             <label for="carName">Car Name</label>
-            <input type="text" name="carName" id="carName" class="form-control" placeholder="Car Name">
+            <input type="text" name="carName" id="carName" class="form-control text-dark" placeholder="Car Name">
         </div>
         <div class="form-group">
             <label for="carModel">Car Model</label>
-            <input type="text" name="carModel" id="carModel" class="form-control" placeholder="Car Model">
+            <input type="text" name="carModel" id="carModel" class="form-control text-dark" placeholder="Car Model">
         </div>
         {{-- Selection Transmission --}}
         <div class="form-group">
             <label for="Transmission">Transmission</label>
-            <select class="form-control bg-dark" id="Transmission" name="Transmission">
+            <select class="form-control text-dark" id="Transmission" name="Transmission">
                 <option value="automatic">Automatic</option>
                 <option value="manual">Manual</option>
             </select>
@@ -232,22 +232,22 @@
         {{-- Car Year --}}
         <div class="form-group">
             <label for="carYear">Car Year</label>
-            <input type="text" name="carYear" id="carYear" class="form-control" placeholder="Car Year">
+            <input type="text" name="carYear" id="carYear" class="form-control text-dark" placeholder="Car Year">
         </div>
         {{-- Car Color --}}
         <div class="form-group">
             <label for="carColor">Car Color</label>
-            <input type="text" name="carColor" id="carColor" class="form-control" placeholder="Car Color">
+            <input type="text" name="carColor" id="carColor" class="form-control text-dark" placeholder="Car Color">
         </div>
         {{-- Car Plate Number --}}
         <div class="form-group">
             <label for="carPlateNumber">Car Plate Number</label>
-            <input type="text" name="carPlateNumber" id="carPlateNumber" class="form-control" placeholder="Car Plate Number">
+            <input type="text" name="carPlateNumber" id="carPlateNumber" class="form-control text-dark" placeholder="Car Plate Number">
         </div>
         {{-- Car Status --}}
         <div class="form-group">
             <label for="carStatus">Car Status</label>
-            <select class="form-control bg-dark" id="carStatus" name="carStatus">
+            <select class="form-control bg-white text-dark" id="carStatus" name="carStatus">
                 <option value="Available">Available</option>
                 <option value="unAvailable">Not Available</option>
             </select>

@@ -33,7 +33,7 @@
                 </div>
                 <div class="description">
                     <h3 class="info-title">{{ __('Driving School Services') }}</h3>
-                    <p class="description">
+                    <p class="description text-dark">
                         {{ __('We provide comprehensive driving school services. It has been an exciting and educational journey.') }}
                     </p>
                 </div>
@@ -44,7 +44,7 @@
                 </div>
                 <div class="description">
                     <h3 class="info-title">{{ __('Modern Curriculum') }}</h3>
-                    <p class="description">
+                    <p class="description text-dark">
                         {{ __('Our curriculum is designed with a modern approach to driver education, ensuring an interactive and engaging learning experience.') }}
                     </p>
                 </div>
@@ -55,7 +55,7 @@
                 </div>
                 <div class="description">
                     <h3 class="info-title">{{ __('Satisfied Student Community') }}</h3>
-                    <p class="description">
+                    <p class="description text-dark">
                         {{ __('We take pride in our satisfied student community. Additionally, we offer a fully customizable experience for our students.') }}
                     </p>
                 </div>

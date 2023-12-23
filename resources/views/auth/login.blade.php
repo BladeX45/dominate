@@ -2,10 +2,10 @@
 
 @section('content')
     <div class="col-md-10 text-center ml-auto mr-auto">
-        <h3 class="mb-5">Get ready to kickstart your journey to safe and skilled driving. Explore our courses, skilled instructors, and modern fleet, all designed to make you a confident driver.</h3>
+        <h3 class="mb-5 text-dark">Get ready to kickstart your journey to safe and skilled driving. Explore our courses, skilled instructors, and modern fleet, all designed to make you a confident driver.</h3>
     </div>
     @if(session('error'))
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
             <div class="col-md-10">
 
@@ -17,10 +17,10 @@
         </div>
     </div>
     @endif
-    <div class="col-lg-4 col-md-6 ml-auto mr-auto">
+    <div class="col-lg-4 col-md-6 ml-auto mr-auto ">
         <form class="form" method="post" action="{{ route('login') }}">
             @csrf
-            <div class="card card-login card-white">
+            <div class="card card-login bg-white">
                 <div class="card-header">
                     <img src="{{ asset('black') }}/img/card-primary.png" alt="">
                     <h1 class="card-title">{{ __('Log in') }}</h1>
@@ -32,7 +32,7 @@
                                 <i class="tim-icons icon-email-85"></i>
                             </div>
                         </div>
-                        <input type="email" name="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" placeholder="{{ __('Email') }}">
+                        <input type="email" name="email" class="text-dark form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" placeholder="{{ __('Email') }}">
                         @include('alerts.feedback', ['field' => 'email'])
                     </div>
                     <div class="input-group{{ $errors->has('password') ? ' has-danger' : '' }}">
@@ -41,7 +41,7 @@
                                 <i class="tim-icons icon-lock-circle"></i>
                             </div>
                         </div>
-                        <input type="password" placeholder="{{ __('Password') }}" name="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}">
+                        <input type="password" placeholder="{{ __('Password') }}" name="password" class="text-dark form-control{{ $errors->has('password') ? ' is-invalid' : '' }}">
                         @include('alerts.feedback', ['field' => 'password'])
                     </div>
                 </div>

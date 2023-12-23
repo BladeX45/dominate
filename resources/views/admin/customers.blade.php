@@ -22,7 +22,7 @@
                 </div>
                 <div class="col">
 
-                        <a href="{{-- route('admin.plans.create') --}}" class="btn btn-info btn-round" data-toggle="modal" data-target="#addUser">Add User</a>
+                        <a href="{{-- route('admin.plans.create') --}}" class="btn btn-primary btn-round" data-toggle="modal" data-target="#addUser">Add User</a>
 
                 </div>
               </div>
@@ -108,22 +108,22 @@
                     {{-- username --}}
                     <div class="form-group">
                         <label for="name">Username</label>
-                        <input type="text" name="name" id="name" placeholder="username" class="form-control">
+                        <input type="text" name="name" id="name" placeholder="username" class="form-control text-dark">
                     </div>
                     {{-- firstName --}}
                     <div class="form-group">
                         <label for="firstName">First Name</label>
-                        <input type="text" name="firstName" id="firstName" placeholder="First Name" class="form-control">
+                        <input type="text" name="firstName" id="firstName" placeholder="First Name" class="form-control text-dark">
                     </div>
                     {{-- birthDate --}}
                     <div class="form-group">
                         <label for="birthDate">birtday</label>
-                        <input type="date" name="birthDate" placeholder="Birth Day" class="form-control" required>
+                        <input type="date" name="birthDate" placeholder="Birth Day" class="form-control text-dark" required>
                     </div>
                     {{-- phone --}}
                     <div class="form-group">
                         <label for="phone">Phone</label>
-                        <input type="text" name="phone" placeholder="Phone" class="form-control" required>
+                        <input type="text" name="phone" placeholder="Phone" class="form-control text-dark" required>
                     </div>
                     {{-- gender --}}
                     <label for="gender">Gender</label><br>
@@ -136,10 +136,6 @@
                             <input type="radio" id="female" name="gender" value="female">
                             <label for="female">Female</label>
                         </div>
-                        <div class="other">
-                            <input type="radio" id="other" name="gender" value="other">
-                            <label for="other">Other</label>
-                        </div>
                     </div>
 
                 </div>
@@ -147,22 +143,22 @@
                     {{-- email --}}
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input type="email" name="email" id="email" placeholder="Email" class="form-control">
+                        <input type="email" name="email" id="email" placeholder="Email" class="form-control text-dark">
                     </div>
                     {{-- lastName --}}
                     <div class="form-group">
                         <label for="lastName">Last Name</label>
-                        <input type="text" name="lastName" id="lastName" placeholder="Last Name" class="form-control">
+                        <input type="text" name="lastName" id="lastName" placeholder="Last Name" class="form-control text-dark">
                     </div>
                     {{-- NIK --}}
                     <div class="form-group">
                         <label for="NIN">NIK</label>
-                        <input type="text" name="NIN" placeholder="NIN" class="form-control" required>
+                        <input type="text" name="NIN" placeholder="NIN" class="form-control text-dark" required>
                     </div>
                     {{-- address --}}
                     <div class="form-group">
                         <label for="address">Address</label>
-                        <textarea name="address" placeholder="Address" class="form-control" rows="5" required></textarea>
+                        <textarea name="address" placeholder="Address" class="form-control text-dark" rows="5" required></textarea>
                     </div>
                 </div>
             </div>

@@ -312,8 +312,16 @@ class PageController extends Controller
         if($certificate != null){
             // get data customer
 
-            // dd($scores);
-            return view('pages.certificate', compact('certificate'));
+            // get first schedule where customerID = certificate customerID
+            $schedulesFirst = Schedule::where('customerID', $certificate->customerID)->orderBy('date', 'asc')->first();
+
+            // get last schedule before certificate date where customerID = certificate customerID
+            $schedulesLast = Schedule::where('customerID', $certificate->customerID)->where('date', '<', $certificate->certificateDate)->orderBy('date', 'desc')->first();
+            dd($schedulesLast);
+
+
+            // return view certificate
+            return view('pages.certificate', compact('certificate', 'schedulesFirst' , 'schedulesLast'));
         }
         // if certificate is notExist then redirect back
         return redirect()->back()->with('error', 'Certificate not found!');
@@ -407,8 +415,15 @@ class PageController extends Controller
                 if(Certificate::where('customerID', $customerID)->where('scoreID', $scores->id)->exists()){
                     // redirect to show customer certicate
 
+                    // get data schedule first
+                    $schedulesFirst = Schedule::where('customerID', $customerID)->orderBy('date', 'asc')->first();
+
                     $certificate = Certificate::where('customerID', $customerID)->where('scoreID', $scores->id)->first();
-                    return view('pages.certificate', compact('schedules', 'customer', 'scores', 'instructors', 'certificate'));
+
+                    // get data schedule last before certificate
+                    $schedulesLast = Schedule::where('customerID', $customerID)->orderBy('date', 'desc')->first();
+
+                    return view('pages.certificate', compact('schedules', 'customer', 'scores', 'instructors', 'certificate', 'schedulesFirst', 'schedulesLast'));
                 }
 
 

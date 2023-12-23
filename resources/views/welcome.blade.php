@@ -5,14 +5,12 @@
         <div class="container-fluid">
         {{-- Hero Section --}}
             <section class="hero" id="hero">
-                <div class="container">
                     <div class="row" style="background-image: url({{ asset('assets/img/bg-hero.jpg') }}); background-size:cover; height:32rem; padding:2rem;" >
                         <div class="col-lg-6">
                             <div class="hero-images">
                             </div>
                         </div>
                     </div>
-                </div>
             </section>
 
         {{-- Features Section --}}
@@ -21,7 +19,7 @@
                 <div class="row my-4">
                     <div class="col-md-12">
                         <div class="features-heading">
-                            <h2>Mengapa Memilih Kami?</h2>
+                            <h2 class="text-dark">Mengapa Memilih Kami?</h2>
                         </div>
                     </div>
                 </div>
@@ -114,7 +112,7 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="pricing-heading">
-                                <h2>Paket Tersedia:</h2>
+                                <h2 class="text-dark">Paket Tersedia:</h2>
                             </div>
                         </div>
                     </div>

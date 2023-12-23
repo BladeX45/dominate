@@ -15,7 +15,7 @@
 
     <div class="row">
         <div class="col-md-12">
-            <div class="card">
+            <div class="card card-dark">
                 <div class="card-header">
                     <div class="row">
                         <div class="col-md-6">
@@ -63,35 +63,35 @@
                             </div>
                         </div>
                         <div class="table-responsive">
-                            <div class="card">
+                            <div class="card bg-dark">
                                 <table class="table bg-dark p-3">
                                     <thead class="thead">
                                         <tr>
                                             {{-- idtransaction Transaction/Expense --}}
-                                            <th>ID Transaksi</th>
-                                            <th>Tanggal</th>
-                                            <th>Debit</th>
-                                            <th>Kredit</th>
-                                            <th>Saldo</th>
+                                            <th class="text-dark">ID Transaksi</th>
+                                            <th class="text-dark">Tanggal</th>
+                                            <th class="text-dark">Debit</th>
+                                            <th class="text-dark">Kredit</th>
+                                            <th class="text-dark">Saldo</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="tbody" id="transactionTable" >
+                                    <tbody class="tbody text-dark" id="transactionTable" >
                                         @foreach ($cashflows as $cashflow)
                                             <tr>
                                                 {{-- transaction_id / expense_id --}}
                                                 @if($cashflow->transaction_id == null)
                                                     @if($cashflow->debitAmount != null)
-                                                        <td>Added Balance</td>
+                                                        <td class="text-dark">Added Balance</td>
                                                     @else
-                                                        <td>{{$cashflow->expense->transactionID}}</td>
+                                                        <td class="text-dark">{{$cashflow->expense->transactionID}}</td>
                                                     @endif
                                                 @else
                                                     <td>{{$cashflow->transaction->transactionID}}</td>
                                                 @endif
-                                                <td>{{ date('Y/m/d', strtotime($cashflow->created_at)) }}</td>
-                                                <td>Rp. {{ number_format($cashflow->debitAmount, 0, ',', '.') }}</td>
-                                                <td>Rp. {{ number_format($cashflow->creditAmount, 0, ',', '.') }}</td>
-                                                <td>Rp. {{ number_format($cashflow->balance, 0, ',', '.') }}</td>
+                                                <td class="text-dark">{{ date('Y/m/d', strtotime($cashflow->created_at)) }}</td>
+                                                <td class="text-dark">Rp. {{ number_format($cashflow->debitAmount, 0, ',', '.') }}</td>
+                                                <td class="text-dark">Rp. {{ number_format($cashflow->creditAmount, 0, ',', '.') }}</td>
+                                                <td class="text-dark">Rp. {{ number_format($cashflow->balance, 0, ',', '.') }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -120,7 +120,7 @@
             @csrf
             <div class="form-group">
                 <label for="startingBalance">Starting Balance</label>
-                <input type="number" class="form-control" id="startingBalance" name="startingBalance" placeholder="Enter Starting Balance" required>
+                <input type="number" class="form-control text-dark" id="startingBalance" name="startingBalance" placeholder="Enter Starting Balance" required>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </x-form>
