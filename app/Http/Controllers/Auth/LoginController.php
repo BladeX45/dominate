@@ -31,38 +31,43 @@ class LoginController extends Controller
     protected $redirectTo = RouteServiceProvider::HOME;
 
     // login Controller
-    public function login(Request $request){
-        // validate data request
-        // $request->validate([
-        //     'email' => 'required|email',
-        //     'password' => 'required|min:8'
-        // ]);
+    public function login(Request $request) {
+        // Validate the login request data
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-        // check role
+        // Attempt to log in the user
         $credentials = $request->only('email', 'password');
-
-
-
-        // check email and password
-        if(Auth::attempt($credentials)){
-            // if not verified then destroy session
-            if(!Auth::user()->email_verified_at){
-                // send email for view verification.send
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+            // Check if the user's account is verified
+            if (!$user->email_verified_at) {
+                // Send an email for email verification and then redirect
+                // You may want to implement this part separately
+                // return redirect()->route('verification.send')->with('error', 'Your account is not verified!');
+                // For now, I'm just returning an error message
                 return redirect()->route('verification.send')->with('error', 'Your account is not verified!');
             }
-            // check role
-            if(Auth::user()->roleID == 1){
-                return redirect()->route('admin.dashboard');
-            }else if(Auth::user()->roleID == 2){
-                return redirect()->route('customer.dashboard');
-            }else if(Auth::user()->roleID == 3){
-                return redirect()->route('instructor.dashboard');
-            }else{
-                return redirect()->route('welcome');
+
+            dd($user->roleID);
+
+            // Redirect based on the user's role
+            switch ($user->roleID) {
+                case 1:
+                    return redirect()->route('admin.dashboard');
+                case 2:
+                    return redirect()->route('customer.dashboard');
+                case 3:
+                    return redirect()->route('instructor.dashboard');
+                default:
+                    return redirect()->route('welcome');
             }
-        }else{
-            return redirect()->route('login')->with('error', 'Email or Password is wrong!');
         }
+
+        // Authentication failed, redirect with an error message
+        return redirect()->route('login')->with('error', 'Email or Password is wrong!');
     }
 
 

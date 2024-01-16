@@ -7,25 +7,23 @@
     }
 </style>
     @if ($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong>Whoops!</strong> There were some problems with your input.
-                <ul>
-                    {{-- loop all error --}}
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Whoops!</strong> There were some problems with your input.
+            <ul>
+                {{-- loop all error --}}
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
 
-                {{-- close button --}}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    {{-- close icon --}}
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        @endif
+            {{-- close button --}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                {{-- close icon --}}
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    @endif
     <div class="row">
-        {{-- alert error --}}
-
         <div class="col-md-5 ml-auto">
             <div class="info-area info-horizontal mt-5">
                 <div class="icon icon-warning">
@@ -74,6 +72,9 @@
                         <!-- Step 1: Name, Email, Password -->
                         <div class="step" data-step="1">
                             <div class="row">
+                                {{-- hidden role --}}
+                                <input type="hidden" name="role" value="customer">
+                                {{-- name, email, password --}}
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="name">Username</label>

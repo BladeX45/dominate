@@ -165,7 +165,7 @@
                                             @if ($car->carImage === '')
                                                     <img id="car-preview"  class="carImage" src="{{ asset('storage') }}/cars/test.png" alt="" style="height: 150px; width:75%">
                                             @else
-                                                    <img id="car-preview" class="carImage" src="{{ asset('storage/cars/'. $car->carImage) }}" alt="">
+                                                    <img id="car-preview" class="carImage" src="{{ asset('storage')."/cars/".$car->carImage }}" alt="">
                                             @endif
                                             <input type="file" id="carImage" name="carImage" accept="image/*" onchange="previewCar();" hidden> <!-- Menggunakan 'photo' sebagai id dan name -->
                                         </label>

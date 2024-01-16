@@ -8,7 +8,6 @@
           <div class="card">
             <div class="card-header card-header-primary">
               <h4 class="card-title ">Users Table</h4>
-              <p class="card-category"> Here is a subtitle for this table</p>
               <div class="row">
                 <div class="container-fluid">
                     <div class="col-md-4">
@@ -82,12 +81,3 @@
     </div>
   </div>
 @endsection
-
-@push('js')
-    <script src="{{ asset('black') }}/js/plugins/chartjs.min.js"></script>
-    <script>
-        $(document).ready(function() {
-          demo.initDashboardPageCharts();
-        });
-    </script>
-@endpush

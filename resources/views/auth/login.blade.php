@@ -8,11 +8,9 @@
     <div class="container">
         <div class="row">
             <div class="col-md-10">
-
                 <div class="alert alert-danger">
                     {{ session('error') }}
                 </div>
-
             </div>
         </div>
     </div>

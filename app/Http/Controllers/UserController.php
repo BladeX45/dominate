@@ -38,91 +38,64 @@ class UserController extends Controller
     // Register Account by Admin
     public function registerUser(Request $request)
     {
-        // dd($request->all());
-        // check request RequestRole = RoleID
-        if($request->role == 'admin'){
-            $request->role = 1;
-        }else if($request->role == 'customer'){
-            $request->role = 2;
-        }else if($request->role == 'Instructor'){
-            $request->role = 3;
+        // Konversi peran ke ID peran yang sesuai
+        $roleId = $this->getRoleIdFromRoleName($request->role);
 
-            // create user
-            $user = User::create([
-                'name' => $request->name,
-                'username' => $request->username,
-                'roleID' => $request->role,
-                'email' => $request->email,
-                'email_verified_at' => now(),
-                'password' => Hash::make($request->password),
-                'remember_token'=> '',
-            ]);
+        if ($roleId === null) {
+            // Jika peran tidak valid, tampilkan pesan kesalahan
+            return redirect()->back()->with('error', __('Invalid role specified.'));
+        }
 
-            // update
-            $user = User::find($user->id);
-            $user->email_verified_at = now();
-            $user->save();
+        // Buat pengguna
+        $user = User::create([
+            'name' => $request->name,
+            'username' => $request->username,
+            'roleID' => $roleId,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'email_verified_at' => now(),
+        ]);
 
-            // create instructor with zero valu
+        // checl email exist
+        $checkEmail = User::where('email', $request->email)->first();
+
+        if ($checkEmail) {
+            return redirect()->back()->with('error', __('Email already exist.'));
+        }
+
+        if ($roleId === 3) {
+            // Jika peran adalah "Instructor," tambahkan detail instruktur
             $instructor = Instructor::create([
-                // firstName
                 'firstName' => '',
-                // lastName
                 'lastName' => '',
-                // gender
                 'gender' => 'other',
-                // nin
                 'NIN' => '',
-                // birthDate
                 'birthDate' => now(),
-                // address
                 'address' => '',
-                // phone
                 'phone' => '',
-                // drivingExperience
                 'drivingExperience' => 0,
-                // certificate
                 'certificate' => '',
-                // rating
                 'rating' => 0,
-                // userID
                 'userID' => $user->id,
             ]);
-
-            // return
-            return redirect()->back()->with('status', __('User successfully created.'));
-        }else{
+        } elseif ($roleId === 2) {
+            // Jika peran adalah "Customer," tambahkan detail pelanggan
             $validator = Validator::make($request->all(), [
-                'name' => 'required|string|max:255',
-                'email' => 'required|string|email|max:255|unique:users',
-                'password' => 'required|string|confirmed|min:8',
                 'firstName' => 'required_if:role,customer|string|max:255',
                 'lastName' => 'required_if:role,customer|string|max:255',
                 'NIN' => 'required_if:role,customer|string|max:255',
                 'birthDate' => 'required_if:role,customer|date',
+                'address' => 'required_if:role,customer|string|max:255',
                 'phone' => 'required_if:role,customer|string|max:255',
                 'gender' => ['required_if:role,customer', Rule::in(['male', 'female', 'other'])],
-
             ]);
 
             if ($validator->fails()) {
+                // delete user
+                $user->delete();
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            $user = User::create([
-                'name' => $request->name,
-                'roleID' => 2,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-                // email_verified_at
-                'email_verified_at' => now(),
-                // remember_token
-                // 'remember_token' => '',
-            ]);
-
-            // dd($user);
-            // dd($user->id);
-            // create customer
             $customer = Customer::create([
                 'userID' => $user->id,
                 'firstName' => $request->firstName,
@@ -132,32 +105,36 @@ class UserController extends Controller
                 'phone' => $request->phone,
                 'gender' => $request->gender,
                 'address' => $request->address,
-                // 'remember_token' => '',
             ]);
 
-            // auth attempt
+            // Coba otentikasi pengguna baru
             Auth::attempt($request->only('email', 'password'));
 
+            // Kirim email verifikasi
             $user = User::find($user->id);
-            // send email verification
             $user->sendEmailVerificationNotification();
-            //    send email verifikasi
+
+            // Redirect ke halaman pengiriman verifikasi email
             return redirect()->route('verification.send')->with('status', __('User successfully created.'));
         }
 
-        $user = User::create([
-            'name' => $request->name,
-            'username' => $request->username,
-            'roleID' => $request->role,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-
-
-
-
+        // Redirect kembali dengan pesan sukses jika tidak ada kesalahan
         return redirect()->back()->with('status', __('User successfully created.'));
-
     }
+
+    // Fungsi bantu untuk mendapatkan ID peran dari nama peran
+    private function getRoleIdFromRoleName($roleName)
+    {
+        switch ($roleName) {
+            case 'admin':
+                return 1;
+            case 'customer':
+                return 2;
+            case 'Instructor':
+                return 3;
+            default:
+                return null; // Kembalikan null jika peran tidak valid
+        }
+    }
+
 }

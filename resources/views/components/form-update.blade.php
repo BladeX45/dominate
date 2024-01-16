@@ -30,7 +30,7 @@
                     reader.onload = function (e) {
                         imagePreview.src = e.target.result;
                     };
-
+a
                     reader.readAsDataURL(input.files[0]);
                 } else {
                     alert("Not an image file");

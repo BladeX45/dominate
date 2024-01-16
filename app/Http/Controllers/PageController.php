@@ -25,38 +25,52 @@ class PageController extends Controller
     // Admin Pages
     public function adminDashboard()
     {
-        // forbidden route if not admin back to previous page
-        if(Auth::user()->roleID != 1){
+        // dd('test');
+        // Pastikan pengguna adalah admin, jika tidak, alihkan kembali ke halaman sebelumnya
+        if (Auth::user()->roleID !== '1') {
             return redirect()->back();
         }
 
-        // get all data from transaction
+        // Ambil semua transaksi
         $transactions = Transaction::all();
-        // dd($transactions);
-        $salesData = Transaction::select('planID', DB::raw('SUM(planAmount) as totalSales'))
-        ->where('paymentStatus', 'success')
-        ->groupBy('planID')
-        ->get();
 
-        $totalSales = $salesData->sum('totalSales');
+        // Hitung total penjualan
+        $totalSales = Transaction::where('paymentStatus', 'success')
+            ->select('planID', DB::raw('SUM(planAmount) as totalSales'))
+            ->groupBy('planID')
+            ->get()
+            ->sum('totalSales');
 
-        $percentageData = $salesData->map(function ($item) use ($totalSales) {
+        // Hitung data persentase
+        $percentageData = $this->calculatePercentageData($totalSales);
+
+        // Ambil semua data mobil
+        $cars = Car::all();
+
+        // Ambil semua biaya
+        $expenses = Expense::all();
+
+        // Tampilkan tampilan dasbor admin dan kirim data yang diperlukan
+        return view('admin.dashboard', compact('transactions', 'percentageData', 'cars', 'expenses'));
+    }
+
+    private function calculatePercentageData($totalSales)
+    {
+        // Ambil data penjualan
+        $salesData = Transaction::where('paymentStatus', 'success')
+            ->select('planID', DB::raw('SUM(planAmount) as totalSales'))
+            ->groupBy('planID')
+            ->get();
+
+        // Hitung persentase untuk setiap item
+        return $salesData->map(function ($item) use ($totalSales) {
             return [
-                'Plan' => $item->plan->planName, // Anda perlu memiliki atribut 'name' di model Plan
+                'Plan' => $item->plan->planName, // Mengasumsikan Anda memiliki relasi 'plan' di model Transaction
                 'Percentage' => ($item->totalSales / $totalSales) * 100,
             ];
         });
-
-        // get all car
-        $cars = Car::all();
-
-        // get all expense
-        $expenses = Expense::all();
-
-        // dd($percentageData);
-
-        return view('admin.dashboard', compact('transactions', 'percentageData', 'cars', 'expenses'));
     }
+
 
     public function customerDashboard(){
         // forbidden route if not admin back to previous page
@@ -84,44 +98,45 @@ class PageController extends Controller
 
     public function users()
     {
-        // check auth role 0 / 1
+        // Periksa peran pengguna yang sedang login (roleID)
         switch (auth()->user()->roleID) {
             case 0:
-                $users = User::where('roleID', 1)->all();
-                return view('owner.users', compact('users',));
+                // Jika peran adalah 0 (owner), ambil daftar pengguna dengan peran 1 (instructor)
+                $users = User::where('roleID', 1)->get();
+                return view('owner.users', compact('users'));
                 break;
             case 1:
-                // instructor
-                $instructors= instructor::all();
-                // Mendapatkan semua data pengguna (users) dengan roleID = 3
+                // Jika peran adalah 1 (instructor), ambil daftar instruktur dan pengguna dengan peran 3 (customer)
+                $instructors = Instructor::all();
                 $data = DB::table('users')
                     ->join('roles', 'users.roleID', '=', 'roles.roleID')
-                    ->where('users.roleID', 3) // Hanya ambil data dengan roleID = 3
+                    ->where('users.roleID', 3) // Hanya ambil data dengan roleID = 3 (customer)
                     ->select(
-                        // id pengguna
                         'users.id as userID',
-                        'users.name as userName', // Kolom 'name' dari tabel 'users'
-                        'users.email as userEmail', // Kolom 'email' dari tabel 'users'
-                        'roles.roleName' // Kolom 'namaRole' dari tabel 'roles'
+                        'users.name as userName',
+                        'users.email as userEmail',
+                        'roles.roleName'
                     )
                     ->paginate(10);
 
-
-                // Mengirimkan data yang telah digabungkan dan dipaginasi ke tampilan
+                // Kirim data ke tampilan admin.users
                 return view('admin.users', compact('data', 'instructors'));
-
                 break;
             case 2:
+                // Jika peran adalah 2 (customer), alihkan ke dashboard pelanggan
                 return redirect()->route('customer.dashboard');
                 break;
             case 3:
+                // Jika peran adalah 3 (instructor), alihkan ke dashboard instruktur
                 return redirect()->route('instructor.dashboard');
                 break;
             default:
+                // Jika tidak ada peran yang cocok, alihkan ke halaman login
                 return redirect()->route('login');
                 break;
         }
     }
+
 
     // transactions page
     public function indexTransactions(){
@@ -162,16 +177,21 @@ class PageController extends Controller
 
 
     }
-
     public function customers(){
-        // forbidden route if not admin back to previous page
+        // Cek apakah pengguna yang mengakses memiliki peran admin (roleID 1)
         if(Auth::user()->roleID != 1){
+            // Jika tidak, maka redirect kembali ke halaman sebelumnya
             return redirect()->back();
         }
-        // role = 2
-        $users = User::where('roleID', 2)->paginate(15);
+
+        // Jika pengguna memiliki peran admin, maka lanjutkan
+        // Mencari semua pengguna dengan peran roleID 2
+        $users = User::where('roleID', 2)->get();
+
+        // Menampilkan tampilan 'admin.customers' dan menyertakan data pengguna yang telah ditemukan
         return view('admin.customers', compact('users'));
     }
+
 
     public function assets(){
         // forbidden route if not admin back to previous page
@@ -378,7 +398,7 @@ class PageController extends Controller
                 // get data schedule
                 $schedules = Schedule::find($scheduleID);
                 // get data instructor
-                $instructors = instructor::find($instructorID);
+                $instructors = Instructor::find($instructorID);
                 // get data score
                 $scores = Score::where('customerID', $customerID)->where('scheduleID', $scheduleID)->first();
 
@@ -458,8 +478,6 @@ class PageController extends Controller
 
     // verification email resend
     public function verificationResend(Request $request){
-        // get user
-        // ddauth
         $user = User::find(Auth::user()->id);
         // send email verification
         $user->sendEmailVerificationNotification();

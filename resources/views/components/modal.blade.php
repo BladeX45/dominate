@@ -1,4 +1,3 @@
- {{-- default style --}}
 
  <!-- Modal -->
  <div class="modal fade" id="{{ $idModal }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -17,10 +16,4 @@
         </div>
     </div>
 </div>
-
-<style>
-    .modal-lg{
-        width: 1200px !important;
-    }
-</style>
 

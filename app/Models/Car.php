@@ -9,6 +9,8 @@ class Car extends Model
 {
     use HasFactory;
 
+    protected $disk = 'public';
+
     protected $guarded = [];
 
     public function schedules()

@@ -4,16 +4,16 @@
     <div class="header py-7 py-lg-8">
         <div class="container-fluid">
         {{-- Hero Section --}}
-            <section class="hero" id="hero">
-                <div class="container">
-                    <div class="row" style="background-image: url({{ asset('assets/img/bg-hero.jpg') }}); background-size:cover; height:32rem; padding:2rem;" >
-                        <div class="col-lg-6">
-                            <div class="hero-images">
-                            </div>
+        <section class="hero" id="hero">
+            <div class="container">
+                <div class="row" style="background-image: url({{ asset('assets/img/bg-hero.jpg') }}); background-size:cover; height:32rem; padding:2rem;" >
+                    <div class="col-lg-6">
+                        <div class="hero-images">
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
         {{-- Features Section --}}
         <section class="features">
@@ -109,84 +109,84 @@
         </section>
 
         {{-- Pricing Section --}}
-            <section class="pricing my-4">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="pricing-heading">
-                                <h2>Paket Tersedia:</h2>
+        <section class="pricing my-4">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="pricing-heading">
+                            <h2>Paket Tersedia:</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="card">
+                    <div class="card-header">
+                        <h2 class="title">
+                            Manual
+                        </h2>
+                        <div class="card-body">
+                            <div class="row">
+                                @foreach ($dataManual as $dm)
+                                <div class="col-md-3">
+                                    <div class="card bg-primary">
+                                        <div class="card-header">
+                                            <h2 class="title">
+                                                {{ $dm->planName }}
+                                            </h2>
+                                        </div>
+                                        <div class="card-body">
+
+                                            <p class="lead">
+                                                {{ $dm->planDescription }}
+                                            </p>
+                                            <p class="lead">
+                                                Rp.{{ number_format($dm->planPrice, 0, ',', '.') }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                @endforeach
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                       <div class="card">
+                    </div>
+                </div>
+                {{-- Matic --}}
+                <div class="row">
+                    <div class="card">
                         <div class="card-header">
                             <h2 class="title">
-                                Manual
+                                Automatic
                             </h2>
-                            <div class="card-body">
-                                <div class="row">
-                                    @foreach ($dataManual as $dm)
-                                    <div class="col-md-3">
-                                        <div class="card bg-primary">
-                                            <div class="card-header">
-                                                <h2 class="title">
-                                                    {{ $dm->planName }}
-                                                </h2>
-                                            </div>
-                                            <div class="card-body">
-
-                                                <p class="lead">
-                                                    {{ $dm->planDescription }}
-                                                </p>
-                                                <p class="lead">
-                                                    Rp.{{ number_format($dm->planPrice, 0, ',', '.') }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    @endforeach
-                                </div>
-                            </div>
                         </div>
-                       </div>
-                    </div>
-                    {{-- Matic --}}
-                    <div class="row">
-                        <div class="card">
-                            <div class="card-header">
-                                <h2 class="title">
-                                    Automatic
-                                </h2>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    @foreach ($dataMatic as $da)
-                                    <div class="col-md-3">
-                                        <div class="card bg-primary">
-                                            <div class="card-header">
-                                                <h2 class="title">
-                                                    {{ $da->planName }}
-                                                </h2>
-                                            </div>
-                                            <div class="card-body">
-                                                <p class="lead">
-                                                    {{ $da->planDescription }}
-                                                </p>
-                                                <p class="lead">
-                                                    {{-- price amount currency format--}}
-                                                    Rp.{{ number_format($da->planPrice, 0, ',', '.') }}
-                                                </p>
-                                            </div>
+                        <div class="card-body">
+                            <div class="row">
+                                @foreach ($dataMatic as $da)
+                                <div class="col-md-3">
+                                    <div class="card bg-primary">
+                                        <div class="card-header">
+                                            <h2 class="title">
+                                                {{ $da->planName }}
+                                            </h2>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="lead">
+                                                {{ $da->planDescription }}
+                                            </p>
+                                            <p class="lead">
+                                                {{-- price amount currency format--}}
+                                                Rp.{{ number_format($da->planPrice, 0, ',', '.') }}
+                                            </p>
                                         </div>
                                     </div>
-                                    @endforeach
                                 </div>
+                                @endforeach
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
             {{-- section for ratings instructor from customer to instructor --}}
             <section class="ratings">
                 <div class="scroll-container">

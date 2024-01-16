@@ -178,7 +178,7 @@
                                     </div>
                                 @else
                                     <div class="avatar-wrapper">
-                                        <img id="image-preview" class="avatar" src="{{ asset('storage/avatar/'. auth()->user()->avatar) }}" alt="">
+                                        <img id="image-preview" class="avatar" src="{{ asset('storage'). '/avatar/' .auth()->user()->avatar }}" alt="">
                                     </div>
                                 @endif
                                 <input type="file" id="photo" name="photo" accept="image/*" onchange="previewImage();" hidden> <!-- Menggunakan 'photo' sebagai id dan name -->

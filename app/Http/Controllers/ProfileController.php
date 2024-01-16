@@ -62,44 +62,33 @@ class ProfileController extends Controller
 
     public function updatePhoto(Request $request)
     {
-        // Validasi request
-        // dd($request);
         $request->validate([
-            'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Atur validasi sesuai kebutuhan
+            'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Dapatkan user yang sedang login
         $user = auth()->user();
 
-        // Cek apakah user memiliki foto sebelumnya, dan hapus jika ada
-        if ($user->avatar) {
-            // Hapus foto sebelumnya dari direktori
-            // Storage::disk('public')->delete('path/to/previous/avatar.jpg');
+        // Simpan nama foto sebelumnya
+        $previousAvatar = $user->avatar;
 
-            // Hapus informasi foto dari basis data
-            $user->avatar = null;
-            $user->save();
+        if ($previousAvatar) {
+            // Hapus foto sebelumnya dari penyimpanan
+            Storage::disk('public')->delete('avatar/' . $previousAvatar);
         }
 
-        // Get the uploaded file
         $uploadedFile = $request->file('photo');
-
-        // Generate a unique filename for the uploaded file
         $filename = uniqid() . '_' . time() . '.' . $uploadedFile->getClientOriginalExtension();
 
-        // move upload file to public/assets/img/receipt/..
-        $uploadedFile->storeAs('avatar', $filename, 'public');
+        // Simpan file baru di penyimpanan publik
+        Storage::disk('public')->put('avatar/' . $filename, file_get_contents($uploadedFile));
 
-        // update
-        $user = User::find(auth()->user()->id);
-        // dd($user);
+        // Update atribut 'avatar' pada model User
         $user->avatar = $filename;
         $user->save();
 
-        // You would typically associate this with the user's record or the transaction record
-
         return redirect()->back()->with('success', 'Foto profil berhasil diunggah.');
     }
+
 
 
 
