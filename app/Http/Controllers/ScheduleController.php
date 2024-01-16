@@ -19,65 +19,64 @@ class ScheduleController extends Controller
      */
     public function index()
     {
-        if(Auth::user()->roleID == 1 || Auth::user()->roleID == 0){
-            $schedules = Schedule::orderBy('date', 'desc')->paginate(15);
+        // Mendapatkan peran (role) pengguna saat ini
+        $userRoleID = Auth::user()->roleID;
 
+        if ($userRoleID == 1 || $userRoleID == 0) {
+            // Jika pengguna memiliki peran sebagai admin atau superadmin
+            $schedules = Schedule::orderBy('date', 'desc')->get();
             $instructors = Instructor::all();
-
             $scores = Score::all();
 
             return view('pages.schedules', compact('schedules', 'instructors', 'scores'));
-
-        }
-        elseif(Auth::user()->roleID == 2){
-            // get customerID
+        } elseif ($userRoleID == 2) {
+            // Jika pengguna memiliki peran sebagai customer
             $customerID = Customer::where('userID', Auth::user()->id)->first();
-
-            // get schedule paginate asc status
-            $schedules = Schedule::where('customerID', $customerID->id)->orderBy('status', 'asc')->paginate(15);
-            // dd($schedules);
-            // get all instructors
-            $instructors = instructor::all();
-
-            // get customer score
+            $schedules = Schedule::where('customerID', $customerID->id)->orderBy('status', 'asc')->get();
+            $instructors = Instructor::all();
             $scores = Score::where('customerID', $customerID->id)->get();
 
-            // dd($scores);
             return view('pages.schedules', compact('schedules', 'customerID', 'instructors', 'scores'));
-        }
-        else{
-            $schedules = Schedule::where('instructorID', Auth::user()->roleID)->paginate(15);
-
-            $instructors = instructor::all();
-
+        } else {
+            // Jika pengguna memiliki peran sebagai instruktur
+            $schedules = Schedule::where('instructorID', $userRoleID)->get();
+            $instructors = Instructor::all();
             $scores = Score::all();
 
             return view('pages.schedules', compact('schedules', 'instructors', 'scores'));
         }
     }
 
+
     // cancel schedule
     public function cancel(Request $request) {
-        // Find the schedule by ID and update its status
-        $schedule = Schedule::where('id', $request->scheduleID)->first();
+        // Cari jadwal berdasarkan ID dan perbarui statusnya
+        $schedule = Schedule::find($request->scheduleID);
+
+
+
         if ($schedule) {
+            // Perbarui status menjadi 'canceled'
             $schedule->update(['status' => 'canceled']);
 
-            // Find the customer by ID
+            // Cari pelanggan berdasarkan ID
             $customer = Customer::find($schedule->customerID);
+
             if ($customer) {
-                // Update the session based on car type
-                $sessionType = ($schedule->carType === 'manual') ? 'ManualSession' : 'MaticSession';
+                // Perbarui sesi berdasarkan jenis mobil
+                $sessionType = ($schedule->car->Transmission === 'manual') ? 'ManualSession' : 'MaticSession';
                 $customer->$sessionType += 1;
                 $customer->save();
             }
 
+            // Redirect kembali dengan pesan sukses
             return redirect()->back()->with('success', 'Schedule canceled successfully');
         }
 
-        // Handle the case when the schedule is not found
+        // Handle kasus ketika jadwal tidak ditemukan
         return redirect()->back()->with('error', 'Schedule not found');
     }
+
 
 
     /**
@@ -85,27 +84,35 @@ class ScheduleController extends Controller
      */
     public function checkAvailability(Request $request)
     {
-        dd($request->all());
         $instructorId = $request->input('instructor');
         $date = $request->input('date');
         $session = $request->input('session');
+        $transmission = $request->input('type');
 
         // Periksa apakah jadwal tersedia berdasarkan instruktur, tanggal, dan sesi
         $isAvailable = !Schedule::where('instructorID', $instructorId)
-            ->where('date', $date)
-            ->where('session', $session)
-            ->exists();
+        ->where('date', $date)
+        ->where('session', $session)
+        ->get();
+
+        // find available car
+        $isAvailable = !$this->findAvailableCar($date, $session, $transmission);
+
+
+        // check data $isAvailable if there is data with status is canceled with foreach
+        // foreach ($isAvailable as $key => $value) {
+        //     if($value->status === 'canceled'){
+        //         $isAvailable = true;
+        //     }
+        //     else{
+        //         $isAvailable = false;
+        //     }
+        // }
+
 
         return response()->json(['isAvailable' => $isAvailable]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -117,10 +124,13 @@ class ScheduleController extends Controller
         $date = $request->input('date');
         $session = $request->input('session');
         $instructor = $request->input('instructor');
+        $type = $request->type;
+        // dd($type);
 
         $existingSchedule = Schedule::where('date', $date)
             ->where('session', $session)
             ->where('instructorID', $instructor)
+            ->where('status', '!=', 'canceled')
             ->first();
 
         if ($existingSchedule) {
@@ -170,12 +180,14 @@ class ScheduleController extends Controller
         return Schedule::where('customerID', $customer->id)
             ->where('date', $date)
             ->where('session', $session)
+            ->where('status', '!=', 'canceled')
             ->first();
     }
 
     private function createSchedule($customer, $instructor, $date, $session, $transmission, $sessionValue)
     {
         $car = $this->findAvailableCar($date, $session, $transmission);
+        // return response()->json($car);
 
         if (!$car) {
             return $this->redirectWithError("No available $transmission car for the selected date and session");
@@ -204,9 +216,17 @@ class ScheduleController extends Controller
 
     private function findAvailableCar($date, $session, $transmission)
     {
-        return Car::whereDoesntHave('schedules', function ($query) use ($date, $session) {
-            $query->where('date', $date)->where('session', $session);
-        })->where('carStatus', 'available')->where('Transmission', $transmission)->first();
+        // where the car is not in the schedule where the date, session
+        // if the the schedule is canceled, the car is available
+        // if the schedule is not canceled, the car is not available
+        return Car::whereNotIn('id', function ($query) use ($date, $session) {
+            $query->select('carID')
+                ->from('schedules')
+                ->where('date', $date)
+                ->where('session', $session)
+                ->where('status', '!=', 'canceled');
+        })->where('transmission', $transmission)->first();
+
     }
 
     private function updateSession($customer, $sessionType, $value)
@@ -218,59 +238,46 @@ class ScheduleController extends Controller
     }
 
 
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Schedule $schedule)
-    {
-        //
-    }
-
     // schedules for instructor
-    public function instructorSchedules(){
-        // ddd(Auth::user()->id);
-        $instructor = instructor::where('userID', Auth::user()->id)->first();
-        $schedules = Schedule::where('instructorID', $instructor->id)->paginate(15);
-        // rating
-        $ratings = rating::where('instructorID', $instructor->id)->get();
-        // score
+    public function instructorSchedules()
+    {
+        // Get instructor data based on the logged-in user
+        $instructor = Instructor::where('userID', Auth::user()->id)->first();
+
+        // Get schedules paginated for better display
+        $schedules = Schedule::where('instructorID', $instructor->id)->get();
+
+        // Get ratings specific to the instructor
+        $ratings = Rating::where('instructorID', $instructor->id)->get();
+
+        // Get all scores (consider filtering by instructor if needed)
         $scores = Score::all();
 
-        return view('instructor.schedules', compact('schedules', 'scores','ratings'));
+        return view('instructor.schedules', compact('schedules', 'scores', 'ratings'));
     }
 
     // train
-    public function train(Request $request){
-        // update status schedule
+    public function train(Request $request)
+    {
+        // Validasi request jika diperlukan
+        $request->validate([
+            'scheduleID' => 'required|exists:schedules,id',
+        ]);
+
+        // Cari jadwal berdasarkan ID
         $schedule = Schedule::find($request->scheduleID);
-        $schedule->status = 'trained';
-        $schedule->save();
 
-        // redirect
-        return redirect()->back()->with('success', 'Schedule trained successfully');
-    }
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Schedule $schedule)
-    {
-        //
-    }
+        // Periksa apakah jadwal ditemukan
+        if ($schedule) {
+            // Update status jadwal menjadi 'trained'
+            $schedule->status = 'trained';
+            $schedule->save();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Schedule $schedule)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Schedule $schedule)
-    {
-        //
+            // Redirect dengan pesan sukses
+            return redirect()->back()->with('success', 'Schedule trained successfully');
+        } else {
+            // Redirect dengan pesan kesalahan jika jadwal tidak ditemukan
+            return redirect()->back()->with('error', 'Schedule not found');
+        }
     }
 }

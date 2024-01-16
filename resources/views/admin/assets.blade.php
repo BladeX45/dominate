@@ -15,6 +15,17 @@
 
     }
 </style>
+{{-- if anyError --}}
+@if ($errors->any())
+<div class="alert alert-danger">
+    <ul>
+        @foreach ($errors->all() as $error )
+        <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
+{{-- if anyError --}}
 <div class="content">
     <div class="container-fluid">
       <div class="row">
@@ -26,11 +37,7 @@
             </div>
             @endif
             {{-- if any error --}}
-            @if ($errors->any())
-            <div class="alert alert-danger">
-                <strong>Whoops!</strong> There were some problems with your input.
-            </div>
-            @endif
+
           <div class="card">
             <div class="card-header card-header-primary">
                 <div class="row">
@@ -38,7 +45,7 @@
                         Cars Table
                     </div>
                     <div class="col">
-                        <a href="{{-- route('admin.plans.create') --}}" class="btn btn-info btn-round" data-toggle="modal" data-target="#addCar">Add Car</a>
+                        <a href="{{-- route('admin.plans.create') --}}" class="btn btn-primary btn-round" data-toggle="modal" data-target="#addCar">Add Car</a>
                     </div>
                 </div>
                 <div class="row">
@@ -50,9 +57,7 @@
                         </div>
                     </div>
                 </div>
-              <h4 class="card-title "></h4>
-              <p class="card-category"> Here is a subtitle for this table</p>
-            </div>
+              <h4 class="card-title "></h4>            </div>
             <div class="card-body">
               <div class="table-responsive">
                 <table class="table">
@@ -119,75 +124,66 @@
                                 @method('put')
                                 @csrf
                                 <div class="col-md-6">
+                                    {{-- hidden id --}}
+                                    <input type="hidden" name="id" value="{{$car->id}}">
                                     {{-- carName --}}
                                     <div class="form-group">
-                                        <label for="carName">{{__('Nama Mobil')}}</label>
-                                        <input type="carName" name="carName" class="form-control" id="carName" value="{{old('carName',$car->carName)}}" placeholder="{{ $car->carName}}">
+                                        <label for="carName" class="text-dark">{{__('Nama Mobil')}}</label>
+                                        <input type="carName" name="carName" class="form-control text-dark" id="carName" value="{{old('carName',$car->carName)}}" placeholder="{{ $car->carName}}">
                                     </div>
                                     <div class="form-group">
                                         {{-- carModel --}}
-                                        <label for="carModel">{{__('Model Mobil')}}</label>
-                                        <input type="carModel" name="carModel" class="form-control" id="carModel" value="{{old('carModel',$car->carModel)}}" placeholder="{{ $car->carModel}}">
+                                        <label for="carModel" class="text-dark">{{__('Model Mobil')}}</label>
+                                        <input type="carModel" name="carModel" class="form-control text-dark" id="carModel" value="{{old('carModel',$car->carModel)}}" placeholder="{{ $car->carModel}}">
                                     </div>
                                     <div class="form-group">
                                         {{-- Transmission --}}
-                                        <label for="Transmission">{{__('Transmisi')}}</label>
-                                        <input type="Transmission" name="Transmission" class="form-control" id="Transmission" value="{{old('Transmission',$car->Transmission)}}" placeholder="{{ $car->Transmission}}">
+                                        <label for="Transmission" class="text-dark">{{__('Transmisi')}}</label>
+                                        <input type="Transmission" name="Transmission" class="form-control text-dark" id="Transmission" value="{{old('Transmission',$car->Transmission)}}" placeholder="{{ $car->Transmission}}">
                                     </div>
                                     <div class="form-group">
                                         {{-- carYear --}}
-                                        <label for="carYear">{{__('Tahun Mobil')}}</label>
-                                        <input type="carYear" name="carYear" class="form-control" id="carYear" value="{{old('carYear',$car->carYear)}}" placeholder="{{ $car->carYear}}">
+                                        <label for="carYear" class="text-dark">{{__('Tahun Mobil')}}</label>
+                                        <input type="carYear" name="carYear" class="form-control text-dark" id="carYear" value="{{old('carYear',$car->carYear)}}" placeholder="{{ $car->carYear}}">
                                     </div>
 
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         {{-- carColor --}}
-                                        <label for="carColor">{{__('Warna Mobil')}}</label>
-                                        <input type="carColor" class="form-control" id="carColor" value="{{old('carColor',$car->carColor)}}" placeholder="{{ $car->carColor}}">
+                                        <label for="carColor" class="text-dark">{{__('Warna Mobil')}}</label>
+                                        <input type="carColor" name="carColor" class="form-control text-dark" id="carColor" value="{{old('carColor',$car->carColor)}}" placeholder="{{ $car->carColor}}">
                                     </div>
                                     <div class="form-group">
                                         {{-- plateNumber --}}
-                                        <label for="plateNumber">{{__('Nomor Plat Mobil')}}</label>
-                                        <input type="plateNumber" class="form-control" id="plateNumber" value="{{old('carPlateNumber',$car->carPlateNumber)}}" placeholder="{{ $car->carPlateNumber}}">
+                                        <label for="plateNumber" class="text-dark">{{__('Nomor Plat Mobil')}}</label>
+                                        <input type="plateNumber" name="carPlateNumber" class="form-control text-dark" id="plateNumber" value="{{old('carPlateNumber',$car->carPlateNumber)}}" placeholder="{{ $car->carPlateNumber}}">
                                     </div>
                                     <div class="form-group">
-                                        <label for="carStatus">{{ __('Status Mobil') }}</label>
+                                        <label for="carStatus" class="text-dark">{{ __('Status Mobil') }}</label>
                                         <select class="form-control bg-dark" id="carStatus" name="carStatus">
                                             <option value="Available">Available</option>
-                                            <option value="Not Available">Not Available</option>
+                                            <option value="unavailable">Not Available</option>
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label for="carImage" class="d-flex justify-content-center">
+                                        <label for="carImage-{{$car->id}}" class="d-flex justify-content-center">
                                             {{-- Jika user->avatar = null, maka tampilkan avatar default --}}
                                             @if ($car->carImage === '')
-                                                    <img id="car-preview"  class="carImage" src="{{ asset('storage') }}/cars/test.png" alt="" style="height: 150px; width:75%">
+                                                    <img id="car-preview-{{$car->id}}"  class="carImage" src="{{ asset('storage/icons/upload.png') }}" alt="" style="height: 150px; width:75%">
                                             @else
+<<<<<<< HEAD
                                                     <img id="car-preview" class="carImage" src="{{ asset('storage')."/cars/".$car->carImage }}" alt="">
+=======
+                                                    <img id="car-preview-{{$car->id}}" class="carImage" src="{{ asset('storage/cars/'. $car->carImage) }}" alt="">
+>>>>>>> b284fced387bacca9cc93bf5cc5baeb34dc7c681
                                             @endif
-                                            <input type="file" id="carImage" name="carImage" accept="image/*" onchange="previewCar();" hidden> <!-- Menggunakan 'photo' sebagai id dan name -->
+                                            <input type="file" id="carImage-{{$car->id}}" name="carImage" accept="image/*" onchange="previewCar({{$car->carImage}});" hidden> <!-- Menggunakan 'photo' sebagai id dan name -->
                                         </label>
                                     </div>
                                 </div>
                         </div>
-                        <script>
-                                function previewCar() {
-                                var input = document.getElementById('carImage'); // Menggunakan 'photo' sebagai id
-                                var imagePreview = document.getElementById('car-preview');
 
-                                if (input.files && input.files[0]) {
-                                    var reader = new FileReader();
-
-                                    reader.onload = function (e) {
-                                        imagePreview.src = e.target.result;
-                                    };
-
-                                    reader.readAsDataURL(input.files[0]);
-                                }
-                            }
-                        </script>
                         <div class="row">
                             <div class="col-md-12 d-flex justify-content-center">
                                 {{-- submit --}}
@@ -219,71 +215,90 @@
   </div>
 
   <x-modal title="Add Car" idModal="addCar" customStyle="">
-    <x-form action="test" method="post">
+    <form action="{{ route('admin.addAsset') }}" method="post" enctype="multipart/form-data">
+        @csrf
         <div class="form-group">
             <label for="carName">Car Name</label>
-            <input type="text" name="carName" id="carName" class="form-control" placeholder="Car Name">
+            <input type="text" name="carName" id="carName" class="form-control text-dark" placeholder="Car Name">
+        </div>
+        <div class="form-group">
+            <label for="carModel">Car Model</label>
+            <input type="text" name="carModel" id="carModel" class="form-control text-dark" placeholder="Car Model">
         </div>
         {{-- Selection Transmission --}}
         <div class="form-group">
             <label for="Transmission">Transmission</label>
-            <select class="form-control bg-dark" id="Transmission" name="Transmission">
-                <option value="Automatic">Automatic</option>
-                <option value="Manual">Manual</option>
+            <select class="form-control text-dark" id="Transmission" name="Transmission">
+                <option value="automatic">Automatic</option>
+                <option value="manual">Manual</option>
             </select>
         </div>
         {{-- Car Year --}}
         <div class="form-group">
             <label for="carYear">Car Year</label>
-            <input type="text" name="carYear" id="carYear" class="form-control" placeholder="Car Year">
+            <input type="text" name="carYear" id="carYear" class="form-control text-dark" placeholder="Car Year">
         </div>
         {{-- Car Color --}}
         <div class="form-group">
             <label for="carColor">Car Color</label>
-            <input type="text" name="carColor" id="carColor" class="form-control" placeholder="Car Color">
+            <input type="text" name="carColor" id="carColor" class="form-control text-dark" placeholder="Car Color">
         </div>
         {{-- Car Plate Number --}}
         <div class="form-group">
             <label for="carPlateNumber">Car Plate Number</label>
-            <input type="text" name="carPlateNumber" id="carPlateNumber" class="form-control" placeholder="Car Plate Number">
+            <input type="text" name="carPlateNumber" id="carPlateNumber" class="form-control text-dark" placeholder="Car Plate Number">
         </div>
         {{-- Car Status --}}
         <div class="form-group">
             <label for="carStatus">Car Status</label>
-            <select class="form-control bg-dark"  id="carStatus" name="carStatus">
+            <select class="form-control bg-white text-dark" id="carStatus" name="carStatus">
                 <option value="Available">Available</option>
-                <option value="Not Available">Not Available</option>
+                <option value="unAvailable">Not Available</option>
             </select>
         </div>
-        {{-- car Image --}}
+        {{-- Car Image --}}
         <div class="form-group">
             <label for="carImage">Car Image</label>
-            <label for="carImage"><span id="fileName">(tidak ada file yang dipilih)</span></label>
-            <input type="file" name="carImage" class="input-file text-light" id="carImage" onchange="updateFileName()">
-            <script>
-                function updateFileName() {
-                    const fileInput = document.getElementById('carImage');
-                    const fileNameSpan = document.getElementById('fileName');
-                    fileNameSpan.textContent = fileInput.files.length > 0 ? fileInput.files[0].name : '(tidak ada file yang dipilih)';
+            <label for="carImage"><span id="fileName">(no file selected)</span></label>
+            <input type="file" name="carImage" class="input-file text-light" id="carImage" onchange="updateFileName(this)">
+        </div>
+        <script>
+            function updateFileName(input) {
+                const fileNameSpan = document.getElementById('fileName');
+                if (input.files.length > 0) {
+                    fileNameSpan.textContent = input.files[0].name;
+                } else {
+                    fileNameSpan.textContent = '(no file selected)';
                 }
-            </script>
-          </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+            }
+        </script>
 
-    </x-form>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
 </x-modal>
 @endsection
 
 
-
-
 @push('js')
 <!-- ... Your HTML content ... -->
+<script>
+    function previewCar(id) {
+    var input = document.getElementById('carImage'+id); // Menggunakan 'photo' sebagai id
+    var imagePreview = document.getElementById('car-preview-'+id);
 
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            imagePreview.src = e.target.result;
+        };
+
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
     <script>
-    //    sortAvail -> a-z
-    //    sortAvailDesc -> z-a
-    //    sortAvailAsc -> a-z
 
         function sortAvail() {
             var table, rows, switching, i, x, y, shouldSwitch;
@@ -324,11 +339,5 @@
             }
         }
 
-    </script>
-    <script src="{{ asset('black') }}/js/plugins/chartjs.min.js"></script>
-    <script>
-        $(document).ready(function() {
-          demo.initDashboardPageCharts();
-        });
     </script>
 @endpush

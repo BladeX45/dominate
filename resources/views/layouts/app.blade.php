@@ -38,6 +38,8 @@
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,600,700,800" rel="stylesheet" />
         <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+        <style>
+        </style>
         <!-- Icons -->
         <link href="{{ asset('black') }}/css/nucleo-icons.css" rel="stylesheet" />
         <!-- CSS -->
@@ -46,7 +48,7 @@
         {{-- font awesome --}}
         <script src="https://kit.fontawesome.com/57b8c8d926.js" crossorigin="anonymous"></script>
     </head>
-    <body class="{{ $class ?? '' }}">
+    <body>
         @auth()
             {{-- if not verfied dont show sidebar --}}
             @if (Auth::user()->email_verified_at == null)
@@ -54,7 +56,7 @@
                 {{-- header for button logout --}}
                 <div class="wrapper wrapper-full-page">
                     <div class="full-page {{ $contentClass ?? '' }}">
-                        <div class="content">
+                        <div class="content bg-white">
                             <div class="container">
                                 @yield('content')
                             </div>
@@ -63,7 +65,7 @@
                     </div>
                 </div>
             @else
-            <div class="wrapper">
+            <div class="wrapper ">
                 @if (Auth::user()->roleID == 1)
                     @include('layouts.navbars.sideAdmin')
                 @elseif (Auth::user()->roleID == 3)
@@ -73,7 +75,7 @@
                 @endif
             <div class="main-panel">
                 @include('layouts.navbars.navbar')
-                <div class="content">
+                <div class="content bg-primary">
                     @yield('content')
                 </div>
                 @include('layouts.footer')
@@ -190,24 +192,24 @@
                     });
 
                     $('.switch-change-color input').on("switchChange.bootstrapSwitch", function() {
-                            var $btn = $(this);
+                      var $btn = $(this);
 
-                            if (white_color == true) {
-                                $('body').addClass('change-background');
-                                setTimeout(function() {
-                                    $('body').removeClass('change-background');
-                                    $('body').removeClass('white-content');
-                                }, 900);
-                                white_color = false;
-                            } else {
-                                $('body').addClass('change-background');
-                                setTimeout(function() {
-                                    $('body').removeClass('change-background');
-                                    $('body').addClass('white-content');
-                                }, 900);
+                      if (white_color == true) {
+                          $('body').addClass('change-background');
+                          setTimeout(function() {
+                              $('body').removeClass('change-background');
+                              $('body').removeClass('white-content');
+                          }, 900);
+                          white_color = false;
+                      } else {
+                          $('body').addClass('change-background');
+                          setTimeout(function() {
+                              $('body').removeClass('change-background');
+                              $('body').addClass('white-content');
+                          }, 900);
 
-                                white_color = true;
-                            }
+                          white_color = true;
+                      }
                     });
                 });
             });
@@ -312,6 +314,118 @@
             showPage(currentPage);
             updatePaginationButtons();
         </script>
+
+<script>
+    $(document).ready(function() {
+      $().ready(function() {
+        $sidebar = $('.sidebar');
+        $navbar = $('.navbar');
+        $main_panel = $('.main-panel');
+
+        $full_page = $('.full-page');
+
+        $sidebar_responsive = $('body > .navbar-collapse');
+        sidebar_mini_active = true;
+        white_color = false;
+
+        window_width = $(window).width();
+
+        fixed_plugin_open = $('.sidebar .sidebar-wrapper .nav li.active a p').html();
+
+
+
+        $('.fixed-plugin a').click(function(event) {
+          if ($(this).hasClass('switch-trigger')) {
+            if (event.stopPropagation) {
+              event.stopPropagation();
+            } else if (window.event) {
+              window.event.cancelBubble = true;
+            }
+          }
+        });
+
+        $('.fixed-plugin .background-color span').click(function() {
+          $(this).siblings().removeClass('active');
+          $(this).addClass('active');
+
+          var new_color = $(this).data('color');
+
+          if ($sidebar.length != 0) {
+            $sidebar.attr('data', new_color);
+          }
+
+          if ($main_panel.length != 0) {
+            $main_panel.attr('data', new_color);
+          }
+
+          if ($full_page.length != 0) {
+            $full_page.attr('filter-color', new_color);
+          }
+
+          if ($sidebar_responsive.length != 0) {
+            $sidebar_responsive.attr('data', new_color);
+          }
+        });
+
+        $('.switch-sidebar-mini input').on("switchChange.bootstrapSwitch", function() {
+          var $btn = $(this);
+
+          if (sidebar_mini_active == true) {
+            $('body').removeClass('sidebar-mini');
+            sidebar_mini_active = false;
+            blackDashboard.showSidebarMessage('Sidebar mini deactivated...');
+          } else {
+            $('body').addClass('sidebar-mini');
+            sidebar_mini_active = true;
+            blackDashboard.showSidebarMessage('Sidebar mini activated...');
+          }
+
+          // we simulate the window Resize so the charts will get updated in realtime.
+          var simulateWindowResize = setInterval(function() {
+            window.dispatchEvent(new Event('resize'));
+          }, 180);
+
+          // we stop the simulation of Window Resize after the animations are completed
+          setTimeout(function() {
+            clearInterval(simulateWindowResize);
+          }, 1000);
+        });
+
+        $('.switch-change-color input').on("switchChange.bootstrapSwitch", function() {
+          var $btn = $(this);
+
+          if (white_color == true) {
+
+            $('body').addClass('change-background');
+            setTimeout(function() {
+              $('body').removeClass('change-background');
+              $('body').removeClass('white-content');
+            }, 900);
+            white_color = false;
+          } else {
+
+            $('body').addClass('change-background');
+            setTimeout(function() {
+              $('body').removeClass('change-background');
+              $('body').addClass('white-content');
+            }, 900);
+
+            white_color = true;
+          }
+
+
+        });
+
+        $('.light-badge').click(function() {
+          $('body').addClass('white-content');
+        });
+
+        $('.dark-badge').click(function() {
+          $('body').removeClass('white-content');
+        });
+      });
+    });
+  </script>
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>

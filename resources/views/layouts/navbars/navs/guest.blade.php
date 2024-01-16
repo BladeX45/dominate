@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-absolute navbar-transparent fixed-top">
+<nav class="navbar navbar-expand-lg navbar-absolute navbar-black fixed-top bg-white">
     <div class="container-fluid">
         <div class="navbar-wrapper">
             <div class="navbar-toggle d-inline">
@@ -26,7 +26,7 @@
                 </li>
                 <li class="nav-item ">
                     <a href="{{ route('register') }}" class="nav-link">
-                        <i class="tim-icons icon-laptop"></i> {{ __('Register') }}
+                        <i class="tim-icons icon-laptop text-dark"></i> {{ __('Register') }}
                     </a>
                 </li>
                 <li class="nav-item ">
@@ -44,7 +44,7 @@
         {{-- certificate number --}}
         <div class="form-group">
             <label for="certificateNumber">Certificate Number</label>
-            <input type="text" class="form-control" id="certificateNumber" name="certificateNumber" placeholder="Certificate Number" required>
+            <input type="text" class="form-control text-dark" id="certificateNumber" name="certificateNumber" placeholder="Certificate Number" required>
         </div>
 
         {{-- submit --}}

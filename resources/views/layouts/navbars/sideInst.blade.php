@@ -8,7 +8,7 @@
             <li @if ($pageSlug == 'profile') class="active " @endif>
                 <a href="{{ route('instructor.profile') }}">
                     <i class="tim-icons icon-single-02"></i>
-                    <p>{{ __('Profile') }}</p>
+                    <p class="text-dark">{{ __('Profile') }}</p>
                 </a>
             </li>
             <li @if ($pageSlug == 'dashboard') class="active " @endif>

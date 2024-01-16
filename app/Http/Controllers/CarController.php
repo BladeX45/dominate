@@ -10,110 +10,115 @@ use Illuminate\Support\Facades\Storage;
 
 class CarController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-
-    }
-
-    // setCarStatus
     public function updateCar(Request $request)
     {
-        // data
-        // "_method" => "put"
-        // "_token" => "hHOzkSznM7gzv8h8LlQ9OId5i12ssnF4XcfdBGA9"
-        // "carName" => "Handa"
-        // "carModel" => "Jazz"
-        // "Transmission" => "automatic"
-        // "carYear" => "2019"
-        // "carStatus" => "Available"
-        // "carImage => "image.jpg"
 
-        // update car
-        $car = Car::where('carName', $request->carName)->first();
-        // validator must img/jpg/png
+        // Cari mobil yang akan diupdate berdasarkan nama
+        $car = Car::where('id', $request->id)->first();
 
+        $imageName = ''; // Initialize the $imageName variable
 
-
-        // if any image
+        // Validasi gambar mobil jika ada
         if ($request->hasFile('carImage')) {
             $validator = $request->validate([
                 'carImage' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ]);
 
+            // Jika validasi berhasil, lakukan pengolahan gambar
+            if ($validator) {
+                // Hapus gambar lama jika ada
+                $oldImage = $car->carImage;
+                $oldImagePath = public_path('storage/cars/' . $oldImage);
+                if (file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
 
-            // delete old image
-            $oldImage = $car->carImage;
-            $oldImage = public_path('storage/cars/' . $oldImage);
-            if (file_exists($oldImage)) {
-                unlink($oldImage);
+                // Upload gambar baru
+                $image = $request->file('carImage');
+                $imageName = time() . '.' . $image->extension();
+                $image->storeAs('public/cars', $imageName);
+                $car->carImage = $imageName;
             }
+        } else {
 
-            // upload new image
-            $image = $request->file('carImage');
-            $imageName = time() . '.' . $image->extension();
-            $image->storeAs('public/cars', $imageName);
-            $car->carImage = 'cars/' . $imageName;
+            // Jika tidak ada gambar baru, gunakan gambar lama
+            if($car->carImage != ''){
+                $imageName = $car->carImage;
+            }
+            else{
+                $imageName = '';
+            }
         }
 
-        $car->update([
-            'carName' => $request->carName,
-            'carModel' => $request->carModel,
-            'carYear' => $request->carYear,
-            'carStatus' => $request->carStatus,
-            'carImage' => $imageName,
-        ]);
 
+        try{
+            // Update data mobil
+            $car = $car->update([
+                'carName' => $request->carName,
+                'carModel' => $request->carModel,
+                'carYear' => $request->carYear,
+                'carStatus' => $request->carStatus,
+                'Transmission' => $request->Transmission,
+                'carImage' => $imageName,
+                'carColor' => $request->carColor,
+                'carPlateNumber' => $request->carPlateNumber,
+            ]);
+        }
+        catch(\Exception $e){
+            return back()->withStatus(__('Car name already exists.'));
+        }
+
+        // Redirect kembali dengan pesan keberhasilan
         return back()->withStatus(__('Car successfully updated.'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
+public function store(Request $request)
+{
+    // Validasi input data
+    $validatedData = $request->validate([
+        'carName' => 'required|string',
+        'carModel' => 'required|string',
+        'Transmission' => 'required|string',
+        'carYear' => 'required|string',
+        'carStatus' => 'required|string',
+        'carImage' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        'carColor' => 'required|string',
+        'carPlateNumber' => 'required|string',
+    ]);
 
+    // Inisialisasi variabel untuk nama gambar
+    $imageName = '';
+
+    // Periksa apakah gambar mobil diunggah
+    if ($request->hasFile('carImage')) {
+        $image = $request->file('carImage');
+
+        // Generate nama unik berdasarkan timestamp
+        $imageName = time() . '.' . $image->extension();
+
+        // Simpan gambar ke direktori 'public/cars'
+        $image->storeAs('public/cars', $imageName);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Car $car)
-    {
-        //
-    }
+    // Buat entitas Car baru dengan data yang telah divalidasi
+    $car = new Car([
+        'carName' => $validatedData['carName'],
+        'carModel' => $validatedData['carModel'],
+        'Transmission' => $validatedData['Transmission'],
+        'carYear' => $validatedData['carYear'],
+        'carStatus' => $validatedData['carStatus'],
+        'carImage' => $imageName,
+        'carColor' => $validatedData['carColor'],
+        'carPlateNumber' => $validatedData['carPlateNumber'],
+    ]);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Car $car)
-    {
-        //
-    }
+    // Simpan data mobil ke database
+    $car->save();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Car $car)
-    {
-        //
-    }
+    // Redirect kembali dengan pesan keberhasilan
+    return back()->withStatus(__('Car successfully added.'));
+}
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Car $car)
-    {
-        //
-    }
+
+
 }

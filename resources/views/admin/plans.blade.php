@@ -34,7 +34,7 @@
                         Plans List
                     </div>
                     <div class="col">
-                        <a href="route('admin.plans.create')" class="btn btn-info btn-round" data-toggle="modal" data-target="#plan">Add Plan</a>
+                        <a href="route('admin.plans.create')" class="btn btn-primary btn-round" data-toggle="modal" data-target="#plan">Add Plan</a>
                     </div>
                 </div>
                 <div class="row">
@@ -58,6 +58,7 @@
                         <th>Price</th>
                         <th>Description</th>
                         <th>Status</th>
+                        <th>Action</th>
                     </thead>
                     <tbody id="data">
                         @foreach ($plans as $plan)
@@ -66,7 +67,7 @@
                             <td>{{ $plan->planName }}</td>
                             <td>{{ $plan->planSession }}</td>
                             <td>{{ $plan->planType }}</td>
-                            <td>{{ $plan->planPrice }}</td>
+                            <td>Rp. {{number_format($plan->planPrice, 0, ',', '.')}}</td>
                             <td>{{ $plan->planDescription }}</td>
                             {{-- 1 = active / 0 = inactive --}}
                             <td>
@@ -91,30 +92,34 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="planName">Plan Name</label>
-                                            <input type="text" name="planName" id="planName" value="{{old('planName',$plan->planName)}}" class="form-control" placeholder="Plan Name">
+                                            <label for="planName" class="text-dark">Plan Name</label>
+                                            <input type="text" name="planName" id="planName" value="{{old('planName',$plan->planName)}}" class="text-dark form-control" placeholder="Plan Name">
                                         </div>
                                         <div class="form-group">
-                                            <label for="planSession">Plan Session</label>
-                                            <input type="text" name="planSession" id="planSession" value="{{old('planSession',$plan->planSession)}}" class="form-control" placeholder="Plan Session">
+                                            <label for="planSession" class="text-dark">Plan Session</label>
+                                            <input type="text" name="planSession" id="planSession" value="{{old('planSession',$plan->planSession)}}" class="text-dark form-control" placeholder="Plan Session">
                                         </div>
                                         <div class="form-group">
-                                            <label for="planType">Plan Type</label>
-                                            <input type="text" name="planType" id="planType" value="{{old('planType',$plan->planType)}}" class="form-control" placeholder="Plan Type">
+                                            <label for="planType" class="text-dark">Plan Type</label>
+                                            <input type="text" name="planType" id="planType" value="{{old('planType',$plan->planType)}}" class="text-dark form-control" placeholder="Plan Type">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="planPrice">Plan Price</label>
-                                            <input type="text" name="planPrice" id="planPrice" value="{{old('planPrice',$plan->planPrice)}}" class="form-control" placeholder="Plan Price">
+                                            <label for="planPrice" class="text-dark">Plan Price</label>
+                                            <input type="text" name="planPrice" id="planPrice" value="{{old('planPrice',$plan->planPrice)}}" class="text-dark form-control" placeholder="Plan Price">
                                         </div>
                                         <div class="form-group">
-                                            <label for="planDescription">Plan Description</label>
-                                            <input type="text" name="planDescription" id="planDescription" value="{{old('planDescription',$plan->planDescription)}}" class="form-control" placeholder="Plan Description">
+                                            <label for="planDescription" class="text-dark">Plan Description</label>
+                                            <input type="text" name="planDescription" id="planDescription" value="{{old('planDescription',$plan->planDescription)}}" class="text-dark form-control" placeholder="Plan Description">
                                         </div>
                                         <div class="form-group">
-                                            <label for="planStatus">Plan Status</label>
-                                            <input type="text" name="planStatus" id="planStatus" class="form-control" value="{{old('planStatus',$plan->planStatus)}}" placeholder="Plan Status">
+                                            <label for="planStatus" class="text-dark">Plan Status</label>
+                                            {{-- dropdown 1/0 --}}
+                                            <select name="planStatus" id="planStatus" class="text-dark form-control">
+                                                <option value="1" {{old('planStatus',$plan->planStatus) == 1 ? 'selected' : ''}}>Active</option>
+                                                <option value="0" {{old('planStatus',$plan->planStatus) == 0 ? 'selected' : ''}}>Inactive</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -179,7 +184,11 @@
                     </div>
                     <div class="form-group">
                         <label for="planStatus">Plan Status</label>
-                        <input type="text" name="planStatus" id="planStatus" class="form-control" value="{{old($plan->planStatus)}}" placeholder="Plan Status">
+                        {{-- dropdown --}}
+                        <select name="planStatus" id="planStatus" class="form-control text-dark">
+                            <option value="1" {{old($plan->planStatus) == 1 ? 'selected' : ''}}>Active</option>
+                            <option value="0" {{old($plan->planStatus) == 0 ? 'selected' : ''}}>Inactive</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -190,7 +199,6 @@
             </div>
         </x-form>
     </x-modal>
-
 @endsection
 
 @push('js')

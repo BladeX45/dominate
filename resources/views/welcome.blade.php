@@ -4,6 +4,7 @@
     <div class="header py-7 py-lg-8">
         <div class="container-fluid">
         {{-- Hero Section --}}
+<<<<<<< HEAD
         <section class="hero" id="hero">
             <div class="container">
                 <div class="row" style="background-image: url({{ asset('assets/img/bg-hero.jpg') }}); background-size:cover; height:32rem; padding:2rem;" >
@@ -14,6 +15,16 @@
                 </div>
             </div>
         </section>
+=======
+            <section class="hero" id="hero">
+                    <div class="row" style="background-image: url({{ asset('assets/img/bg-hero.jpg') }}); background-size:cover; height:32rem; padding:2rem;" >
+                        <div class="col-lg-6">
+                            <div class="hero-images">
+                            </div>
+                        </div>
+                    </div>
+            </section>
+>>>>>>> b284fced387bacca9cc93bf5cc5baeb34dc7c681
 
         {{-- Features Section --}}
         <section class="features">
@@ -21,7 +32,7 @@
                 <div class="row my-4">
                     <div class="col-md-12">
                         <div class="features-heading">
-                            <h2>Mengapa Memilih Kami?</h2>
+                            <h2 class="text-dark">Mengapa Memilih Kami?</h2>
                         </div>
                     </div>
                 </div>
@@ -109,6 +120,7 @@
         </section>
 
         {{-- Pricing Section --}}
+<<<<<<< HEAD
         <section class="pricing my-4">
             <div class="container">
                 <div class="row">
@@ -146,6 +158,14 @@
                                     </div>
                                 </div>
                                 @endforeach
+=======
+            <section class="pricing my-4">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="pricing-heading">
+                                <h2 class="text-dark">Paket Tersedia:</h2>
+>>>>>>> b284fced387bacca9cc93bf5cc5baeb34dc7c681
                             </div>
                         </div>
                     </div>
@@ -158,6 +178,7 @@
                             <h2 class="title">
                                 Automatic
                             </h2>
+<<<<<<< HEAD
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -179,6 +200,69 @@
                                             </p>
                                         </div>
                                     </div>
+=======
+                            <div class="card-body">
+                                <div class="row">
+                                    @foreach ($dataManual as $dm)
+                                        @if($dm->planStatus == 1)
+                                        <div class="col-md-3">
+                                            <div class="card bg-primary">
+                                                <div class="card-header">
+                                                    <h2 class="title">
+                                                        {{ $dm->planName }}
+                                                    </h2>
+                                                </div>
+                                                <div class="card-body">
+
+                                                    <p class="lead">
+                                                        {{ $dm->planDescription }}
+                                                    </p>
+                                                    <p class="lead">
+                                                        Rp.{{ number_format($dm->planPrice, 0, ',', '.') }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                       </div>
+                    </div>
+                    {{-- Matic --}}
+                    <div class="row">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="title">
+                                    Automatic
+                                </h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    @foreach ($dataMatic as $da)
+                                    @if ($da->planStatus == 1)
+                                    <div class="col-md-3">
+                                        <div class="card bg-primary">
+                                            <div class="card-header">
+                                                <h2 class="title">
+                                                    {{ $da->planName }}
+                                                </h2>
+                                            </div>
+                                            <div class="card-body">
+                                                <p class="lead">
+                                                    {{ $da->planDescription }}
+                                                </p>
+                                                <p class="lead">
+                                                    {{-- price amount currency format--}}
+                                                    Rp.{{ number_format($da->planPrice, 0, ',', '.') }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
+                                    @endforeach
+>>>>>>> b284fced387bacca9cc93bf5cc5baeb34dc7c681
                                 </div>
                                 @endforeach
                             </div>

@@ -32,10 +32,11 @@
                 <thead>
                     <tr>
                         <th scope="col">Username</th>
-                        <th scope="col">Plan ID</th>
-                        <th scope="col">Plan Amount</th>
-                        <th scope="col">Total Session</th>
                         <th scope="col">Transaction ID</th>
+                        <th scope="col">Plan</th>
+                        <th scope="col">Plan Amount</th>
+                        <th scope="col">Payment Amount</th>
+                        <th scope="col">Total Session</th>
                         <th scope="col">Payment Method</th>
                         <th scope="col">Payment Status</th>
                         <th scope="col">Receipt Transfer</th>
@@ -47,10 +48,12 @@
                     @foreach ($data as $transaction)
                     <tr>
                         <td>{{ $transaction->userName }}</td>
-                        <td>{{ $transaction->planID }}</td>
-                        <td>{{ $transaction->planAmount }}</td>
-                        <td>{{ $transaction->totalSession }}</td>
                         <td>{{ $transaction->transactionID }}</td>
+                        <td>{{ $transaction->planName }}</td>
+                        <td>{{ $transaction->planAmount }}</td>
+                        {{-- format IDR paymentAmount --}}
+                        <td>{{ 'Rp. '.number_format($transaction->paymentAmount, 0, ',', '.') }}</td>
+                        <td>{{ $transaction->totalSession }}</td>
                         <td>{{ $transaction->paymentMethod }}</td>
                         <td>{{ $transaction->transactionStatus }}</td>
                         {{-- if receiptTransfer != null --}}
@@ -70,14 +73,14 @@
                             </td>
                         @endif
                         {{-- date format DD/MM/yyy --}}
-                        <td>{{ date('d/m/Y', strtotime($transaction->transactionDate)) }}</td>
+                        <td>{{ date('Y/m/d', strtotime($transaction->transactionDate)) }}</td>
                         {{-- verify transaction --}}
                         <td>
                             {{-- if success disabled verify, when pending show button tolak and verify --}}
                             @if ($transaction->transactionStatus == 'success')
-                                <button type="button" class="btn btn-sm btn-primary evidence-button" disabled>Verify</button>
+                                <button type="button" class="btn btn-sm btn-info evidence-button" disabled>Verify</button>
                             @else
-                            <button type="button" class="btn btn-sm btn-primary evidence-button" data-toggle="modal" data-target="#verify{{ $transaction->transactionID }}">Verify</button>
+                            <button type="button" class="btn btn-sm btn-info evidence-button" data-toggle="modal" data-target="#verify{{ $transaction->transactionID }}">Verify</button>
                             {{-- Modal --}}
                             <x-modal title="Verify" idModal="verify{{ $transaction->transactionID }}" customStyle="">
                                 <h3 class="title">Are you sure to verify this transaction?</h3>
@@ -124,6 +127,16 @@
                     @endforeach
                 </tbody>
             </table>
+            <div class="row">
+                <div class="col-md-12 d-flex justify-content-center">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            <li class="page-item"><a class="page-link" href="#" id="prev">Previous</a></li>
+                            <li class="page-item"><a class="page-link" href="#" id="next">Next</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
             <p id="noDataFoundMessage" style="display: none; color: red;">Data not Found</p>
         </div>
     </div>

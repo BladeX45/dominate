@@ -14,7 +14,7 @@
                 <div class="col-md-12">
                     <div class="d-flex justify-content-between">
                         <div class="searchInput">
-                            <input type="text" name="search" id="searchInput" class="form-control w-100" placeholder="Cari Jadwal">
+                            <input type="text" name="search" id="searchInput" class="form-control w-100" placeholder="Search Expense">
                         </div>
                         <button type="button" class="btn btn-md btn-primary me-3" data-bs-toggle="modal" data-bs-target="#expense">
                             <span>
@@ -46,7 +46,7 @@
                             <td>{{$expense->expenseName}}</td>
                             {{-- format amount currency --}}
                             <td>Rp. {{number_format($expense->expenseAmount, 0, ',', '.')}}</td>
-                            <td>{{$expense->expenseDate}}</td>
+                            <td>{{ date('Y/m/d', strtotime($expense->expenseDate)) }}</td>
                             <td>{{$expense->expenseDescription}}</td>
                         </tr>
                         @endforeach
@@ -73,23 +73,23 @@
         <x-form action="{{route('admin.addExpense')}}" method="post">
             {{-- expense Name --}}
             <div class="form-group">
-                <label for="expenseName">Transaction Name</label>
-                <input type="text" class="form-control" id="expenseName" name="expenseName" placeholder="Nama Pengeluaran" required>
+                <label for="expenseName" class="text-dark">Transaction Name</label>
+                <input type="text" class="form-control text-dark" id="expenseName" name="expenseName" placeholder="Nama Pengeluaran" required>
             </div>
             {{-- expense Amount --}}
             <div class="form-group">
-                <label for="expenseAmount">Amount</label>
-                <input type="number" class="form-control" id="expenseAmount" name="expenseAmount" placeholder="Jumlah Pengeluaran" required>
+                <label for="expenseAmount" class="text-dark">Amount</label>
+                <input type="number" class="form-control text-dark" id="expenseAmount" name="expenseAmount" placeholder="Jumlah Pengeluaran" required>
             </div>
             {{-- expense Date --}}
             <div class="form-group">
-                <label for="expenseDate">Date</label>
-                <input type="date" class="form-control" id="expenseDate" name="expenseDate" placeholder="Tanggal Pengeluaran" required>
+                <label for="expenseDate" class="text-dark">Date</label>
+                <input type="date" class="form-control text-dark" id="expenseDate" name="expenseDate" placeholder="Tanggal Pengeluaran" required>
             </div>
             {{-- expense Description --}}
             <div class="form-group">
-                <label for="expenseDescription">Description</label>
-                <textarea class="form-control" id="expenseDescription" name="expenseDescription" rows="3" placeholder="Deskripsi Pengeluaran" required></textarea>
+                <label for="expenseDescription" class="text-dark">Description</label>
+                <textarea class="form-control text-dark" id="expenseDescription" name="expenseDescription" rows="3" placeholder="Deskripsi Pengeluaran" required></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary">Submit</button>

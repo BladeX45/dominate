@@ -57,9 +57,9 @@
                                     <tr>
                                         <th scope="row">{{ $loop->iteration }}</th>
                                         <td>{{ $schedule->instructor->firstName }} {{ $schedule->instructor->lastName }}</td>
-                                        <td>{{ $schedule->carType }}</td>
-                                        <td>{{ $schedule->carID}}</td>
-                                        <td>{{ $schedule->date }}</td>
+                                        <td>{{ $schedule->car->Transmission }}</td>
+                                        <td>{{ date('Y/m/d', strtotime($schedule->date)) }}</td>
+                                        <td>{{ $schedule->session }}</td>
                                         <td>{{ $schedule->status }}</td>
                                         {{-- if roleID == 0 | 1 --}}
                                         @if (auth()->user()->roleID == 0 || auth()->user()->roleID == 1)
@@ -189,12 +189,12 @@
                 {{-- input rating 1-10 --}}
                 <div class="form-group">
                     <label for="rating">Rating</label>
-                    <input type="number" name="rating" id="rating" class="form-control" min="1" max="10" required>
+                    <input type="number" name="rating" id="rating" class="form-control text-dark" min="1" max="10" required>
                 </div>
                 {{-- input comment --}}
                 <div class="form-group">
                     <label for="comment">Komentar</label>
-                    <textarea name="comment" id="comment" cols="30" rows="10" class="form-control" required></textarea>
+                    <textarea name="comment" id="comment" cols="30" rows="10" class="form-control text-dark" required></textarea>
                 </div>
                 {{-- button submit --}}
                 <button type="submit" class="btn btn-primary">Simpan</button>
@@ -209,24 +209,25 @@
         <x-schedules>
             <div id="availability-message"></div>
             <label for="instructor">Choose Instructor</label>
-            <select name="instructor" id="instructor" class="form-control" required>
+            <select name="instructor" id="instructor" class="form-control text-dark" required>
                 @foreach ($instructors as $instructor)
                     <option class="bg-primary" value="{{ $instructor->id }}">{{ $instructor->firstName }} {{ $instructor->lastName }}</option>
                 @endforeach
             </select>
 
+
             <label for="type">Choose Transmission</label>
-            <select name="type" id="type" class="form-control" required>
+            <select name="type" id="type" class="form-control text-dark" required>
                 <option class="bg-primary" value="manual">Manual</option>
                 <option class="bg-primary" value="matic">Matic</option>
             </select>
 
             <label for="date">Date</label>
-            <input type="date" name="date" id="date" class="form-control" required>
+            <input type="date" name="date" id="date" class="form-control text-dark" required>
             <span id="error-message" style="color: red;"></span>
 
             <label for="session">Pilih Sesi</label>
-            <select name="session" id="session" class="form-control" required>
+            <select name="session" id="session" class="form-control text-dark" required>
                 <option class="bg-primary">--- Choose Session ---</option>
                 <option class="bg-primary" value="1">08:00-10:00</option>
                 <option class="bg-primary" value="2">10:15-12:15</option>
@@ -260,6 +261,8 @@
                         type: type
                     },
                     success: function (response) {
+                        // Tanggapan dari server
+                        console.log(response);
                         var availabilityMessage = document.getElementById('availability-message');
                         if (response.isAvailable) {
                             // Jadwal tersedia, tambahkan class 'available' dan hapus class 'booked' (jika ada)
@@ -267,14 +270,14 @@
                             availabilityMessage.classList.add('bg');
                             availabilityMessage.classList.add('bg-success');
                             availabilityMessage.classList.remove('bg-danger');
-                            console.log(response);
+                            $('#submit-button').prop('disabled', false);
                         } else {
                             // Jadwal tidak tersedia, tambahkan class 'booked' dan hapus class 'available' (jika ada)
                             availabilityMessage.innerHTML = 'Jadwal sudah dipesan.';
                             availabilityMessage.classList.add('bg');
                             availabilityMessage.classList.add('bg-danger');
                             availabilityMessage.classList.remove('bg-success');
-                            console.log(response);
+                            document.getElementById("submit-button").disabled = true;
                         }
                     },
 
@@ -374,6 +377,7 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+
     var searchInput = document.getElementById("searchInput");
         // Dapatkan semua baris (tr) dalam tabel
         var rows = document.querySelectorAll("tbody tr");

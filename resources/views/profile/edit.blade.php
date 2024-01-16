@@ -90,14 +90,6 @@
                                     <label class="form-check-label" for="female">
                                         {{__('Female')}}
                                     </label>
-
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="gender" id="other" value="other" {{(auth()->user()->instructor && auth()->user()->instructor->gender == 'other') || (auth()->user()->customer && auth()->user()->customer->gender == 'other') ? 'checked' : ''}}>
-                                    <label class="form-check-label" for="other">
-                                        {{__('Other')}}
-                                    </label>
-
                                 </div>
                               </div>
                             </div>
@@ -260,9 +252,9 @@
                 {{-- Jika user->avatar = null, maka tampilkan avatar default --}}
 
                 @if (Auth::user()->instructor->certificate === '')
-                        <img id="certificate-preview"  class="certificate" src="{{ asset('storage/icon/upload.png') }}" alt="" style="height: 280px; width:75%">
+                        <img id="certificate-preview"  class="certificate" src="{{asset('storage\icons\upload.png')}}" alt="" style="height: 280px; width:75%">
                 @else
-                        <img id="certificate-preview" class="certificate" src="{{ asset('storage/certificate/'. auth()->user()->instructor->certificate) }}" alt="">
+                        <img id="certificate-preview" class="certificate" src="{{ asset('storage/certificates/'. auth()->user()->instructor->certificate) }}" alt="">
                 @endif
                 <input type="file" id="certificate" name="certificate" accept="image/*" onchange="previewCertificate();" hidden> <!-- Menggunakan 'photo' sebagai id dan name -->
             </label>

@@ -4,10 +4,32 @@
 <div class="content">
     <div class="container-fluid">
       <div class="row">
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <div class="col-md-12">
           <div class="card">
             <div class="card-header card-header-primary">
+<<<<<<< HEAD
               <h4 class="card-title ">Users Table</h4>
+=======
+              <div class="row">
+                <div class="col-md-10">
+                    <h4 class="card-title ">Users Table</h4>
+                </div>
+                <div class="col">
+
+                        <a href="{{-- route('admin.plans.create') --}}" class="btn btn-primary btn-round" data-toggle="modal" data-target="#addUser">Add User</a>
+
+                </div>
+              </div>
+>>>>>>> b284fced387bacca9cc93bf5cc5baeb34dc7c681
               <div class="row">
                 <div class="container-fluid">
                     <div class="col-md-4">
@@ -79,5 +101,82 @@
         </div>
       </div>
     </div>
+    {{-- modal --}}
+    <x-modal title="Add User" idModal="addUser" customStyle="modal-lg">
+        <x-form action="{{ route('admin.addUser') }}" method="POST">
+            @csrf
+            <div class="row">
+                {{-- hidden role --}}
+                <input type="hidden" name="role" value="customer">
+                <div class="col-md-6">
+                    {{-- username --}}
+                    <div class="form-group">
+                        <label for="name">Username</label>
+                        <input type="text" name="name" id="name" placeholder="username" class="form-control text-dark">
+                    </div>
+                    {{-- firstName --}}
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" name="firstName" id="firstName" placeholder="First Name" class="form-control text-dark">
+                    </div>
+                    {{-- birthDate --}}
+                    <div class="form-group">
+                        <label for="birthDate">birtday</label>
+                        <input type="date" name="birthDate" placeholder="Birth Day" class="form-control text-dark" required>
+                    </div>
+                    {{-- phone --}}
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="text" name="phone" placeholder="Phone" class="form-control text-dark" required>
+                    </div>
+                    {{-- gender --}}
+                    <label for="gender">Gender</label><br>
+                    <div class="d-flex justify-content-between">
+                        <div class="male">
+                            <input type="radio" id="html" name="gender" value="male">
+                            <label for="html">Male</label>
+                        </div>
+                        <div class="female">
+                            <input type="radio" id="female" name="gender" value="female">
+                            <label for="female">Female</label>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-6">
+                    {{-- email --}}
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" name="email" id="email" placeholder="Email" class="form-control text-dark">
+                    </div>
+                    {{-- lastName --}}
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" name="lastName" id="lastName" placeholder="Last Name" class="form-control text-dark">
+                    </div>
+                    {{-- NIK --}}
+                    <div class="form-group">
+                        <label for="NIN">NIK</label>
+                        <input type="text" name="NIN" placeholder="NIN" class="form-control text-dark" required>
+                    </div>
+                    {{-- address --}}
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <textarea name="address" placeholder="Address" class="form-control text-dark" rows="5" required></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+
+            </div>
+            {{-- firstName --}}
+
+            <div class="row">
+                <div class="col-md-12 d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary">Add User</button>
+                </div>
+            </div>
+        </x-form>
+    </x-modal>
   </div>
 @endsection

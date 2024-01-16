@@ -32,8 +32,6 @@ return new class extends Migration
             $table->integer('MaticSession')->nullable()->default(null);
             // certificate -> default null
             $table->string('certificate')->nullable()->default(null);
-            // isCertificatePass -> default 0
-            $table->boolean('isCertificatePass')->default(0);
 
             // fk from user
             $table->unsignedBigInteger('userID');
